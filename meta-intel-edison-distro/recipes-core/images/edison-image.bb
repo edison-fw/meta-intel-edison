@@ -111,6 +111,9 @@ IMAGE_INSTALL += "iperf"
 # Add pulseaudio
 IMAGE_INSTALL += "pulseaudio-server libpulsecore libpulsecommon libpulse libpulse-simple pulseaudio-misc pulseaudio-service"
 
+#Add Gstreamer
+IMAGE_INSTALL += "gstreamer1.0 gstreamer1.0-meta-base gstreamer1.0-meta-audio"
+
 # Those are necessary to manually create partitions and file systems on the eMMC
 IMAGE_INSTALL += "parted"
 IMAGE_INSTALL += "e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks libcomerr libss libe2p libext2fs dosfstools"
