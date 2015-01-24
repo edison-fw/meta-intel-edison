@@ -2,14 +2,14 @@ DESCRIPTION = "nodeJS Evented I/O for V8 JavaScript"
 HOMEPAGE = "http://nodejs.org"
 # tools/wrk is under Apache-2.0
 LICENSE = "MIT & BSD & Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=4a31e6c424761191227143b86f58a1ef"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=e804bf1e856481415099460bc54d9316"
 
 DEPENDS = "openssl"
 DEPENDS_class-target = "nodejs-native"
 
-PR = "r1"
+PR = "r0"
 
-SRC_URI = "git://github.com/joyent/node.git;protocol=https;branch=v0.10;tag=v0.10.28"
+SRC_URI = "git://github.com/joyent/node.git;protocol=https;branch=v0.10;tag=v${PV}"
 
 S = "${WORKDIR}/git"
 
