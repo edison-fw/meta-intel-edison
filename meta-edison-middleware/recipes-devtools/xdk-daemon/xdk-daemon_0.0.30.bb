@@ -51,7 +51,7 @@ do_install () {
     cp -a ${S}/* ${D}/opt/xdk-daemon/
 
     install -d ${D}${systemd_unitdir}/system/
-    install -m 0644 ${S}/xdk-daemon.service ${D}${systemd_unitdir}/system/
+    install -m 0644 ${S}/xdk-daemon-mdns.service ${D}${systemd_unitdir}/system/xdk-daemon.service
 
     install -d ${D}${bindir}
     ln -s /opt/xdk-daemon/current/xdk-whitelist ${D}${bindir}/xdk-whitelist
