@@ -166,10 +166,17 @@ exit /b 0
 	exit /b 5
 
 :flash-dfu-ifwi
-	dfu-util -d %USB_VID%:%USB_PID% -l | findstr "%1" > NUL 2>&1
-	if %errorlevel% == 0 (
-		call:flash-command --alt %1 -D %2
-		exit /b %errorlevel%
+	(dfu-util -d %USB_VID%:%USB_PID% -l & call echo %%^^errorlevel%% ^>dfu_error.txt) | findstr "%1" > NUL 2>&1
+	set /a flash_ifwi_error=%errorlevel%
+	for /f %%E in (dfu_error.txt) do set /a dfu_error=%%E
+	del dfu_error.txt
+	if %dfu_error% == 0 (
+		if %flash_ifwi_error% == 0 (
+			call:flash-command --alt %1 -D %2
+			exit /b %flash_ifwi_error%
+		)
+	) else (
+		exit /b %dfu_error%
 	)
 	exit /b 0
 
@@ -177,11 +184,11 @@ exit /b 0
 	set filterout="on"
 	if %verbose_output% == 1 ( set filterout="off")
 
-	dfu-util -d %USB_VID%:%USB_PID% %* 2>&1 | cscript.exe /E:JScript //B filter-dfu-out.js %LOG_FILENAME% %filterout%
-
-	set /a err_num=%errorlevel%
-	if %err_num% neq 0 echo Flash failed on %*
-	exit /b %err_num%
+	(dfu-util -d %USB_VID%:%USB_PID% %* 2>&1 & call echo %%^^errorlevel%% ^>dfu_error.txt) | cscript.exe /E:JScript //B filter-dfu-out.js %LOG_FILENAME% %filterout%
+	for /f %%E in (dfu_error.txt) do set /a dfu_error=%%E
+	del dfu_error.txt
+	if %dfu_error% neq 0 echo Flash failed on %*
+	exit /b %dfu_error%
 
 :flash-debug
 	echo DEBUG: dfu-util -l
@@ -218,14 +225,21 @@ exit /b 0
 	setlocal
 	set /a currtime=%TIMEOUT%
 :start_wait
-	dfu-util -l -d %USB_VID%:%USB_PID% | findstr "Found" | findstr "%USB_VID%" > NUL 2>&1
-	if %errorlevel% == 0 (
-		echo Dfu device found
-		exit /b 0
+	(dfu-util -l -d %USB_VID%:%USB_PID% & call echo %%^^errorlevel%% ^>dfu_error.txt) | findstr "Found" | findstr "%USB_VID%" > NUL 2>&1
+	set /a start_wait_error=%errorlevel%
+	for /f %%E in (dfu_error.txt) do set /a dfu_error=%%E
+	del dfu_error.txt
+	if %dfu_error% == 0 (
+		if %start_wait_error% == 0 (
+			echo Dfu device found
+			exit /b 0
+		) else (
+			set /a currtime-= 1
+			timeout /t 1 /nobreak > nul
+			if %currtime% gtr 0 goto:start_wait
+		)
 	) else (
-		set /a currtime-= 1
-		timeout /t 1 /nobreak > nul
-		if %currtime% gtr 0 goto:start_wait
+		exit /b %dfu_error%
 	)
 	echo Dfu device not found Timeout
 	echo Did you plug and reboot your board?
