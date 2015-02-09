@@ -15,11 +15,19 @@ NOWDATE := $(shell date +"%Y%m%d%H%M%S")
 BUILD_TAG ?= custom_build_$(USER)@$(HOSTNAME)$(NOWDATE)
 BB_DL_DIR ?= $(CURDIR)/bbcache/downloads
 BB_SSTATE_DIR ?= $(CURDIR)/bbcache/sstate-cache
+SDK_HOST ?= linux64
 
 ###############################################################################
 # Main targets
 ###############################################################################
-setup: _setup-sdkhost_linux64
+
+setup: pub bbcache
+	@echo Setup buildenv for SDK host $(SDK_HOST)
+	@mkdir -p out/$(SDK_HOST)
+	./device-software/setup.sh $(SETUP_ARGS) --dl_dir=$(BB_DL_DIR) --sstate_dir=$(BB_SSTATE_DIR) --build_dir=$(CURDIR)/out/$(SDK_HOST) --build_name=$(BUILD_TAG) --sdk_host=$(SDK_HOST)
+	@rm -f out/current
+	@ln -s $(CURDIR)/out/$(SDK_HOST) $(CURDIR)/out/current
+	@if [ $(SDK_HOST) = macosx ]; then  /bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake odcctools2-crosssdk -c cleansstate" ; echo "Please make sure that OSX-sdk.zip is available in your bitbake download directory" ; fi
 
 cleansstate: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; $(CURDIR)/device-software/utils/invalidate_sstate.sh $(CURDIR)/out/current/build"
@@ -97,6 +105,8 @@ help:
 	@echo ' BB_DL_DIR     - defines the directory (absolute path) where bitbake places downloaded files (defaults to bbcache/downloads)'
 	@echo ' BB_SSTATE_DIR - defines the directory (absolute path) where bitbake places shared-state files (defaults to bbcache/sstate-cache)'
 	@echo ' SETUP_ARGS    - control advanced behaviour of the setup script (run ./device-software/setup.sh --help for more details)'
+	@echo ' SDK_HOST      - the host on which the SDK will run. Must be one of [win32, win64, linux32, linux64, macosx]'
+
 
 ###############################################################################
 # Private targets
@@ -109,14 +119,6 @@ _check_setup_was_done:
 
 _check_postbuild_was_done:
 	@if [ ! -f $(CURDIR)/out/current/build/toFlash/flashall.sh ]; then echo Please run \"make image/bootloader/kernel\" first ; exit 1 ; fi
-
-_setup-sdkhost_%: pub bbcache
-	@echo Setup buildenv for SDK host $*
-	@mkdir -p out/$*
-	./device-software/setup.sh $(SETUP_ARGS) --dl_dir=$(BB_DL_DIR) --sstate_dir=$(BB_SSTATE_DIR) --build_dir=$(CURDIR)/out/$* --build_name=$(BUILD_TAG) --sdk_host=$*
-	@rm -f out/current
-	@ln -s $(CURDIR)/out/$* $(CURDIR)/out/current
-	@if [ $* = macosx ]; then  /bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake odcctools2-crosssdk -c cleansstate" ; echo "Please make sure that OSX-sdk.zip is available in your bitbake download directory" ; fi
 
 pub:
 	@mkdir -p $@
@@ -133,11 +135,11 @@ _image_archive:
 _devtools_package_archive:
 	cd $(CURDIR)/out/current/build/devtools_packages ; zip -r $(CURDIR)/pub/edison-devtools-packages-$(BUILD_TAG).zip `ls`
 
-_sdk_archive_%:
-	cd $(CURDIR)/out/$*/build/tmp/deploy/sdk ; zip -r $(CURDIR)/pub/edison-sdk-$*-$(BUILD_TAG).zip `ls *-edison-image-*`
+_sdk_archive:
+	cd $(CURDIR)/out/$(SDK_HOST)/build/tmp/deploy/sdk ; zip -r $(CURDIR)/pub/edison-sdk-$(SDK_HOST)-$(BUILD_TAG).zip `ls *-edison-image-*`
 
-_toolchain_archive_%:
-	cd $(CURDIR)/out/$*/build/tmp/deploy/sdk ; zip -r $(CURDIR)/pub/edison-meta-toolchain-$*-$(BUILD_TAG).zip `ls *-meta-toolchain-*`
+_toolchain_archive:
+	cd $(CURDIR)/out/$(SDK_HOST)/build/tmp/deploy/sdk ; zip -r $(CURDIR)/pub/edison-meta-toolchain-$(SDK_HOST)-$(BUILD_TAG).zip `ls *-meta-toolchain-*`
 
 
 ###############################################################################
@@ -147,36 +149,55 @@ _toolchain_archive_%:
 
 ci_image: setup cleansstate devtools_package _devtools_package_archive image _image_archive
 
-_ci_sdk_%:
-	$(MAKE) _setup-sdkhost_$* cleansstate sdk _sdk_archive_$*
+_ci_sdk:
+	$(MAKE) setup cleansstate sdk _sdk_archive SDK_HOST=$(SDK_HOST)
 
-_ci_toolchain_%:
-	$(MAKE) _setup-sdkhost_$* cleansstate toolchain _toolchain_archive_$*
+_ci_toolchain:
+	$(MAKE) setup cleansstate toolchain _toolchain_archive SDK_HOST=$(SDK_HOST)
 
-ci_sdk_win32: _ci_sdk_win32
-ci_sdk_win64: _ci_sdk_win64
-ci_sdk_linux32: _ci_sdk_linux32
-ci_sdk_linux64: _ci_sdk_linux64
-ci_sdk_macosx: _ci_sdk_macosx
-ci_toolchain_win32: _ci_toolchain_win32
-ci_toolchain_win64: _ci_toolchain_win64
-ci_toolchain_linux32: _ci_toolchain_linux32
-ci_toolchain_linux64: _ci_toolchain_linux64
-ci_toolchain_macosx: _ci_toolchain_macosx
+ci_sdk_win32:
+	$(MAKE) _ci_sdk SDK_HOST=win32
+
+ci_sdk_win64:
+	$(MAKE) _ci_sdk SDK_HOST=win64
+
+ci_sdk_linux32:
+	$(MAKE) _ci_sdk SDK_HOST=linux32
+
+ci_sdk_linux64:
+	$(MAKE) _ci_sdk SDK_HOST=linux64
+
+ci_sdk_macosx:
+	$(MAKE) _ci_sdk SDK_HOST=macosx
+
+ci_toolchain_win32:
+	$(MAKE) _ci_toolchain SDK_HOST=win32
+
+ci_toolchain_win64:
+	$(MAKE) _ci_toolchain SDK_HOST=win64
+
+ci_toolchain_linux32:
+	$(MAKE) _ci_toolchain SDK_HOST=linux32
+
+ci_toolchain_linux64:
+	$(MAKE) _ci_toolchain SDK_HOST=linux64
+
+ci_toolchain_macosx:
+	$(MAKE) _ci_toolchain SDK_HOST=macosx
 
 ci_image-from-src-package-and-GPL-LGPL-sources_archive: setup src-package
 	cp $(CURDIR)/pub/edison-src-$(BUILD_TAG).tgz $(CURDIR)/out/current
 	cd $(CURDIR)/out/current ; tar -xvf edison-src-$(BUILD_TAG).tgz
-	cd $(CURDIR)/out/current/edison-src ; /bin/bash -c "SETUP_ARGS=\"$(SETUP_ARGS) --create_src_archive\" make setup cleansstate image _image_archive"
+	cd $(CURDIR)/out/current/edison-src ; /bin/bash -c "SETUP_ARGS=\"$(SETUP_ARGS) --create_src_archive\" make setup cleansstate image _image_archive SDK_HOST=$(SDK_HOST)"
 	cd $(CURDIR)/out/current/edison-src/out/current/build/toFlash ; zip -r $(CURDIR)/pub/edison-image-from-src-package-$(BUILD_TAG).zip `ls`
 	cd $(CURDIR)/out/current/edison-src/out/current/build/tmp/deploy/sources ; zip -r $(CURDIR)/pub/edison-GPL_LGPL-sources-$(BUILD_TAG).zip `ls`
 
 ci_full:
 	$(MAKE) ci_image                             BUILD_TAG=$(BUILD_TAG)
 	$(MAKE) ci_image-from-src-package-and-GPL-LGPL-sources_archive BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_win32   ci_toolchain_win32    BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_win64   ci_toolchain_win64    BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_linux32 ci_toolchain_linux32  BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_linux64 ci_toolchain_linux64  BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_macosx  ci_toolchain_macosx   BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_win32   ci_toolchain_win32   BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_win64   ci_toolchain_win64   BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_linux32 ci_toolchain_linux32 BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_linux64 ci_toolchain_linux64 BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_macosx  ci_toolchain_macosx  BUILD_TAG=$(BUILD_TAG)
 
