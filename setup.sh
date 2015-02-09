@@ -24,6 +24,10 @@
 
 set -e
 
+# Branch and Tag to fetch from the yoctoproject.org upstream repository.
+yocto_branch="daisy"
+yocto_tag="yocto-1.6.1"
+
 do_local_conf () {
   cat > $yocto_conf_dir/local.conf <<EOF
 BB_NUMBER_THREADS = "$my_bb_number_thread"
@@ -238,16 +242,49 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
       ;;
   esac
 
+  cd $my_build_dir
   poky_dir=$my_build_dir/poky
-
-  # Re-create the poky dir from archive
-  echo "Extracting upstream Yocto tools in the $poky_dir directory from archive"
+  echo "Cloning Poky in the $poky_dir directory"
   rm -rf $poky_dir
-  tar -xjf $top_repo_dir/device-software/utils/poky-daisy-11.0.1.tar.bz2
-  mv poky-daisy-11.0.1 $poky_dir
+  # git clone --branch <TAG> option appears from git v1.7.10
+  # Unfortunately, ubuntu 12.04 uses git v1.7.9
+  # Since most of the users will use a recent version of git, we test the
+  # version to increase git-clone speed.
+  #
+  # Check the version of host git-clone
+  git_version=`git --version | cut -d' ' -f3`
+  # The easiest way to check version is to use Python
+
+  echo """import sys
+from distutils.version import LooseVersion
+if LooseVersion('1.7.10') <= LooseVersion(sys.argv[1]):
+    print "0"
+else:
+    print "1"
+""" > tmp.py
+
+  ok=$(python tmp.py $git_version)
+  rm tmp.py
+  if [ ! $ok -eq 0 ]; then
+    echo "Your git version is too old (${git_version}): cloning will take a while"
+    git clone --depth 0 -b ${yocto_branch} git://git.yoctoproject.org/poky.git
+    cd $poky_dir
+    git checkout ${yocto_tag}
+  else
+    git clone --depth 0 -b ${yocto_tag} git://git.yoctoproject.org/poky.git
+  fi
+
+  cd $poky_dir
+  mingw_dir=$poky_dir/meta-mingw
+  echo "Cloning Mingw layer to ${mingw_dir} directory from upstream project"
+  git clone --depth 0 -b ${yocto_branch} http://git.yoctoproject.org/git/meta-mingw
+
+  darwin_dir=$poky_dir/meta-darwin
+  echo "Cloning Darwin layer to ${darwin_dir} directory from upstream project"
+  git clone --depth 0 -b ${yocto_branch} http://git.yoctoproject.org/git/meta-darwin
 
   # Apply patch on top of it allowing to perform build in external source directory
-  #echo "Applying patch on it"
+  echo "Applying patch on poky"
   cd $poky_dir
   git apply $top_repo_dir/device-software/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B-poky-dora.patch
   git apply $top_repo_dir/device-software/utils/sdk-populate-clean-broken-links.patch
@@ -258,16 +295,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git apply $top_repo_dir/device-software/utils/0001-openssh-avoid-screen-sessions-being-killed-on-discon.patch
   git apply $top_repo_dir/device-software/utils/handle_bash_func.patch
   git apply $top_repo_dir/device-software/utils/0001-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
-
-  mingw_dir=$poky_dir/meta-mingw
-  echo "Unpacking Mingw layer to poky/meta-mingw/ directory from archive"
-  mkdir -p $mingw_dir
-  ( cd $mingw_dir && tar -xjf $top_repo_dir/device-software/utils/mingw-daisy.tar.bz2)
-
-  darwin_dir=$poky_dir/meta-darwin
-  echo "Unpacking Darwin layer to poky/meta-darwin/ directory from archive"
-  mkdir -p $darwin_dir
-  ( cd $darwin_dir && tar -xjf $top_repo_dir/device-software/utils/darwin-daisy.tar.bz2)
 
   if [[ $my_sdk_host == win* ]]
   then
