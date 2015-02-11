@@ -121,6 +121,47 @@ function usage()
   echo ""
 }
 
+# do_update_cache function: update git yoctoproject repository or clone it if
+# it does not exist.
+# $1: name of the repository to clone.
+#
+# 1- test if there is a git repo in cache
+# if yes
+# 2- update it
+# if no
+# 2b- clone it from upstream
+#
+do_update_cache () {
+  # save local path
+  my_position=$(pwd)
+  if [ ! -d "${my_dl_dir}" ]; then
+    # directory does not exist, create it
+    mkdir -p ${my_dl_dir}
+  fi
+
+  cd $my_dl_dir
+  if [ -d "$1.git" ]; then
+    cd $1.git
+    # Verify we are in a git repository
+    # $? == 0 if git repo
+    # $? != 0 if not git repo
+    if ! git rev-parse --git-dir > /dev/null 2>&1 ; then
+      echo "Error: ${my_dl_dir}/$1.git is not a git repository!"
+      echo "You can remove it manually with:"
+      echo "rm -rf ${my_dl_dir}/$1.git"
+      echo "Exiting..."
+      exit 1
+    fi
+    # The repo already exists. Just pull.
+    git fetch --all
+  else
+    # The repo does not exist. Clone it.
+    git clone --bare git://git.yoctoproject.org/$1.git
+  fi
+  cd $my_position
+
+}
+
 main() {
   top_repo_dir=$(dirname $(dirname $(readlink -f $0)))
   my_build_dir=$top_repo_dir
@@ -242,46 +283,27 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
       ;;
   esac
 
+  # Updating local git cache
+  do_update_cache "poky"
+  do_update_cache "meta-mingw"
+  do_update_cache "meta-darwin"
+
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
   echo "Cloning Poky in the $poky_dir directory"
   rm -rf $poky_dir
-  # git clone --branch <TAG> option appears from git v1.7.10
-  # Unfortunately, ubuntu 12.04 uses git v1.7.9
-  # Since most of the users will use a recent version of git, we test the
-  # version to increase git-clone speed.
-  #
-  # Check the version of host git-clone
-  git_version=`git --version | cut -d' ' -f3`
-  # The easiest way to check version is to use Python
 
-  echo """import sys
-from distutils.version import LooseVersion
-if LooseVersion('1.7.10') <= LooseVersion(sys.argv[1]):
-    print "0"
-else:
-    print "1"
-""" > tmp.py
-
-  ok=$(python tmp.py $git_version)
-  rm tmp.py
-  if [ ! $ok -eq 0 ]; then
-    echo "Your git version is too old (${git_version}): cloning will take a while"
-    git clone --depth 0 -b ${yocto_branch} git://git.yoctoproject.org/poky.git
-    cd $poky_dir
-    git checkout ${yocto_tag}
-  else
-    git clone --depth 0 -b ${yocto_tag} git://git.yoctoproject.org/poky.git
-  fi
-
+  git clone -b ${yocto_branch} ${my_dl_dir}/poky.git
   cd $poky_dir
+  git checkout ${yocto_tag}
+
   mingw_dir=$poky_dir/meta-mingw
-  echo "Cloning Mingw layer to ${mingw_dir} directory from upstream project"
-  git clone --depth 0 -b ${yocto_branch} http://git.yoctoproject.org/git/meta-mingw
+  echo "Cloning Mingw layer to ${mingw_dir} directory from local cache"
+  git clone -b ${yocto_branch} ${my_dl_dir}/meta-mingw.git
 
   darwin_dir=$poky_dir/meta-darwin
-  echo "Cloning Darwin layer to ${darwin_dir} directory from upstream project"
-  git clone --depth 0 -b ${yocto_branch} http://git.yoctoproject.org/git/meta-darwin
+  echo "Cloning Darwin layer to ${darwin_dir} directory from local cache"
+  git clone -b ${yocto_branch} ${my_dl_dir}/meta-darwin.git
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
