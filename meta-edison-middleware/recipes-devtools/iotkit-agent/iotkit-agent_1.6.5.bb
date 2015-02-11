@@ -6,7 +6,8 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=30c8ae0368f724cf5f753d08bf
 
 DEPENDS = "nodejs-native"
 
-SRC_URI = "git://github.com/intel-iot-devkit/iotkit-agent.git;protocol=https;branch=dprelease;tag=prod-v${PV}"
+SRC_URI = "git://github.com/enableiot/iotkit-agent.git;protocol=git"
+SRCREV = "47c3ab71d22088a951abf120715e9ec5755b7fa0"
 
 S = "${WORKDIR}/git"
 
@@ -40,27 +41,11 @@ do_compile () {
 }
 
 do_install () {
-    install -d ${D}${libdir}
-    install -d ${D}${libdir}/node_modules/
     install -d ${D}${libdir}/node_modules/iotkit-agent/
-    install -d ${D}${sysconfdir}/iotkit-agent/
-    install -d ${D}${libdir}/node_modules/iotkit-agent/config/
-    install -m 0644 ${S}/package.json ${D}${libdir}/node_modules/iotkit-agent/
-    install -m 0644 ${S}/config/config.json ${D}${sysconfdir}/iotkit-agent/
-    install -d ${D}${datadir}/iotkit-agent/
-    install -d ${D}${bindir}
+    cp -r ${S}/* ${D}${libdir}/node_modules/iotkit-agent/
+    rm -rf ${D}${libdir}/node_modules/iotkit-agent/buildscripts
 
-    cp -r ${S}/node_modules ${D}${libdir}/node_modules/iotkit-agent/
-    cp -r ${S}/admin ${D}${libdir}/node_modules/iotkit-agent/
-    cp -r ${S}/api ${D}${libdir}/node_modules/iotkit-agent/
-    cp -r ${S}/bin ${D}${libdir}/node_modules/iotkit-agent/
-    cp -r ${S}/certs ${D}${datadir}/iotkit-agent/
-    cp -r ${S}/data ${D}${datadir}/iotkit-agent/
-    cp -r ${S}/lib ${D}${libdir}/node_modules/iotkit-agent/
-    cp -r ${S}/listeners ${D}${libdir}/node_modules/iotkit-agent/
-    install -m 0644 ${S}/config/index.js ${D}${libdir}/node_modules/iotkit-agent/config
-    install -m 0755 ${S}/iotkit-admin.js ${D}${libdir}/node_modules/iotkit-agent/
-    install -m 0755 ${S}/iotkit-agent.js ${D}${libdir}/node_modules/iotkit-agent/
+    install -d ${D}${bindir}
     ln -s ../lib/node_modules/iotkit-agent/iotkit-agent.js ${D}${bindir}/iotkit-agent
     ln -s ../lib/node_modules/iotkit-agent/iotkit-admin.js ${D}${bindir}/iotkit-admin
 
@@ -76,9 +61,7 @@ SYSTEMD_AUTO_ENABLE = "disable"
 SYSTEMD_SERVICE_${PN} = "iotkit-agent.service"
 
 FILES_${PN} = "${libdir}/node_modules/ \
-               ${bindir}/iotkit-agent \
-               ${bindir}/iotkit-admin \
-               ${datadir}/iotkit-agent/ \
-               ${sysconfdir}/iotkit-agent/"
+               ${bindir}/ \
+"
 
 PACKAGES = "${PN}"
