@@ -257,6 +257,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git apply --whitespace=nowarn $top_repo_dir/device-software/utils/0001-busybox-handle-syslog-related-files-properly.patch
   git apply $top_repo_dir/device-software/utils/0001-openssh-avoid-screen-sessions-being-killed-on-discon.patch
   git apply $top_repo_dir/device-software/utils/handle_bash_func.patch
+  git apply $top_repo_dir/device-software/utils/0001-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
 
   mingw_dir=$poky_dir/meta-mingw
   echo "Unpacking Mingw layer to poky/meta-mingw/ directory from archive"
