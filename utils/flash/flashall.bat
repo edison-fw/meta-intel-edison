@@ -14,9 +14,7 @@ set PFT_XML_FILE="%BASE_DIR%pft-config-edison.xml"
 set IFWI_DFU_FILE=%BASE_DIR%edison_ifwi-dbg
 
 set VAR_DIR=%BASE_DIR%u-boot-envs\
-set VARIANT_NAME_DEFAULT=edison-defaultrndis
-set VARIANT_NAME_BLANK=edison-blankrndis
-set VARIANT_NAME=%VARIANT_NAME_BLANK%
+set VARIANT_NAME=edison-blankrndis
 
 set LOG_FILENAME=flash.log
 set /a verbose_output=0
@@ -29,9 +27,6 @@ set appname=%0
 if -%1-==-- goto parse_arg_end
 if -%1- == ---recovery- (
 	set /a DO_RECOVERY=1
-)
-if -%1- == ---keep-data- (
-	set VARIANT_NAME=%VARIANT_NAME_DEFAULT%
 )
 if -%1- == -/?- set /a show_help=1
 if -%1- == --h- set /a show_help=1
@@ -145,9 +140,7 @@ if %errorlevel% neq 0 ( exit /b %errorlevel% )
 
 echo Rebooting
 echo U-boot ^& Kernel System Flash Success...
-if %VARIANT_NAME% == %VARIANT_NAME_BLANK% (
-	echo Your board needs to reboot to complete the flashing procedure, please do not unplug it for 2 minutes.
-)
+echo Your board needs to reboot to complete the flashing procedure, please do not unplug it for 2 minutes.
 :skip_flash_kernel
 
 :: ********************************************************************
@@ -156,13 +149,12 @@ exit /b 0
 
 
 :print-usage
-	echo Usage: %1 [-h] [--help] [--recovery] [--keep-data]
+	echo Usage: %1 [-h] [--help] [--recovery]
 	echo Update all software and restore board to its initial state.
 	echo  -h,--help     display this help and exit.
 	echo  -v            verbose output
 	echo  --recovery    recover the board to DFU mode using a dedicated tool,
 	echo                available only on linux and window hosts.
-	echo  --keep-data   preserve user data when flashing.
 	exit /b 5
 
 :flash-dfu-ifwi

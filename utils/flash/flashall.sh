@@ -30,26 +30,22 @@ IFWI_DFU_FILE=${ESC_BASE_DIR}/edison_ifwi-dbg
 
 VAR_DIR="${BASE_DIR}/u-boot-envs"
 if [[ "$OSTYPE" == "cygwin" ]] ; then
-	VARIANT_NAME_DEFAULT="edison-defaultrndis"
-	VARIANT_NAME_BLANK="edison-blankrndis"
+	VARIANT_NAME="edison-blankrndis"
 else
-	VARIANT_NAME_DEFAULT="edison-defaultcdc"
-	VARIANT_NAME_BLANK="edison-blankcdc"
+	VARIANT_NAME="edison-blankcdc"
 fi
-VARIANT_NAME=$VARIANT_NAME_BLANK
 
 LOG_FILENAME="flash.log"
 OUTPUT_LOG_CMD="2>&1 | tee -a ${LOG_FILENAME} | ( sed -n '19 q'; head -n 1; cat >/dev/null )"
 
 function print-usage {
 	cat << EOF
-Usage: ${0##*/} [-h][--help][--recovery] [--keep-data]
+Usage: ${0##*/} [-h][--help][--recovery]
 Update all software and restore board to its initial state.
  -h,--help     display this help and exit.
  -v            verbose output
  --recovery    recover the board to DFU mode using a dedicated tool,
                available only on linux and window hosts.
- --keep-data   preserve user data when flashing.
 EOF
 	exit -5
 }
@@ -142,7 +138,7 @@ function dfu-wait {
 }
 
 # Execute old getopt to have long options support
-ARGS=$($GETOPTS -o hv -l "keep-data,recovery,help" -n "${0##*/}" -- "$@");
+ARGS=$($GETOPTS -o hv -l "recovery,help" -n "${0##*/}" -- "$@");
 #Bad arguments
 if [ $? -ne 0 ]; then print-usage ; fi;
 eval set -- "$ARGS";
@@ -152,7 +148,6 @@ while true; do
 		-h|--help) shift; print-usage;;
 		-v) shift; OUTPUT_LOG_CMD=" 2>&1 | tee -a ${LOG_FILENAME}";;
 		--recovery) shift; DO_RECOVERY=1;;
-		--keep-data) shift; VARIANT_NAME=$VARIANT_NAME_DEFAULT;;
 		--) shift; break;;
 	esac
 done
@@ -232,9 +227,7 @@ else
 
 	echo "Rebooting"
 	echo "U-boot & Kernel System Flash Success..."
-	if [ $VARIANT_NAME == $VARIANT_NAME_BLANK ] ; then
-		echo "Your board needs to reboot to complete the flashing procedure, please do not unplug it for 2 minutes."
-	fi
+	echo "Your board needs to reboot to complete the flashing procedure, please do not unplug it for 2 minutes."
 fi
 
 IFS=${BACKUP_IFS}
