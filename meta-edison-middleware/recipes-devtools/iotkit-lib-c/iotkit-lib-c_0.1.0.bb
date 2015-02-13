@@ -8,7 +8,7 @@ DEPENDS = "nodejs-native swig-native curl"
 
 PR = "r1"
 
-SRC_URI = "git://github.com/enableiot/iotkit-lib-c.git;protocol=https;tag=v1.4.0"
+SRC_URI = "git://github.com/enableiot/iotkit-lib-c.git;protocol=https;tag=v1.4.6"
 
 S = "${WORKDIR}/git"
 
@@ -38,7 +38,7 @@ do_install_prepend () {
 PACKAGES =+ "${PN}-tests"
 
 FILES_${PN}-dbg += "${libdir}/node_modules/iotkitjs/.debug/ \
-                    ${PYTHON_SITEPACKAGES_DIR}/.debug/ \
+                    ${libdir}/python2.7/dist-packages/.debug/ \
                     ${datadir}/iotkit-lib/tests/.debug/"
 
 FILES_${PN}-tests = "${datadir}/iotkit-lib/tests/*"
