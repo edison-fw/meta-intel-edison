@@ -125,6 +125,7 @@ retry_count=$?
 set_retry_count $((${retry_count} + 1))
 fi_echo "Starting First Install (try: ${retry_count})"
 
+systemctl start blink-led
 # format partition home to ext4
 mkfs.ext4 -m0 /dev/disk/by-partlabel/home
 fi_assert $? "Formatting home partition"
@@ -180,6 +181,7 @@ fi_assert $? "Generating Wifi Access Point SSID and passphrase"
 
 fi_echo "First install success"
 
+systemctl stop blink-led
 # end main part
 exit_first_install 0
 
