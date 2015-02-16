@@ -75,7 +75,7 @@ fi
 
 # Re-run post build to avoid losing hairs
 rm -rf ./toFlash
-$top_repo_dir/device-software/utils/flash/postBuild.sh $build_dir
+$top_repo_dir/meta-intel-edison/utils/flash/postBuild.sh $build_dir
 
 echo "*** Start creating a debian rootfs image ***"
 

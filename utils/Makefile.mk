@@ -24,22 +24,22 @@ SDK_HOST ?= linux64
 setup: pub bbcache
 	@echo Setup buildenv for SDK host $(SDK_HOST)
 	@mkdir -p out/$(SDK_HOST)
-	./device-software/setup.sh $(SETUP_ARGS) --dl_dir=$(BB_DL_DIR) --sstate_dir=$(BB_SSTATE_DIR) --build_dir=$(CURDIR)/out/$(SDK_HOST) --build_name=$(BUILD_TAG) --sdk_host=$(SDK_HOST)
+	./meta-intel-edison/setup.sh $(SETUP_ARGS) --dl_dir=$(BB_DL_DIR) --sstate_dir=$(BB_SSTATE_DIR) --build_dir=$(CURDIR)/out/$(SDK_HOST) --build_name=$(BUILD_TAG) --sdk_host=$(SDK_HOST)
 	@rm -f out/current
 	@ln -s $(CURDIR)/out/$(SDK_HOST) $(CURDIR)/out/current
 	@if [ $(SDK_HOST) = macosx ]; then  /bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake odcctools2-crosssdk -c cleansstate" ; echo "Please make sure that OSX-sdk.zip is available in your bitbake download directory" ; fi
 
 cleansstate: _check_setup_was_done
-	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; $(CURDIR)/device-software/utils/invalidate_sstate.sh $(CURDIR)/out/current/build"
+	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; $(CURDIR)/meta-intel-edison/utils/invalidate_sstate.sh $(CURDIR)/out/current/build"
 
 devtools_package: _check_setup_was_done
-	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; $(CURDIR)/device-software/utils/create_devtools_package.sh $(CURDIR)/out/current/build"
+	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; $(CURDIR)/meta-intel-edison/utils/create_devtools_package.sh $(CURDIR)/out/current/build"
 
 sdk: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake edison-image -c populate_sdk"
 
 src-package: pub
-	./device-software/utils/create_src_package.sh
+	./meta-intel-edison/utils/create_src_package.sh
 	mv edison-src.tgz $(CURDIR)/pub/edison-src-$(BUILD_TAG).tgz
 
 clean:
@@ -47,7 +47,7 @@ clean:
 
 u-boot linux-externalsrc edison-image meta-toolchain bootimg: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake -c cleansstate $@ ; bitbake $@"
-	./device-software/utils/flash/postBuild.sh $(CURDIR)/out/current/build
+	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 
 bootloader: u-boot
 
@@ -80,7 +80,7 @@ debian_image:
 	@echo '*******************************'
 	@echo '*******************************'
 	@echo 'Now run the following command to create the debian rootfs:'
-	@echo 'sudo $(CURDIR)/device-software/utils/create-debian-image.sh --build_dir=$(CURDIR)/out/current/build'
+	@echo 'sudo $(CURDIR)/meta-intel-edison/utils/create-debian-image.sh --build_dir=$(CURDIR)/out/current/build'
 	@echo 'and run a regular make flash'
 	@echo '*******************************'
 
@@ -104,7 +104,7 @@ help:
 	@echo ' BUILD_TAG      - set the build name used for e.g. artifact file naming'
 	@echo ' BB_DL_DIR     - defines the directory (absolute path) where bitbake places downloaded files (defaults to bbcache/downloads)'
 	@echo ' BB_SSTATE_DIR - defines the directory (absolute path) where bitbake places shared-state files (defaults to bbcache/sstate-cache)'
-	@echo ' SETUP_ARGS    - control advanced behaviour of the setup script (run ./device-software/setup.sh --help for more details)'
+	@echo ' SETUP_ARGS    - control advanced behaviour of the setup script (run ./meta-intel-edison/setup.sh --help for more details)'
 	@echo ' SDK_HOST      - the host on which the SDK will run. Must be one of [win32, win64, linux32, linux64, macosx]'
 
 

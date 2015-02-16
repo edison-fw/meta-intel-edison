@@ -15,7 +15,7 @@ fi
 rm -rf $build_dir/toFlash/*
 mkdir -p $build_dir/toFlash
 
-env_dir=$top_repo_dir/device-software/meta-intel-edison-bsp/recipes-bsp/u-boot/files
+env_dir=$top_repo_dir/meta-intel-edison/meta-intel-edison-bsp/recipes-bsp/u-boot/files
 
 # Get Edison rootfs image settings
 if [ -f $env_dir/edison.env ]
@@ -51,7 +51,7 @@ cp $build_dir/tmp/deploy/images/edison/u-boot-edison.bin $build_dir/toFlash/
 cp -R $build_dir/tmp/deploy/images/edison/u-boot-envs $build_dir/toFlash
 
 # Copy IFWI
-cp $top_repo_dir/device-software/utils/flash/ifwi/edison/*.bin $build_dir/toFlash/
+cp $top_repo_dir/meta-intel-edison/utils/flash/ifwi/edison/*.bin $build_dir/toFlash/
 
 # build Ifwi file for using in DFU mode
 # Remove FUP footer (144 bytes) as it's not needed when we directly write to boot partitions
@@ -71,12 +71,12 @@ cp $build_dir/tmp/deploy/images/edison/u-boot-edison.bin $build_dir/symbols/
 
 
 # copy phoneflashtool xml file
-cp $top_repo_dir/device-software/utils/flash/pft-config-edison.xml $build_dir/toFlash/
+cp $top_repo_dir/meta-intel-edison/utils/flash/pft-config-edison.xml $build_dir/toFlash/
 
 # Copy flashing script
-cp $top_repo_dir/device-software/utils/flash/flashall.sh $build_dir/toFlash/
-cp $top_repo_dir/device-software/utils/flash/flashall.bat $build_dir/toFlash/
-cp $top_repo_dir/device-software/utils/flash/filter-dfu-out.js $build_dir/toFlash/
+cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
+cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.bat $build_dir/toFlash/
+cp $top_repo_dir/meta-intel-edison/utils/flash/filter-dfu-out.js $build_dir/toFlash/
 
 # Look for mkimage tool path
 mkimage_tool_path=$(find $top_repo_dir/u-boot -name mkimage)
@@ -89,7 +89,7 @@ if [ -z $mkimage_tool_path ]; then
 fi
 
 # copy OTA update
-cp $top_repo_dir/device-software/utils/flash/ota_update.cmd $build_dir/toFlash/
+cp $top_repo_dir/meta-intel-edison/utils/flash/ota_update.cmd $build_dir/toFlash/
 
 # Preprocess OTA script
 # Compute sha1sum of each file under build/toFlash and build an array containing

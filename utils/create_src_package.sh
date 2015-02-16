@@ -23,12 +23,12 @@ rm -rf edison-src
 mkdir edison-src
 
 echo "*** Synchronize patches in external sources recipes ***"
-$top_repo_dir/device-software/utils/generate-recipes-patches.sh
+$top_repo_dir/meta-intel-edison/utils/generate-recipes-patches.sh
 
 echo "*** Copy files in archive ***"
 
 # Copy all external sources directories as-is in the package for now
-cp -r device-software edison-src/
+cp -r meta-intel-edison edison-src/
 cp Makefile edison-src/
 clean_and_copy_dir broadcom_cws edison-src/
 
@@ -44,12 +44,12 @@ clean_and_copy_dir arduino/clloader edison-src/
 
 ###############################################################################
 # Remove this script from source package
-rm $top_repo_dir/edison-src/device-software/utils/create_src_package.sh
-rm $top_repo_dir/edison-src/device-software/utils/generate-recipes-patches.sh
+rm $top_repo_dir/edison-src/meta-intel-edison/utils/create_src_package.sh
+rm $top_repo_dir/edison-src/meta-intel-edison/utils/generate-recipes-patches.sh
 
 # Remove the devenv layer from source package
-rm -r $top_repo_dir/edison-src/device-software/meta-edison-devenv
-sed -i -e "s/\$my_dir\/device-software\/meta-edison-devenv//g" $top_repo_dir/edison-src/device-software/setup.sh
+rm -r $top_repo_dir/edison-src/meta-intel-edison/meta-edison-devenv
+sed -i -e "s/\$my_dir\/meta-intel-edison\/meta-edison-devenv//g" $top_repo_dir/edison-src/meta-intel-edison/setup.sh
 
 ###############################################################################
 # Cleanups

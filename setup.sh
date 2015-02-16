@@ -44,7 +44,7 @@ BUILDNAME = "$my_build_name"
 LICENSE_FLAGS_WHITELIST += "commercial"
 COPY_LIC_MANIFEST = "1"
 COPY_LIC_DIRS = "1"
-FILESYSTEM_PERMS_TABLES = "$top_repo_dir/device-software/meta-intel-edison-distro/files/fs-perms.txt"
+FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
 $extra_package_type
 $extra_archiving
 $extra_conf
@@ -74,11 +74,11 @@ BBLAYERS ?= " \\
   $poky_dir/meta \\
   $poky_dir/meta-yocto \\
   $poky_dir/meta-yocto-bsp \\
-  $top_repo_dir/device-software/meta-intel-edison-bsp \\
-  $top_repo_dir/device-software/meta-intel-edison-distro \\
-  $top_repo_dir/device-software/meta-intel-iot-middleware \\
-  $top_repo_dir/device-software/meta-intel-arduino \\
-  $top_repo_dir/device-software/meta-intel-edison-devtools \\
+  $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
+  $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
+  $top_repo_dir/meta-intel-edison/meta-intel-iot-middleware \\
+  $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
+  $top_repo_dir/meta-intel-edison/meta-intel-edison-devtools \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
@@ -250,7 +250,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     echo "We are building in devenv mode, i.e. with dependency on teamforge internal servers"
     echo "and yocto recipes assuming local sources for some package."
     echo "You can change this by passing the --mode=external option to this script."
-    do_append_layer $top_repo_dir/device-software/meta-intel-edison-devenv
+    do_append_layer $top_repo_dir/meta-intel-edison/meta-intel-edison-devenv
   else
     if [ "$my_mode" = "external" ]
     then
@@ -308,15 +308,15 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
   cd $poky_dir
-  git apply $top_repo_dir/device-software/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B-poky-dora.patch
-  git apply $top_repo_dir/device-software/utils/sdk-populate-clean-broken-links.patch
-  git apply --whitespace=nowarn $top_repo_dir/device-software/utils/0001-bash-fix-CVE-2014-6271.patch
-  git apply --whitespace=nowarn $top_repo_dir/device-software/utils/0002-bash-Fix-CVE-2014-7169.patch
-  git apply $top_repo_dir/device-software/utils/0001-libarchive-avoid-dependency-on-e2fsprogs.patch
-  git apply --whitespace=nowarn $top_repo_dir/device-software/utils/0001-busybox-handle-syslog-related-files-properly.patch
-  git apply $top_repo_dir/device-software/utils/0001-openssh-avoid-screen-sessions-being-killed-on-discon.patch
-  git apply $top_repo_dir/device-software/utils/handle_bash_func.patch
-  git apply $top_repo_dir/device-software/utils/0001-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B-poky-dora.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/sdk-populate-clean-broken-links.patch
+  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0001-bash-fix-CVE-2014-6271.patch
+  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0002-bash-Fix-CVE-2014-7169.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-libarchive-avoid-dependency-on-e2fsprogs.patch
+  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0001-busybox-handle-syslog-related-files-properly.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-openssh-avoid-screen-sessions-being-killed-on-discon.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/handle_bash_func.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
 
   if [[ $my_sdk_host == win* ]]
   then
