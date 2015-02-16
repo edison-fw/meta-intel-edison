@@ -44,7 +44,7 @@ BUILDNAME = "$my_build_name"
 LICENSE_FLAGS_WHITELIST += "commercial"
 COPY_LIC_MANIFEST = "1"
 COPY_LIC_DIRS = "1"
-FILESYSTEM_PERMS_TABLES = "$top_repo_dir/device-software/meta-edison-distro/files/fs-perms.txt"
+FILESYSTEM_PERMS_TABLES = "$top_repo_dir/device-software/meta-intel-edison-distro/files/fs-perms.txt"
 $extra_package_type
 $extra_archiving
 $extra_conf
@@ -74,11 +74,11 @@ BBLAYERS ?= " \\
   $poky_dir/meta \\
   $poky_dir/meta-yocto \\
   $poky_dir/meta-yocto-bsp \\
-  $top_repo_dir/device-software/meta-edison \\
-  $top_repo_dir/device-software/meta-edison-distro \\
-  $top_repo_dir/device-software/meta-edison-middleware \\
-  $top_repo_dir/device-software/meta-edison-arduino \\
-  $top_repo_dir/device-software/meta-edison-devtools \\
+  $top_repo_dir/device-software/meta-intel-edison-bsp \\
+  $top_repo_dir/device-software/meta-intel-edison-distro \\
+  $top_repo_dir/device-software/meta-intel-iot-middleware \\
+  $top_repo_dir/device-software/meta-intel-arduino \\
+  $top_repo_dir/device-software/meta-intel-edison-devtools \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
@@ -250,7 +250,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     echo "We are building in devenv mode, i.e. with dependency on teamforge internal servers"
     echo "and yocto recipes assuming local sources for some package."
     echo "You can change this by passing the --mode=external option to this script."
-    do_append_layer $top_repo_dir/device-software/meta-edison-devenv
+    do_append_layer $top_repo_dir/device-software/meta-intel-edison-devenv
   else
     if [ "$my_mode" = "external" ]
     then

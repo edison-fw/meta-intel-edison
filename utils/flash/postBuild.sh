@@ -15,7 +15,7 @@ fi
 rm -rf $build_dir/toFlash/*
 mkdir -p $build_dir/toFlash
 
-env_dir=$top_repo_dir/device-software/meta-edison/recipes-bsp/u-boot/files
+env_dir=$top_repo_dir/device-software/meta-intel-edison-bsp/recipes-bsp/u-boot/files
 
 # Get Edison rootfs image settings
 if [ -f $env_dir/edison.env ]
