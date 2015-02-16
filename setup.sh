@@ -320,7 +320,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 
   if [[ $my_sdk_host == win* ]]
   then
-    do_append_layer $top_repo_dir/device-software/meta-mingw
     do_append_layer $mingw_dir
   fi
 
