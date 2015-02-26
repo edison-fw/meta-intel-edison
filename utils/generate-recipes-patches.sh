@@ -36,7 +36,7 @@ cd $top_repo_dir/u-boot
 
 create_squashed_patch dda0dbfc69f3d560c87f5be85f127ed862ea6721
 # And move it in our new recipe
-mv $top_repo_dir/u-boot/upstream_to_edison.patch $top_repo_dir/meta-intel-edison/meta-edison/recipes-bsp/u-boot/files/
+mv $top_repo_dir/u-boot/upstream_to_edison.patch $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp/recipes-bsp/u-boot/files/
 
 ###############################################################################
 # Special treatment for the linux-kernel: we switch back to basic yocto recipe
@@ -51,6 +51,6 @@ git fetch git://git.yoctoproject.org/linux-yocto-3.10.git standard/base
 
 create_squashed_patch c03195ed6e3066494e3fb4be69154a57066e845b
 # And move it with our defconfig in our special linux kernel recipe (based on standard yocto 3.10 kernel)
-mv $top_repo_dir/linux-kernel/upstream_to_edison.patch $top_repo_dir/meta-intel-edison/meta-edison/recipes-kernel/linux/files/
-cp $top_repo_dir/linux-kernel/arch/x86/configs/i386_edison_defconfig $top_repo_dir/meta-intel-edison/meta-edison/recipes-kernel/linux/files/defconfig
+mv $top_repo_dir/linux-kernel/upstream_to_edison.patch $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp/recipes-kernel/linux/files/
+cp $top_repo_dir/linux-kernel/arch/x86/configs/i386_edison_defconfig $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp/recipes-kernel/linux/files/defconfig
 
