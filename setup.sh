@@ -76,7 +76,7 @@ BBLAYERS ?= " \\
   $poky_dir/meta-yocto-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
-  $top_repo_dir/meta-intel-edison/meta-intel-iot-middleware \\
+  $poky_dir/meta-intel-iot-middleware \\
   $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-devtools \\
   $extra_layers
@@ -287,6 +287,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "poky"
   do_update_cache "meta-mingw"
   do_update_cache "meta-darwin"
+  do_update_cache "meta-intel-iot-middleware"
 
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
@@ -304,6 +305,12 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   darwin_dir=$poky_dir/meta-darwin
   echo "Cloning Darwin layer to ${darwin_dir} directory from local cache"
   git clone -b ${yocto_branch} ${my_dl_dir}/meta-darwin-mirror.git meta-darwin
+
+  middleware_dir=$poky_dir/meta-intel-iot-middleware
+  echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
+  cd ${middleware_dir}
+  git checkout d6486852e8704270ae24bdd7199ffff0a444b163
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
