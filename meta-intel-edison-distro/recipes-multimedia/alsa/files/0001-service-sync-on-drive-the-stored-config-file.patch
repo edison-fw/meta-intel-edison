@@ -1,0 +1,23 @@
+From 6e0253f3010b8a56da55d239441e62b3a95a4206 Mon Sep 17 00:00:00 2001
+From: Simon Desfarges <simon.desfarges@intel.com>
+Date: Wed, 4 Mar 2015 16:54:17 +0100
+Subject: [PATCH] service: sync on drive the stored config file
+
+Signed-off-by: Simon Desfarges <simon.desfarges@intel.com>
+---
+ alsactl/alsa-store.service.in |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/alsactl/alsa-store.service.in b/alsactl/alsa-store.service.in
+index f1a56bb..dc1290c 100644
+--- a/alsactl/alsa-store.service.in
++++ b/alsactl/alsa-store.service.in
+@@ -12,4 +12,5 @@ Before=shutdown.target
+ [Service]
+ Type=oneshot
+ ExecStart=@sbindir@/alsactl store
++ExecStartPost=/bin/sync
+ StandardOutput=syslog
+-- 
+1.7.9.5
+
