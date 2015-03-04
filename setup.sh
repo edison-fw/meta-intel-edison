@@ -140,23 +140,23 @@ do_update_cache () {
   fi
 
   cd $my_dl_dir
-  if [ -d "$1.git" ]; then
-    cd $1.git
+  if [ -d "$1-mirror.git" ]; then
+    cd $1-mirror.git
     # Verify we are in a git repository
     # $? == 0 if git repo
     # $? != 0 if not git repo
     if ! git rev-parse --git-dir > /dev/null 2>&1 ; then
-      echo "Error: ${my_dl_dir}/$1.git is not a git repository!"
+      echo "Error: ${my_dl_dir}/$1-mirror.git is not a git repository!"
       echo "You can remove it manually with:"
-      echo "rm -rf ${my_dl_dir}/$1.git"
+      echo "rm -rf ${my_dl_dir}/$1-mirror.git"
       echo "Exiting..."
       exit 1
     fi
     # The repo already exists. Just pull.
-    git fetch --all
+    git remote update
   else
     # The repo does not exist. Clone it.
-    git clone --bare git://git.yoctoproject.org/$1.git
+    git clone --mirror git://git.yoctoproject.org/$1.git $1-mirror.git
   fi
   cd $my_position
 
@@ -293,17 +293,17 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning Poky in the $poky_dir directory"
   rm -rf $poky_dir
 
-  git clone -b ${yocto_branch} ${my_dl_dir}/poky.git
+  git clone -b ${yocto_branch} ${my_dl_dir}/poky-mirror.git poky
   cd $poky_dir
   git checkout ${yocto_tag}
 
   mingw_dir=$poky_dir/meta-mingw
   echo "Cloning Mingw layer to ${mingw_dir} directory from local cache"
-  git clone -b ${yocto_branch} ${my_dl_dir}/meta-mingw.git
+  git clone -b ${yocto_branch} ${my_dl_dir}/meta-mingw-mirror.git meta-mingw
 
   darwin_dir=$poky_dir/meta-darwin
   echo "Cloning Darwin layer to ${darwin_dir} directory from local cache"
-  git clone -b ${yocto_branch} ${my_dl_dir}/meta-darwin.git
+  git clone -b ${yocto_branch} ${my_dl_dir}/meta-darwin-mirror.git meta-darwin
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
