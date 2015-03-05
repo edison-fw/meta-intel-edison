@@ -1,6 +1,6 @@
 # Provide default alsa configuration for Edison
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 
 SRC_URI += "\
     file://asound.state \

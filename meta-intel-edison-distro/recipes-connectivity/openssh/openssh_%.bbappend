@@ -1,1 +1,1 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/openssh"
+FILESEXTRAPATHS_prepend := "${THISDIR}/openssh:"

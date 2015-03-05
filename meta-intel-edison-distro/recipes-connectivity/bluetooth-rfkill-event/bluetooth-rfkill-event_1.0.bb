@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${THISDIR}/COPYING;md5=3fa94220fac4e7b1463e6fd8d63140
 
 DEPENDS = "glib-2.0 bluez5"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 
 inherit systemd
 

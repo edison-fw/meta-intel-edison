@@ -1,7 +1,7 @@
 DESCRIPTION = "Broadcom Bluetooth fw files and patch utility"
 SECTION = "connectivity"
 
-FILESEXTRAPATHS_prepend := "${EDISONREPO_TOP_DIR}/broadcom_cws/bluetooth/firmware/"
+FILESEXTRAPATHS_prepend := "${EDISONREPO_TOP_DIR}/broadcom_cws/bluetooth/firmware/:"
 
 SRC_URI = "file://BCM43341B0_002.001.014.0122.0166.hcd \
            file://brcm_patchram_plus.c \

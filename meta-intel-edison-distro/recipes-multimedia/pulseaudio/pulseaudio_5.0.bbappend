@@ -1,6 +1,6 @@
 # Overlay the pulseaudio recipe to embed bluetooth modules for A2DP
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 
 SRC_URI += "\
     file://system.pa \

@@ -2,7 +2,7 @@ DESCRIPTION = "This is intel mcu app download daemon."
 HOMEPAGE = "http://www.intel.com"
 LICENSE = "CLOSED"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 
 SRC_URI = "file://mcu_fw_loader.service \
 		   file://mcu_fw_loader.sh"

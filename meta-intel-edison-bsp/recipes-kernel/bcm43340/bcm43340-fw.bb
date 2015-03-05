@@ -1,7 +1,7 @@
 DESCRIPTION = "Firmware files for use with Linux kernel"
 SECTION = "kernel"
 
-FILESEXTRAPATHS_prepend := "${EDISONREPO_TOP_DIR}/broadcom_cws/wlan/firmware/"
+FILESEXTRAPATHS_prepend := "${EDISONREPO_TOP_DIR}/broadcom_cws/wlan/firmware/:"
 
 SRC_URI = "file://bcmdhd_aob.cal_4334x_b0 \
            file://bcmdhd.cal_4334x_b0 \

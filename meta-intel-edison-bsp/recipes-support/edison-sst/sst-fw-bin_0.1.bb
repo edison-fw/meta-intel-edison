@@ -2,7 +2,7 @@ DESCRIPTION = "This is edison sst fw binary."
 HOMEPAGE = "http://www.intel.com"
 LICENSE = "CLOSED"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 
 SRC_URI = "file://fw_sst_119a.bin"
 
