@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="daisy"
-yocto_tag="yocto-1.6.1"
+yocto_branch="dizzy"
+yocto_tag="yocto-1.7.2"
 
 do_local_conf () {
   cat > $yocto_conf_dir/local.conf <<EOF
@@ -316,13 +316,17 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 
   darwin_dir=$poky_dir/meta-darwin
   echo "Cloning Darwin layer to ${darwin_dir} directory from local cache"
-  git clone -b ${yocto_branch} ${my_dl_dir}/meta-darwin-mirror.git meta-darwin
+  git clone ${my_dl_dir}/meta-darwin-mirror.git meta-darwin
+  cd ${darwin_dir}
+  git checkout 29b5ff31cee24e796f2eb2d2fd1269e3e92c831c
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-Update-gcc-patch.patch
 
+  cd $poky_dir
   middleware_dir=$poky_dir/meta-intel-iot-middleware
   echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
   cd ${middleware_dir}
-  git checkout b198e8f713d218db33090ed8a92a10f3494145fa
+  git checkout c6d681475e76107e6c04c5f7a06034dc9e772d1e
 
   cd ${top_repo_dir}
   echo "Cloning meta-arduino layer to ${top_repo_dir} directory from GitHub.com/01org/meta-arduino"
@@ -336,15 +340,9 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Revert-machine-sdk-mingw32.conf-Disable-SDKTAROPTS.patch
   cd $poky_dir
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B-poky-dora.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B.patch
   git apply $top_repo_dir/meta-intel-edison/utils/sdk-populate-clean-broken-links.patch
-  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0001-bash-fix-CVE-2014-6271.patch
-  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0002-bash-Fix-CVE-2014-7169.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-libarchive-avoid-dependency-on-e2fsprogs.patch
-  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0001-busybox-handle-syslog-related-files-properly.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-openssh-avoid-screen-sessions-being-killed-on-discon.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/handle_bash_func.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0002-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
 
   if [[ $my_sdk_host == win* ]]
   then

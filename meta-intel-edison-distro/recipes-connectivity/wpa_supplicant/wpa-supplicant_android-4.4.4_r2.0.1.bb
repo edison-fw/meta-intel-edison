@@ -1,8 +1,8 @@
+require recipes-connectivity/wpa-supplicant/wpa-supplicant.inc
+
 LIC_FILES_CHKSUM = "file://COPYING;md5=ab87f20cd7e8c0d0a6539b34d3791d0e \
                     file://README;md5=5c7cc1ea1a4d82b1cbe9a02fe92881b8 \
                     file://wpa_supplicant/wpa_supplicant.c;beginline=1;endline=12;md5=cba4fa09fa364da845ca546f21008909"
-
-RRECOMMENDS_${PN} = "wpa-supplicant-passphrase wpa-supplicant-cli"
 
 
 SYSTEMD_SERVICE_${PN} = "wpa_supplicant.service wpa_supplicant_wlan0_event.service wpa_supplicant_p2p_event.service"
@@ -11,7 +11,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/wpa-supplicant:"
 
 PV = "android-4.4.4_r2.0.1"
 
-BASE_SRC_URI = "file://defconfig-gnutls \
+SRC_URI = "file://defconfig \
            file://wpa_supplicant.conf-sane \
            file://p2p_supplicant.conf-sane \
            file://99_wpa_supplicant \
@@ -22,9 +22,7 @@ BASE_SRC_URI = "file://defconfig-gnutls \
            file://wpa_supplicant_p2p_event.service \
            file://wpa-supplicant.sh \
            file://wpa-supplicant-${PV}.patch \
-           file://wpa_cli-actions.sh "
-
-SRC_URI = "${BASE_SRC_URI} \
+           file://wpa_cli-actions.sh \
            git://android.googlesource.com/platform/external/wpa_supplicant_8;protocol=https;tag=android-4.4.4_r2.0.1"
 
 S = "${WORKDIR}/git"
@@ -86,11 +84,3 @@ do_install () {
         install -m 0644 ${WORKDIR}/99_wpa_supplicant ${D}/etc/default/volatiles
 }
 
-pkg_postinst_wpa-supplicant () {
-	# If we're offline, we don't need to do this.
-	if [ "x$D" != "x" ]; then
-		exit 0
-	fi
-
-	killall -q -HUP dbus-daemon || true
-}

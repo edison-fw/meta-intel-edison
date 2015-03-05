@@ -9,6 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=ea398a763463b76b18da15f013c0c531"
 S = "${WORKDIR}/git"
 
 DEPENDS = "nodejs-native"
+RDEPENDS_${PN} = "python"
 
 do_compile() {
     # changing the home directory to the working directory, the .npmrc will be created in this directory

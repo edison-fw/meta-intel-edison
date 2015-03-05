@@ -1,0 +1,71 @@
+From f8165dfe3b126770d0579614f7932c89f5455334 Mon Sep 17 00:00:00 2001
+From: Simon Desfarges <simon.desfarges@intel.com>
+Date: Wed, 25 Feb 2015 11:33:26 +0100
+Subject: [PATCH] Update gcc patch
+
+Signed-off-by: Simon Desfarges <simon.desfarges@intel.com>
+---
+ ...tribute_availability_with_message_for_gcc.patch |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/recipes-devtools/osx-runtime/files/remove_unsupported_attribute_availability_with_message_for_gcc.patch b/recipes-devtools/osx-runtime/files/remove_unsupported_attribute_availability_with_message_for_gcc.patch
+index ea2de5c..9ddf5d0 100644
+--- a/recipes-devtools/osx-runtime/files/remove_unsupported_attribute_availability_with_message_for_gcc.patch
++++ b/recipes-devtools/osx-runtime/files/remove_unsupported_attribute_availability_with_message_for_gcc.patch
+@@ -2,10 +2,11 @@ Index: OSX-sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFAvai
+ ===================================================================
+ --- OSX-sdk.orig/System/Library/Frameworks/CoreFoundation.framework/Headers/CFAvailability.h
+ +++ OSX-sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFAvailability.h
+-@@ -23,110 +23,6 @@
++@@ -22,119 +22,6 @@
++ #ifndef __has_extension
+  #define __has_extension(x) 0
+  #endif
+- 
++-
+ -// The arguments to these availability macros is a version number, e.g. 10_6, 3_0 or 'NA'
+ -// To use a deprecation message with the macro, add a string as the last argument.
+ -#if __has_feature(attribute_availability_with_message)
+@@ -25,8 +26,11 @@ Index: OSX-sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFAvai
+ -#define __NSi_6_0 introduced=6.0
+ -#define __NSi_6_1 introduced=6.1
+ -#define __NSi_7_0 introduced=7.0
++-#define __NSi_7_1 introduced=7.1
+ -#define __NSi_8_0 introduced=8.0
++-#define __NSi_8_1 introduced=8.1
+ -#define __NSi_9_0 introduced=9.0
++-#define __NSi_9_1 introduced=9.1
+ -#define __NSi_10_0 introduced=10.0
+ -#define __NSi_10_1 introduced=10.1
+ -#define __NSi_10_2 introduced=10.2
+@@ -37,6 +41,7 @@ Index: OSX-sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFAvai
+ -#define __NSi_10_7 introduced=10.7
+ -#define __NSi_10_8 introduced=10.8
+ -#define __NSi_10_9 introduced=10.9
++-#define __NSi_10_10 introduced=10.10
+ -
+ -#define __NSd_2_0 ,deprecated=2.0
+ -#define __NSd_2_1 ,deprecated=2.1
+@@ -53,8 +58,11 @@ Index: OSX-sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFAvai
+ -#define __NSd_6_0 ,deprecated=6.0
+ -#define __NSd_6_1 ,deprecated=6.1
+ -#define __NSd_7_0 ,deprecated=7.0
++-#define __NSd_7_1 ,deprecated=7.1
+ -#define __NSd_8_0 ,deprecated=8.0
++-#define __NSd_8_1 ,deprecated=8.1
+ -#define __NSd_9_0 ,deprecated=9.0
++-#define __NSd_9_1 ,deprecated=9.1
+ -#define __NSd_10_0 ,deprecated=10.0
+ -#define __NSd_10_1 ,deprecated=10.1
+ -#define __NSd_10_2 ,deprecated=10.2
+@@ -65,6 +73,7 @@ Index: OSX-sdk/System/Library/Frameworks/CoreFoundation.framework/Headers/CFAvai
+ -#define __NSd_10_7 ,deprecated=10.7
+ -#define __NSd_10_8 ,deprecated=10.8
+ -#define __NSd_10_9 ,deprecated=10.9
++-#define __NSd_10_10 ,deprecated=10.10
+ -
+ -#define __NSi_NA unavailable
+ -#define __NSd_NA
+-- 
+1.7.9.5
+
