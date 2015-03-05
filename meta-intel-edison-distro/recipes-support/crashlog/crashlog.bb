@@ -25,7 +25,7 @@ do_install() {
 
 # As this package is tied to systemd, only build it when we're also building systemd.
 python () {
-    if not oe.utils.contains ('DISTRO_FEATURES', 'systemd', True, False, d):
+    if not bb.utils.contains ('DISTRO_FEATURES', 'systemd', True, False, d):
         raise bb.parse.SkipPackage("'systemd' not in DISTRO_FEATURES")
 }
 
