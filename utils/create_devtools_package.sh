@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 echo "*** Start creating the dev tools ipk packages ***"
 
 top_repo_dir=$(dirname $(dirname $(dirname $(readlink -f $0))))
