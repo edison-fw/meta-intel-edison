@@ -76,6 +76,7 @@ cp $top_repo_dir/meta-intel-edison/utils/flash/pft-config-edison.xml $build_dir/
 # Copy flashing script
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.bat $build_dir/toFlash/
+cp $top_repo_dir/meta-intel-edison/utils/flash/FlashEdison.json $build_dir/toFlash/
 cp $top_repo_dir/meta-intel-edison/utils/flash/filter-dfu-out.js $build_dir/toFlash/
 
 # Look for mkimage tool path
