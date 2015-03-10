@@ -2,6 +2,7 @@ require connman.inc
 
 SRC_URI  = "${KERNELORG_MIRROR}/linux/network/${BPN}/${BP}.tar.xz \
             file://0001-plugin.h-Change-visibility-to-default-for-debug-symb.patch \
+            file://wifi_default.patch \
             file://add_xuser_dbus_permission.patch \
             file://disable_p2p.patch \
             file://connman \

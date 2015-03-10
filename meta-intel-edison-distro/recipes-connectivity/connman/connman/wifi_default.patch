@@ -1,0 +1,20 @@
+--- a/src/technology.c
++++ b/src/technology.c
+@@ -386,7 +386,7 @@ static void technology_load(struct connman_technology *technology)
+	keyfile = __connman_storage_load_global();
+	/* Fallback on disabling technology if file not found. */
+	if (!keyfile) {
+-		if (technology->type == CONNMAN_SERVICE_TYPE_ETHERNET)
++		if (technology->type == CONNMAN_SERVICE_TYPE_WIFI)
+			/* We enable ethernet by default */
+			technology->enable_persistent = true;
+		else
+@@ -402,7 +402,7 @@ static void technology_load(struct connman_technology *technology)
+	if (!error)
+		technology->enable_persistent = enable;
+	else {
+-		if (technology->type == CONNMAN_SERVICE_TYPE_ETHERNET)
++		if (technology->type == CONNMAN_SERVICE_TYPE_WIFI)
+			technology->enable_persistent = true;
+		else
+			technology->enable_persistent = false;
