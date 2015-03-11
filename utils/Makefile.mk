@@ -185,7 +185,7 @@ ci_toolchain_linux64:
 ci_toolchain_macosx:
 	$(MAKE) _ci_toolchain SDK_HOST=macosx
 
-ci_image-from-src-package-and-GPL-LGPL-sources_archive: setup src-package
+ci_image-from-src-package-and-GPL-LGPL-sources_archive: setup devtools_package _devtools_package_archive src-package
 	cp $(CURDIR)/pub/edison-src-$(BUILD_TAG).tgz $(CURDIR)/out/current
 	cd $(CURDIR)/out/current ; tar -xvf edison-src-$(BUILD_TAG).tgz
 	cd $(CURDIR)/out/current/edison-src ; /bin/bash -c "SETUP_ARGS=\"$(SETUP_ARGS) --create_src_archive\" make setup cleansstate image _image_archive SDK_HOST=$(SDK_HOST)"
