@@ -1,0 +1,15 @@
+[Unit]
+Description=Watchdog sample daemon
+
+[Service]
+Environment="Timeout=30"
+ExecStart=/usr/bin/watchdog-sample ${Timeout}
+WatchdogSec=30s
+Restart=on-failure
+StartLimitInterval=4min
+StartLimitBurst=4
+StartLimitAction=reboot-force
+
+[Install]
+WantedBy=basic.target
+

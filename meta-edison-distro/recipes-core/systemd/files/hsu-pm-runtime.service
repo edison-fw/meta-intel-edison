@@ -1,0 +1,14 @@
+[Unit]
+Description= HSU runtime pm service
+Requires=getty.target
+After=getty.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo auto > /sys/devices/pci0000:00/0000:00:04.3/power/control'
+ExecStart=/bin/sh -c 'echo auto > /sys/devices/pci0000:00/0000:00:04.1/power/control'
+StandardOutput=null
+
+[Install]
+WantedBy=default.target
+

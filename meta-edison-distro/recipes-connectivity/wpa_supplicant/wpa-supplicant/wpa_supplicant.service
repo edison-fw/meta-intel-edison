@@ -1,0 +1,21 @@
+[Unit]
+Description=WPA supplicant service
+Requires=sys-subsystem-net-devices-wlan0.device
+After=sys-subsystem-net-devices-wlan0.device
+
+[Service]
+Type=simple
+
+# start wpa_supplicant service :
+#    - the second interface p2p-dev-wlan0 is automatically created at startup
+#    - the file wpa_supplicant is common to both interfaces wlan0 and p2p-dev-wlan0
+ExecStart=/usr/sbin/wpa_supplicant -u -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0 -Dnl80211 -puse_p2p_group_interface=1p2p_device=1 -m/etc/wpa_supplicant/p2p_supplicant.conf -O /var/run/wpa_supplicant -e /etc/wpa_supplicant/entropy.bin
+
+# start wpa_supplicant_event service after the start of wpa_supplicant service
+ExecStartPost=/bin/systemctl start wpa_supplicant_wlan0_event ; /bin/systemctl start wpa_supplicant_p2p_event
+
+# stop wpa_supplicant_event service after the stop of wpa_supplicant service
+ExecStopPost=/bin/systemctl stop wpa_supplicant_wlan0_event ; /bin/systemctl stop wpa_supplicant_p2p_event
+
+[Install]
+WantedBy=multi-user.target

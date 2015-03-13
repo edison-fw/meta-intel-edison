@@ -1,0 +1,184 @@
+
+--- a/wpa_supplicant/src/drivers/driver_nl80211.c	2014-10-01 16:44:14.819137037 +0200
++++ b/wpa_supplicant/src/drivers/driver_nl80211.c	2014-10-01 16:37:16.979149254 +0200
+@@ -321,7 +321,7 @@
+ 			     struct wpa_driver_scan_params *params);
+ static int android_pno_stop(struct i802_bss *bss);
+ #endif /* ANDROID */
+-#ifdef ANDROID_P2P
++#if defined(ANDROID_P2P) && !defined(EDISON_TARGET)
+ int wpa_driver_set_p2p_noa(void *priv, u8 count, int start, int duration);
+ int wpa_driver_get_p2p_noa(void *priv, u8 *buf, size_t len);
+ int wpa_driver_set_p2p_ps(void *priv, int legacy_ps, int opp_ps, int ctwindow);
+@@ -10329,7 +10329,7 @@
+ 		   "opp_ps=%d ctwindow=%d)", legacy_ps, opp_ps, ctwindow);
+ 
+ 	if (opp_ps != -1 || ctwindow != -1)
+-#ifdef ANDROID_P2P
++#if defined(ANDROID_P2P) && !defined(EDISON_TARGET)
+ 		wpa_driver_set_p2p_ps(priv, legacy_ps, opp_ps, ctwindow);
+ #else
+ 		return -1; /* Not yet supported */
+@@ -10832,7 +10832,7 @@
+ 	.update_ft_ies = wpa_driver_nl80211_update_ft_ies,
+ 	.get_mac_addr = wpa_driver_nl80211_get_macaddr,
+ 	.get_survey = wpa_driver_nl80211_get_survey,
+-#ifdef ANDROID_P2P
++#if defined(ANDROID_P2P) && !defined(EDISON_TARGET)
+ 	.set_noa = wpa_driver_set_p2p_noa,
+ 	.get_noa = wpa_driver_get_p2p_noa,
+ 	.set_ap_wps_ie = wpa_driver_set_ap_wps_p2p_ie,
+
+--- a/wpa_supplicant/wpa_cli.c	2014-10-01 16:52:31.123122526 +0200
++++ b/wpa_supplicant/wpa_cli.c	2014-10-01 17:05:59.043098904 +0200
+@@ -3625,7 +3625,8 @@
+ 			continue;
+ #endif /* _DIRENT_HAVE_D_TYPE */
+ 		if (os_strcmp(dent->d_name, ".") == 0 ||
+-		    os_strcmp(dent->d_name, "..") == 0)
++		    os_strcmp(dent->d_name, "..") == 0 ||
++		    os_strstr(dent->d_name, "p2p"))
+ 			continue;
+ 		printf("Selected interface '%s'\n", dent->d_name);
+ 		ifname = os_strdup(dent->d_name);
+
+--- a/wpa_supplicant/p2p_supplicant.c	2014-09-26 12:09:39.856249682 +0200
++++ b/wpa_supplicant/p2p_supplicant.c	2014-12-17 16:42:39.535846212 +0100
+@@ -3061,6 +3061,13 @@
+ 	int cla, op;
+ 
+ 	if (wpa_s->hw.modes == NULL) {
++		wpa_printf(MSG_DEBUG, "P2P: Driver did not support fetching. "
++		           "Use supported channels retrieved on interface wlan0");
++		wpa_s = wpa_s->global->ifaces;
++
++	}
++
++	if (wpa_s->hw.modes == NULL) {
+ 		wpa_printf(MSG_DEBUG, "P2P: Driver did not support fetching "
+ 			   "of all supported channels; assume dualband "
+ 			   "support");
+@@ -3172,7 +3179,8 @@
+ }
+ 
+ 
+-int wpas_p2p_add_p2pdev_interface(struct wpa_supplicant *wpa_s)
++int wpas_p2p_add_p2pdev_interface(struct wpa_supplicant *wpa_s,
++                                  const char *conf_p2p_dev)
+ {
+ 	struct wpa_interface iface;
+ 	struct wpa_supplicant *p2pdev_wpa_s;
+@@ -3198,7 +3206,20 @@
+ 	iface.ifname = wpa_s->pending_interface_name;
+ 	iface.driver = wpa_s->driver->name;
+ 	iface.driver_param = wpa_s->conf->driver_param;
+-	iface.confname = wpa_s->confname;
++
++	/*
++	 * If a P2P Device configuration file was given, use it as the interface
++	 * configuration file (instead of using parent's configuration file.
++	 */
++	if (conf_p2p_dev) {
++		iface.confname = conf_p2p_dev;
++		iface.ctrl_interface = NULL;
++	} else {
++		iface.confname = wpa_s->confname;
++		iface.ctrl_interface = wpa_s->conf->ctrl_interface;
++	}
++	iface.conf_p2p_dev = NULL;
++
+ 	p2pdev_wpa_s = wpa_supplicant_add_iface(wpa_s->global, &iface);
+ 	if (!p2pdev_wpa_s) {
+ 		wpa_printf(MSG_DEBUG, "P2P: Failed to add P2P Device interface");
+
+--- a/wpa_supplicant/main.c	2014-09-26 12:09:39.856249682 +0200
++++ b/wpa_supplicant/main.c	2014-12-17 16:42:39.535846212 +0100
+@@ -83,6 +83,9 @@
+ #endif /* CONFIG_DBUS */
+ 	printf("  -v = show version\n"
+ 	       "  -W = wait for a control interface monitor before starting\n"
++#ifdef CONFIG_P2P
++	       "  -m = Configuration file for the P2P Device interface\n"
++#endif /* CONFIG_P2P */
+ 	       "  -N = start describing new interface\n");
+ 
+ 	printf("example:\n"
+@@ -160,7 +163,7 @@
+ 
+ 	for (;;) {
+ 		c = getopt(argc, argv,
+-			   "b:Bc:C:D:de:f:g:G:hi:I:KLNo:O:p:P:qsTtuvW");
++			   "b:Bc:C:D:de:f:g:G:hi:I:KLm:No:O:p:P:qsTtuvW");
+ 		if (c < 0)
+ 			break;
+ 		switch (c) {
+@@ -220,6 +223,11 @@
+ 			license();
+ 			exitcode = 0;
+ 			goto out;
++#ifdef CONFIG_P2P
++		case 'm':
++			iface->conf_p2p_dev = optarg;
++			break;
++#endif /* CONFIG_P2P */
+ 		case 'o':
+ 			params.override_driver = optarg;
+ 			break;
+@@ -311,7 +319,7 @@
+ 		if (wpa_s->global->p2p == NULL &&
+ 		    (wpa_s->drv_flags &
+ 		     WPA_DRIVER_FLAGS_DEDICATED_P2P_DEVICE) &&
+-		    wpas_p2p_add_p2pdev_interface(wpa_s) < 0)
++		    wpas_p2p_add_p2pdev_interface(wpa_s, iface->conf_p2p_dev) < 0)
+ 			exitcode = -1;
+ #endif /* CONFIG_P2P */
+ 	}
+
+--- a/wpa_supplicant/p2p_supplicant.h	2014-09-26 12:09:39.856249682 +0200
++++ b/wpa_supplicant/p2p_supplicant.h	2014-12-17 16:42:39.535846212 +0100
+@@ -19,7 +19,8 @@
+ int wpas_p2p_init(struct wpa_global *global, struct wpa_supplicant *wpa_s);
+ void wpas_p2p_deinit(struct wpa_supplicant *wpa_s);
+ void wpas_p2p_deinit_global(struct wpa_global *global);
+-int wpas_p2p_add_p2pdev_interface(struct wpa_supplicant *wpa_s);
++int wpas_p2p_add_p2pdev_interface(struct wpa_supplicant *wpa_s,
++                                  const char *conf_p2p_dev);
+ int wpas_p2p_connect(struct wpa_supplicant *wpa_s, const u8 *peer_addr,
+ 		     const char *pin, enum p2p_wps_method wps_method,
+ 		     int persistent_group, int auto_join, int join,
+
+--- a/wpa_supplicant/wpa_supplicant_i.h	2014-09-26 12:09:39.856249682 +0200
++++ b/wpa_supplicant/wpa_supplicant_i.h	2014-12-17 16:42:39.535846212 +0100
+@@ -63,6 +63,17 @@
+ 	 */
+ 	const char *confanother;
+ 
++#ifdef CONFIG_P2P
++	/**
++	 * conf_p2p_dev - Configuration file used to hold the
++	 * P2P Device configuration parameters.
++	 *
++	 * This can also be %NULL. In such a case, if a P2P Device dedicated
++	 * interfaces is created, the main configuration file will be used.
++	 */
++	const char *conf_p2p_dev;
++#endif /* CONFIG_P2P */
++
+ 	/**
+ 	 * ctrl_interface - Control interface parameter
+ 	 *
+
+@@ -904,0 +904,0 @@
+--- a/wpa_supplicant/scan.c	2014-09-26 12:09:39.856249682 +0200
++++ b/wpa_supplicant/scan.c	2014-12-17 16:42:39.535846212 +0100
+@@ -904,7 +904,7 @@
+  */
+ void wpa_supplicant_req_scan(struct wpa_supplicant *wpa_s, int sec, int usec)
+ {
+-#ifndef ANDROID
++#if !defined(ANDROID) && !defined(EDISON_TARGET)
+ 	/* If there's at least one network that should be specifically scanned
+ 	 * then don't cancel the scan and reschedule.  Some drivers do
+ 	 * background scanning which generates frequent scan results, and that
+
+

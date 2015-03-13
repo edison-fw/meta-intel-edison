@@ -1,0 +1,36 @@
+From 6c576a4ac85307a5c851bee91a567cae3ea5a43b Mon Sep 17 00:00:00 2001
+From: Paul Eggleton <paul.eggleton@linux.intel.com>
+Date: Wed, 5 Nov 2014 21:08:51 -0800
+Subject: [PATCH] openssh: avoid screen sessions being killed on disconnect
+ with systemd
+
+Tell systemd just to kill the sshd process when the ssh connection drops
+instead of the entire cgroup for sshd, so that any screen sessions (and
+more to the point, processes within them) do not get killed.
+
+(This is what the Fedora sshd service file does, and what we're already
+doing in the dropbear service file).
+
+(From OE-Core master rev: 3c238dff41fbd3687457989c7b17d22b2cc844be)
+
+(From OE-Core rev: 6e6aeb7cca52b92a0c8013473e2b8bb18738a119)
+
+Signed-off-by: Paul Eggleton <paul.eggleton@linux.intel.com>
+Signed-off-by: Ross Burton <ross.burton@intel.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ .../openssh/openssh/sshd@.service                  |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meta/recipes-connectivity/openssh/openssh/sshd@.service b/meta/recipes-connectivity/openssh/openssh/sshd@.service
+index 4eda659..bb2d68e 100644
+--- a/meta/recipes-connectivity/openssh/openssh/sshd@.service
++++ b/meta/recipes-connectivity/openssh/openssh/sshd@.service
+@@ -8,3 +8,4 @@ ExecStart=-@SBINDIR@/sshd -i
+ ExecReload=@BASE_BINDIR@/kill -HUP $MAINPID
+ StandardInput=socket
+ StandardError=syslog
++KillMode=process
+-- 
+1.7.9.5
+

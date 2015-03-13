@@ -1,0 +1,2 @@
+IMAGE_INSTALL += "clloader"
+

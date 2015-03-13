@@ -1,0 +1,10 @@
+[Unit]
+Description=Daemon to handle arduino sketches
+After=syslog.target
+
+[Service]
+ExecStart=/opt/edison/launcher.sh
+
+[Install]
+WantedBy=multi-user.target
+

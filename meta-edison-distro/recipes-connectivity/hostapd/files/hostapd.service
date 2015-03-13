@@ -1,0 +1,23 @@
+[Unit]
+Description=Hostap daemon service
+Requires=sys-subsystem-net-devices-wlan0.device udhcpd-for-hostapd.service
+After=sys-subsystem-net-devices-wlan0.device
+Before=udhcpd-for-hostapd.service
+
+[Service]
+Type=simple
+
+# reload the driver for softap mode
+ExecStartPre=/sbin/modprobe -r bcm4334x
+ExecStartPre=/sbin/modprobe bcm4334x op_mode=2
+
+# start the service hostapd
+ExecStart=/usr/sbin/hostapd /etc/hostapd/hostapd.conf
+
+# reload the driver for sta/p2p mode
+ExecStopPost=/sbin/modprobe -r bcm4334x
+ExecStopPost=/sbin/modprobe bcm4334x
+
+[Install]
+WantedBy=multi-user.target
+

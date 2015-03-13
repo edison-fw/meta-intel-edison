@@ -1,0 +1,9 @@
+diff --git a/units/systemd-reboot.service.in b/units/systemd-reboot.service.in
+index d99bd3e..4517cfe 100644
+--- a/units/systemd-reboot.service.in
++++ b/units/systemd-reboot.service.in
+@@ -15,3 +15,4 @@ After=shutdown.target umount.target final.target
+ [Service]
+ Type=oneshot
+ ExecStart=@SYSTEMCTL@ --force reboot
++ExecStartPre=/bin/sh -c " if test -e /run/systemd/reboot-param ; then read REBOOTPARAM < /run/systemd/reboot-param ; fw_setenv bootargs_mode $REBOOTPARAM ; fi "

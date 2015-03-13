@@ -1,0 +1,9 @@
+[Unit]
+Description=OTA update service
+OnFailure=reboot.target
+Requires=dev-disk-by\x2dpartlabel-home.device dev-disk-by\x2dpartlabel-update.device
+After=dev-disk-by\x2dpartlabel-home.device dev-disk-by\x2dpartlabel-update.device
+[Service]
+ExecStart=@BASE_BINDIR@/sh -c "shell='sh'; if [ -f /bin/bash ]; then shell='bash'; fi; @BASE_BINDIR@/$shell @BASE_SBINDIR@/ota-update.sh systemd-service"
+StandardOutput=journal+console
+

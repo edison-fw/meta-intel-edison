@@ -1,0 +1,10 @@
+[Unit]
+Description=Cleanjournal service
+
+[Service]
+ExecStart=/usr/sbin/clean_journal.sh
+Restart=no
+
+[Install]
+WantedBy=basic.target
+

@@ -1,0 +1,170 @@
+From 3bb54b908b10ef4b225dcdbfb40c8cdc2d1c2db1 Mon Sep 17 00:00:00 2001
+From: Fabien Chereau <fabien.chereau@intel.com>
+Date: Thu, 22 May 2014 17:15:01 +0200
+Subject: [PATCH] kernel/kernel-yocto: fix external src builds when S != B
+
+Based on the original patch from Khem Raj, modified by Bruce Ashfield.
+
+When inheriting kernel.bbclass (and not kernel-yocto.bbclass), externalsrc
+builds were broken when S != B for the kernel.
+Additional fixes make sure that we do not assume directory paths when
+accessing files.
+
+[YOCTO: #5992]
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Signed-off-by: Bruce Ashfield <bruce.ashfield@windriver.com>
+Signed-off-by: Fabien Chereau <fabien.chereau@intel.com>
+Signed-off-by: Simon Desfarges <simonx.desfarges@intel.com>
+---
+ meta/classes/kernel.bbclass | 63 +++++++++++++++++++++++++--------------------
+ 1 file changed, 35 insertions(+), 28 deletions(-)
+
+diff --git a/meta/classes/kernel.bbclass b/meta/classes/kernel.bbclass
+index 19b159b..8914f04 100644
+--- a/meta/classes/kernel.bbclass
++++ b/meta/classes/kernel.bbclass
+@@ -157,6 +157,7 @@ kernel_do_compile() {
+ 	# different initramfs image.  The way to do that in the kernel
+ 	# is to specify:
+ 	# make ...args... CONFIG_INITRAMFS_SOURCE=some_other_initramfs.cpio
++	cd ${S}
+ 	if [ "$use_alternate_initrd" = "" ] && [ "${INITRAMFS_TASK}" != "" ] ; then
+ 		# The old style way of copying an prebuilt image and building it
+ 		# is turned on via INTIRAMFS_TASK != ""
+@@ -165,7 +166,7 @@ kernel_do_compile() {
+ 	fi
+ 	oe_runmake ${KERNEL_IMAGETYPE_FOR_MAKE} ${KERNEL_ALT_IMAGETYPE} CC="${KERNEL_CC}" LD="${KERNEL_LD}" ${KERNEL_EXTRA_ARGS} $use_alternate_initrd
+ 	if test "${KERNEL_IMAGETYPE_FOR_MAKE}.gz" = "${KERNEL_IMAGETYPE}"; then
+-		gzip -9c < "${KERNEL_IMAGETYPE_FOR_MAKE}" > "${KERNEL_OUTPUT}"
++		gzip -9c < "${B}/${KERNEL_IMAGETYPE_FOR_MAKE}" > "${KERNEL_OUTPUT}"
+ 	fi
+ }
+ 
+@@ -199,11 +200,11 @@ kernel_do_install() {
+ 	#
+ 	install -d ${D}/${KERNEL_IMAGEDEST}
+ 	install -d ${D}/boot
+-	install -m 0644 ${KERNEL_OUTPUT} ${D}/${KERNEL_IMAGEDEST}/${KERNEL_IMAGETYPE}-${KERNEL_VERSION}
+-	install -m 0644 System.map ${D}/boot/System.map-${KERNEL_VERSION}
+-	install -m 0644 .config ${D}/boot/config-${KERNEL_VERSION}
+-	install -m 0644 vmlinux ${D}/boot/vmlinux-${KERNEL_VERSION}
+-	[ -e Module.symvers ] && install -m 0644 Module.symvers ${D}/boot/Module.symvers-${KERNEL_VERSION}
++	install -m 0644 ${B}/${KERNEL_OUTPUT} ${D}/${KERNEL_IMAGEDEST}/${KERNEL_IMAGETYPE}-${KERNEL_VERSION}
++	install -m 0644 ${B}/System.map ${D}/boot/System.map-${KERNEL_VERSION}
++	install -m 0644 ${B}/.config ${D}/boot/config-${KERNEL_VERSION}
++	install -m 0644 ${B}/vmlinux ${D}/boot/vmlinux-${KERNEL_VERSION}
++	[ -e ${B}/Module.symvers ] && install -m 0644 ${B}/Module.symvers ${D}/boot/Module.symvers-${KERNEL_VERSION}
+ 	install -d ${D}${sysconfdir}/modules-load.d
+ 	install -d ${D}${sysconfdir}/modprobe.d
+ 
+@@ -232,20 +233,22 @@ kernel_do_install() {
+ 	# dir. This ensures the original Makefiles are used and not the
+ 	# redirecting Makefiles in the build directory.
+ 	#
++	pwd="$PWD"
++	cd "${B}"
+ 	find . -depth -not -name "*.cmd" -not -name "*.o" -not -path "./Documentation*" -not -path "./source*" -not -path "./.*" -print0 | cpio --null -pdlu $kerneldir
+-	cp .config $kerneldir
++	cp ${B}/.config $kerneldir
+ 	if [ "${S}" != "${B}" ]; then
+-		pwd="$PWD"
+ 		cd "${S}"
+ 		find . -depth -not -path "./Documentation*" -not -path "./.*" -print0 | cpio --null -pdlu $kerneldir
+-		cd "$pwd"
+ 	fi
+ 
++	cd "$pwd"
++
+ 	# Test to ensure that the output file and image type are not actually
+ 	# the same file. If hardlinking is used, they will be the same, and there's
+ 	# no need to install.
+-	! [ ${KERNEL_OUTPUT} -ef $kerneldir/${KERNEL_IMAGETYPE} ] && install -m 0644 ${KERNEL_OUTPUT} $kerneldir/${KERNEL_IMAGETYPE}
+-	install -m 0644 System.map $kerneldir/System.map-${KERNEL_VERSION}
++	! [ ${B}/${KERNEL_OUTPUT} -ef $kerneldir/${KERNEL_IMAGETYPE} ] && install -m 0644 ${B}/${KERNEL_OUTPUT} $kerneldir/${KERNEL_IMAGETYPE}
++	install -m 0644 ${B}/System.map $kerneldir/System.map-${KERNEL_VERSION}
+ 
+ 	# Dummy Makefile so the clean below works
+         mkdir $kerneldir/Documentation
+@@ -260,7 +263,9 @@ kernel_do_install() {
+ 	# we clean the scripts dir while leaving the generated config
+ 	# and include files.
+ 	#
+-	oe_runmake -C $kerneldir CC="${KERNEL_CC}" LD="${KERNEL_LD}" clean _mrproper_scripts 
++	# Note: we clear KBUILD_OUTPUT to ensure we operate on the right kernel source
++	# since it overrides -C to make.
++	KBUILD_OUTPUT="" oe_runmake -C $kerneldir CC="${KERNEL_CC}" LD="${KERNEL_LD}" clean _mrproper_scripts
+
+ 	# hide directories that shouldn't have their .c, s and S files deleted
+ 	for d in tools scripts lib; do
+@@ -280,16 +285,16 @@ kernel_do_install() {
+ 	# arch/powerpc/lib/crtsavres.o which is present in
+ 	# KBUILD_LDFLAGS_MODULE, making it required to build external modules.
+ 	if [ ${ARCH} = "powerpc" ]; then
+-		cp -l arch/powerpc/lib/crtsavres.o $kerneldir/arch/powerpc/lib/crtsavres.o
++		cp -l ${B}/arch/powerpc/lib/crtsavres.o $kerneldir/arch/powerpc/lib/crtsavres.o
+ 	fi
+
+ 	# Necessary for building modules like compat-wireless.
+-	if [ -f include/generated/bounds.h ]; then
+-		cp -l include/generated/bounds.h $kerneldir/include/generated/bounds.h
++	if [ -f ${B}/include/generated/bounds.h ]; then
++		cp -l ${B}/include/generated/bounds.h $kerneldir/include/generated/bounds.h
+ 	fi
+-	if [ -d arch/${ARCH}/include/generated ]; then
++	if [ -d ${B}/arch/${ARCH}/include/generated ]; then
+ 		mkdir -p $kerneldir/arch/${ARCH}/include/generated/
+-		cp -flR arch/${ARCH}/include/generated/* $kerneldir/arch/${ARCH}/include/generated/
++		cp -flR ${B}/arch/${ARCH}/include/generated/* $kerneldir/arch/${ARCH}/include/generated/
+ 	fi
+
+ 	# Remove the following binaries which cause strip or arch QA errors
+@@ -449,19 +454,19 @@ do_uboot_mkimage() {
+ 		if test "x${KEEPUIMAGE}" != "xyes" ; then
+ 			ENTRYPOINT=${UBOOT_ENTRYPOINT}
+ 			if test -n "${UBOOT_ENTRYSYMBOL}"; then
+-				ENTRYPOINT=`${HOST_PREFIX}nm ${S}/vmlinux | \
++				ENTRYPOINT=`${HOST_PREFIX}nm ${B}/vmlinux | \
+ 					awk '$3=="${UBOOT_ENTRYSYMBOL}" {print $1}'`
+ 			fi
+-			if test -e arch/${ARCH}/boot/compressed/vmlinux ; then
+-				${OBJCOPY} -O binary -R .note -R .comment -S arch/${ARCH}/boot/compressed/vmlinux linux.bin
+-				uboot-mkimage -A ${UBOOT_ARCH} -O linux -T kernel -C none -a ${UBOOT_LOADADDRESS} -e $ENTRYPOINT -n "${DISTRO_NAME}/${PV}/${MACHINE}" -d linux.bin arch/${ARCH}/boot/uImage
++			if test -e ${B}/arch/${ARCH}/boot/compressed/vmlinux ; then
++				${OBJCOPY} -O binary -R .note -R .comment -S ${B}/arch/${ARCH}/boot/compressed/vmlinux ${B}/linux.bin
++				uboot-mkimage -A ${UBOOT_ARCH} -O linux -T kernel -C none -a ${UBOOT_LOADADDRESS} -e $ENTRYPOINT -n "${DISTRO_NAME}/${PV}/${MACHINE}" -d ${B}/linux.bin ${B}/arch/${ARCH}/boot/uImage
+ 				rm -f linux.bin
+ 			else
+-				${OBJCOPY} -O binary -R .note -R .comment -S vmlinux linux.bin
+-				rm -f linux.bin.gz
+-				gzip -9 linux.bin
+-				uboot-mkimage -A ${UBOOT_ARCH} -O linux -T kernel -C gzip -a ${UBOOT_LOADADDRESS} -e $ENTRYPOINT -n "${DISTRO_NAME}/${PV}/${MACHINE}" -d linux.bin.gz arch/${ARCH}/boot/uImage
+-				rm -f linux.bin.gz
++				${OBJCOPY} -O binary -R .note -R .comment -S ${B}/vmlinux ${B}/linux.bin
++				rm -f ${B}/linux.bin.gz
++				gzip -9 ${B}/linux.bin
++				uboot-mkimage -A ${UBOOT_ARCH} -O linux -T kernel -C gzip -a ${UBOOT_LOADADDRESS} -e $ENTRYPOINT -n "${DISTRO_NAME}/${PV}/${MACHINE}" -d ${B}/linux.bin.gz ${B}/arch/${ARCH}/boot/uImage
++				rm -f ${B}/linux.bin.gz
+ 			fi
+ 		fi
+ 	fi
+@@ -470,8 +475,8 @@ do_uboot_mkimage() {
+ addtask uboot_mkimage before do_install after do_compile
+ 
+ kernel_do_deploy() {
+-	install -m 0644 ${KERNEL_OUTPUT} ${DEPLOYDIR}/${KERNEL_IMAGE_BASE_NAME}.bin
+-	if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' .config); then
++	install -m 0644 ${D}/${KERNEL_IMAGEDEST}/${KERNEL_IMAGETYPE}-${KERNEL_VERSION} ${DEPLOYDIR}/${KERNEL_IMAGE_BASE_NAME}.bin
++	if [ ${MODULE_TARBALL_DEPLOY} = "1" ] && (grep -q -i -e '^CONFIG_MODULES=y$' ${B}/.config); then
+ 		mkdir -p ${D}/lib
+ 		tar -cvzf ${DEPLOYDIR}/${MODULE_TARBALL_BASE_NAME} -C ${D} lib
+ 		ln -sf ${MODULE_TARBALL_BASE_NAME} ${DEPLOYDIR}/${MODULE_TARBALL_SYMLINK_NAME}
+@@ -500,3 +505,5 @@ addtask deploy before do_build after do_install
+ 
+ EXPORT_FUNCTIONS do_deploy
+ 
++OE_TERMINAL_EXPORTS += "KBUILD_OUTPUT"
++export KBUILD_OUTPUT = "${B}"
+-- 
+1.8.3.2
+

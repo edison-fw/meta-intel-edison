@@ -1,0 +1,10 @@
+[Unit]
+Description=Edison Arduino board LED Blinker
+
+[Service]
+ExecStart=/usr/bin/blink-led
+Restart=on-failure
+
+[Install]
+WantedBy=basic.target
+

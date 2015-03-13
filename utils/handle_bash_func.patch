@@ -1,0 +1,41 @@
+commit becb32bb30a9fc8ffe3bf59bbe346297a5a8899a
+Author: Richard Purdie <richard.purdie@linuxfoundation.org>
+Date:   Mon Dec 8 16:37:26 2014 +0000
+
+    bitbake: data: Handle BASH_FUNC shellshock implication
+
+    The shellshock patches changed the way bash functions are exported.
+    Unfortunately different distros used slightly different formats,
+    Fedora went with BASH_FUNC_XXX()=() { echo foo; } and Ubuntu went with
+    BASH_FUNC_foo%%=() {  echo foo; }.
+
+    The former causes errors in dealing with out output from emit_env,
+    the functions are not exported in either case any more.
+
+    This patch handles things so the functions work as expected in either
+    case.
+
+    [YOCTO #6880]
+
+    (Bitbake rev: 4d4baf20487271aa83bd9f1a778e4ea9af6f6681)
+
+    Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+
+diff --git a/bitbake/lib/bb/data.py b/bitbake/lib/bb/data.py
+index 91b1eb1..eb628c7 100644
+--- a/bitbake/lib/bb/data.py
++++ b/bitbake/lib/bb/data.py
+@@ -219,6 +219,13 @@ def emit_var(var, o=sys.__stdout__, d = init(), all=False):
+
+     val = str(val)
+
++    if varExpanded.startswith("BASH_FUNC_"):
++        varExpanded = varExpanded[10:-2]
++        val = val[3:] # Strip off "() "
++        o.write("%s() %s\n" % (varExpanded, val))
++        o.write("export -f %s\n" % (varExpanded))
++        return 1
++
+     if func:
+         # NOTE: should probably check for unbalanced {} within the var
+         o.write("%s() {\n%s\n}\n" % (varExpanded, val))

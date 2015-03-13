@@ -1,0 +1,10 @@
+[Unit]
+Description=Crashlog service
+
+[Service]
+ExecStart=/usr/sbin/retrieve_crashlog.sh
+Restart=no
+
+[Install]
+WantedBy=basic.target
+

@@ -1,0 +1,11 @@
+[Unit]
+Description=Automount for SDCard
+ConditionPathExists=/dev/mmcblk1p1
+RefuseManualStart=true
+RefuseManualStop=true
+
+[Automount]
+Where=/media/sdcard
+
+[Install]
+WantedBy=local-fs.target
