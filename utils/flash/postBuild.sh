@@ -6,7 +6,7 @@ top_repo_dir=$(dirname $(dirname $(dirname $(dirname $(readlink -f $0)))))
 
 build_dir=""
 if [ $# -eq 0 ]; then
-  build_dir=$top_repo_dir/out/current/build
+  build_dir=$top_repo_dir/build
 else
   build_dir=$1
 fi
