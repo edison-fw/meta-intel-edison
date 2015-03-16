@@ -2,18 +2,19 @@ DESCRIPTION = "This is the edison arduino sketch download daemon."
 HOMEPAGE = "http://www.intel.com"
 LICENSE = "LGPLv2.1"
 
-S = "${EDISONREPO_TOP_DIR}/arduino/clloader"
+S = "${WORKDIR}/git"
 
-SRC_URI += "file://clloader.service \
+SRC_URI = "git://github.com/01org/clloader.git;protocol=https;branch=edison \
+            file://clloader.service \
             file://sketch_reset.service"
 
-LIC_FILES_CHKSUM = " \
-        file://clloader.c;endline=29;md5=4b30a8a8eefba8a23997c11e77c6fd24 \
-"
+SRCREV = "ef2fe0ae9f7fba836df696441fd9053ed07b770e"
 
-do_clean() {
-    make clean
-}
+SRC_URI[md5sum] = "6013acecb8e8a5ba751db2bd8af6b056"
+
+LIC_FILES_CHKSUM = " \
+        file://LICENSE;md5=b0b5438307a421c4874700ff23ac51a1 \
+"
 
 do_compile() {
     make

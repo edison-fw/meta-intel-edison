@@ -37,11 +37,6 @@ cd $top_repo_dir
 mkdir edison-src/mw
 clean_and_copy_dir mw/oobe edison-src/
 
-# Copy Arduino stuff in src dir
-cd $top_repo_dir
-mkdir edison-src/arduino
-clean_and_copy_dir arduino/clloader edison-src/
-
 ###############################################################################
 # Remove this script from source package
 rm $top_repo_dir/edison-src/meta-intel-edison/utils/create_src_package.sh
