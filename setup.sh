@@ -78,7 +78,6 @@ BBLAYERS ?= " \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
   $poky_dir/meta-intel-iot-middleware \\
   $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
-  $top_repo_dir/meta-intel-edison/meta-intel-edison-devtools \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
