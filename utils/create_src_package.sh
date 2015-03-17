@@ -44,6 +44,7 @@ rm $top_repo_dir/edison-src/meta-intel-edison/utils/generate-recipes-patches.sh
 
 # Remove the devenv layer from source package
 rm -r $top_repo_dir/edison-src/meta-intel-edison/meta-intel-edison-devenv
+sed -i "/vmlinux/d" $top_repo_dir/edison-src/meta-intel-edison/utils/flash/postBuild.sh
 
 ###############################################################################
 # Cleanups

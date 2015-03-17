@@ -80,7 +80,11 @@ cp $top_repo_dir/meta-intel-edison/utils/flash/FlashEdison.json $build_dir/toFla
 cp $top_repo_dir/meta-intel-edison/utils/flash/filter-dfu-out.js $build_dir/toFlash/
 
 # Look for mkimage tool path
-mkimage_tool_path=$(find $top_repo_dir/u-boot -name mkimage)
+ubootdir=$top_repo_dir/u-boot
+mkimage_tool_path=""
+if [ -a $ubootdir ]; then
+    mkimage_tool_path=$(find $top_repo_dir/u-boot -name mkimage)
+fi
 if [ -z $mkimage_tool_path ]; then
     mkimage_tool_path=$(find $build_dir/tmp/work/edison-poky-linux/u-boot -name mkimage)
     if [ -z "$mkimage_tool_path" ]; then
