@@ -164,3 +164,6 @@ IMAGE_INSTALL += "upm-dev"
 IMAGE_INSTALL += "mcu-fw-load"
 IMAGE_INSTALL += "mcu-fw-bin"
 
+# nfs
+IMAGE_INSTALL += "nfs-utils"
+
