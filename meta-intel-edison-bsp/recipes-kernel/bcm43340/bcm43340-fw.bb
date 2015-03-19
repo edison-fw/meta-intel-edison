@@ -1,12 +1,9 @@
 DESCRIPTION = "Firmware files for use with Linux kernel"
 SECTION = "kernel"
 
-FILESEXTRAPATHS_prepend := "${EDISONREPO_TOP_DIR}/broadcom_cws/wlan/firmware/:"
+SRC_URI = "git://github.com/01org/edison-firmware.git;branch=master;protocol=git;rev=8585a10b3527666b2d35b3dcacffede3ec00cb53" 
 
-SRC_URI = "file://bcmdhd_aob.cal_4334x_b0 \
-           file://bcmdhd.cal_4334x_b0 \
-           file://fw_bcmdhd_p2p.bin_4334x_b0 \
-           file://LICENCE.broadcom_bcm43xx"
+S = "${WORKDIR}/git/broadcom_cws/wlan/firmware/"
 
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://LICENCE.broadcom_bcm43xx;md5=3160c14df7228891b868060e1951dfbc"
@@ -14,11 +11,7 @@ LIC_FILES_CHKSUM = "file://LICENCE.broadcom_bcm43xx;md5=3160c14df7228891b868060e
 PV = "6.20.190"
 PR = "r2"
 
-S = "${WORKDIR}"
-
 inherit allarch update-alternatives
-
-FILESDIR = "${FILE_DIRNAME}/files/"
 
 do_install() {
         install -v -d  ${D}/etc/firmware/
