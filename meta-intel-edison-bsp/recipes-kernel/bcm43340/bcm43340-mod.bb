@@ -1,5 +1,8 @@
 DESCRIPTION = "Broadcom wifi driver for the 43340"
 LICENSE = "GPLv2"
+
+SRC_URI = "git://github.com/01org/edison-bcm43340.git;branch=master;protocol=git;rev=9d609e1ffadbf8895a701e6283392bb54bd962f9"
+
 LIC_FILES_CHKSUM = "file://COPYING;md5=f9986853fb3b3403700e7535a392d014"
 
 inherit module
@@ -7,8 +10,5 @@ inherit module
 PV = "1.141"
 PR = "r47"
 
-S = "${EDISONREPO_TOP_DIR}/broadcom_cws/wlan/driver_bcm43x/"
+S = "${WORKDIR}/git/"
 
-do_clean() {
-    make clean
-}
