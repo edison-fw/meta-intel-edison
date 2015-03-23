@@ -183,7 +183,7 @@ main() {
   my_sdk_host="$plat$arch"
 
   my_mode="external"
-  if [ -d "$top_repo_dir/linux-kernel" ]; then
+  if [ -d "$top_repo_dir/meta-intel-edison-devenv" ]; then
     my_mode="devenv"
   fi
 
@@ -243,20 +243,27 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     shift
   done
 
+  if [ -d "$top_repo_dir/meta-intel-edison-devtools" ]; then
+    echo "Found a development tools layer, adding it to Edison list of layers"
+    echo "Note that none of the recipes provided by this layer is compiled by default."
+    do_append_layer $top_repo_dir/meta-intel-edison-devtools
+  fi
+
   # Validate setup mode, can be devenv or external
   if [ "$my_mode" = "devenv" ]
   then
     echo "We are building in devenv mode, i.e. with dependency on teamforge internal servers"
     echo "and yocto recipes assuming local sources for some package."
     echo "You can change this by passing the --mode=external option to this script."
-    do_append_layer $top_repo_dir/meta-intel-edison/meta-intel-edison-devenv
+    do_append_layer $top_repo_dir/meta-intel-edison-devenv
   else
     if [ "$my_mode" = "external" ]
     then
       echo "We are building in external mode"
     else
-      echo "Invalid mode, can be external or devenv. Default to external excepted if the linux-kernel"
-      echo "directory is present, in which case a developer environment is assumed."
+      echo "Invalid mode, can be external or devenv. Default to external"
+      echo "excepted if the meta-intel-edison-devenv layer directory"
+      echo "is present, in which case a developer environment is assumed."
     fi
   fi
 
