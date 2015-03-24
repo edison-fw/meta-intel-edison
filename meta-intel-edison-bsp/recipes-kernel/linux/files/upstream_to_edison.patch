@@ -1,16 +1,16 @@
-From f9d6c67e7d5fcd7778b28a2ac9884f6bef2d10fb Mon Sep 17 00:00:00 2001
+From 2d6252bac14c17011750efb7f49ec51d5226fc3d Mon Sep 17 00:00:00 2001
 From: Simon Desfarges <simon.desfarges@intel.com>
-Date: Thu, 12 Mar 2015 14:07:42 +0100
+Date: Tue, 24 Mar 2015 17:49:02 +0100
 Subject: [PATCH] Squashed all commits from upstream to Edison
 
-Change-Id: Id7d448c7d9a70c44a3d9a05fb797ee96de88dc4c
+Change-Id: If326dd107da9935adfe86cff8d693d1c09e03310
 ---
  Documentation/kernel-parameters.txt                |    6 +-
  arch/x86/Kconfig                                   |   62 +-
  arch/x86/Kconfig.cpu                               |   19 +-
  arch/x86/Makefile                                  |    2 +
  arch/x86/Makefile_32.cpu                           |    2 +
- arch/x86/configs/i386_edison_defconfig             | 3860 +++++++++++++
+ arch/x86/configs/i386_edison_defconfig             | 3864 +++++++++++++
  arch/x86/configs/i386_mrfl_defconfig               | 3980 ++++++++++++++
  arch/x86/include/asm/apb_timer.h                   |    1 +
  arch/x86/include/asm/bcm_bt_lpm.h                  |   46 +
@@ -340,6 +340,7 @@ Change-Id: Id7d448c7d9a70c44a3d9a05fb797ee96de88dc4c
  drivers/usb/gadget/udc-core.c                      |   12 +-
  drivers/usb/host/ehci-pci.c                        |    2 +-
  drivers/usb/host/xhci-plat.c                       |   11 +
+ drivers/usb/host/xhci.c                            |    3 +
  drivers/usb/phy/penwell_otg.c                      | 5780 ++++++++++++++++++++
  drivers/watchdog/Kconfig                           |   21 +
  drivers/watchdog/Makefile                          |    1 +
@@ -479,7 +480,7 @@ Change-Id: Id7d448c7d9a70c44a3d9a05fb797ee96de88dc4c
  sound/soc/soc-jack.c                               |   14 +-
  sound/soc/soc-pcm.c                                |   83 +-
  sound/soc/soc-utils.c                              |   34 +-
- 474 files changed, 110414 insertions(+), 8173 deletions(-)
+ 475 files changed, 110421 insertions(+), 8173 deletions(-)
  create mode 100644 arch/x86/configs/i386_edison_defconfig
  create mode 100644 arch/x86/configs/i386_mrfl_defconfig
  create mode 100644 arch/x86/include/asm/bcm_bt_lpm.h
@@ -951,10 +952,10 @@ index 6647ed4..a2eb6c6 100644
  cflags-$(CONFIG_MELAN)		+= -march=i486
 diff --git a/arch/x86/configs/i386_edison_defconfig b/arch/x86/configs/i386_edison_defconfig
 new file mode 100644
-index 0000000..02cd5fe
+index 0000000..d186936
 --- /dev/null
 +++ b/arch/x86/configs/i386_edison_defconfig
-@@ -0,0 +1,3860 @@
+@@ -0,0 +1,3864 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
 +# Linux/x86 3.10.17 Kernel Configuration
@@ -4357,7 +4358,11 @@ index 0000000..02cd5fe
 +# CONFIG_NFS_V4_1 is not set
 +# CONFIG_NFS_USE_LEGACY_DNS is not set
 +CONFIG_NFS_USE_KERNEL_DNS=y
-+# CONFIG_NFSD is not set
++CONFIG_NFSD=y
++CONFIG_NFSD_V2_ACL=y
++CONFIG_NFSD_V3=y
++CONFIG_NFSD_V3_ACL=y
++# CONFIG_NFSD_V4 is not set
 +CONFIG_LOCKD=y
 +CONFIG_LOCKD_V4=y
 +CONFIG_NFS_ACL_SUPPORT=y
@@ -91496,6 +91501,20 @@ index 6e70ce9..37003c8 100644
 +#endif
  	platform_driver_unregister(&usb_xhci_driver);
  }
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 4a5251f..04de933 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -317,6 +317,9 @@ static void xhci_cleanup_msix(struct xhci_hcd *xhci)
+ 
+ 	xhci_free_irq(xhci);
+ 
++	if (xhci->quirks & XHCI_PLAT)
++		return;
++
+ 	if (xhci->msix_entries) {
+ 		pci_disable_msix(pdev);
+ 		kfree(xhci->msix_entries);
 diff --git a/drivers/usb/phy/penwell_otg.c b/drivers/usb/phy/penwell_otg.c
 new file mode 100644
 index 0000000..14b7d42
