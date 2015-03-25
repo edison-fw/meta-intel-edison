@@ -1,0 +1,16 @@
+[Unit]
+Description=Post install service
+OnFailure=reboot.target
+Requires=sysinit.target dev-disk-by\x2dpartlabel-home.device dev-disk-by\x2dpartlabel-update.device
+After=sysinit.target dev-disk-by\x2dpartlabel-home.device dev-disk-by\x2dpartlabel-update.device
+Before=shutdown.target resize-rootfs.service serial-getty@ttyMFD2.service
+Conflicts=shutdown.target systemd-readahead-collect.service systemd-readahead-replay.service
+
+[Service]
+Type=oneshot
+ExecStart=@BASE_BINDIR@/sh -c "shell='sh'; if [ -f /bin/bash ]; then shell='bash'; fi; @BASE_BINDIR@/$shell @BASE_SBINDIR@/post-install.sh systemd-service"
+ExecStartPost=/bin/systemctl disable post-install.service
+StandardOutput=journal+console
+
+[Install]
+WantedBy=basic.target

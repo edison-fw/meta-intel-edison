@@ -65,11 +65,10 @@ IMAGE_INSTALL += "i2c-tools"
 IMAGE_INSTALL += "watchdog-sample"
 IMAGE_INSTALL += "pwr-button-handler"
 IMAGE_INSTALL += "blink-led"
-IMAGE_INSTALL += "first-install"
+IMAGE_INSTALL += "post-install"
 IMAGE_INSTALL += "resize-rootfs"
 IMAGE_INSTALL += "systemd-analyze"
 IMAGE_INSTALL += "wget"
-IMAGE_INSTALL += "ota-update"
 
 # Allows to enable OpenMP feature
 IMAGE_INSTALL += "libgomp"

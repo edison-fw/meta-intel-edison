@@ -1,12 +1,12 @@
 #!/bin/bash
-# first install script to do post flash install
+# This script performs post treatments after flash
 
 # global variable set to 1 if output is systemd journal
 fi_journal_out=0
 
 export PATH="$PATH:/usr/sbin/"
 
-# handle argument, if first-install is called from systemd service
+# handle argument, if post-install is called from systemd service
 # arg1 is "systemd-service"
 if [ "$1" == "systemd-service" ]; then fi_journal_out=1; fi;
 
@@ -51,10 +51,8 @@ exit_first_install () {
         fw_setenv bootargs_target multi-user
     fi
     # dump journal to log file
-    journalctl -u first-install -o short-iso >> /first-install.log
+    journalctl -u post-install -o short-iso >> /post-install.log
     systemctl daemon-reload
-    systemctl stop home.mount
-    systemctl default
 }
 
 # continue normal flow or exit on error code
@@ -70,6 +68,9 @@ fi_assert () {
 }
 
 factory_partition () {
+    #unmount factory partition
+    systemctl stop factory.mount
+
     mkdir -p /factory
     mount /dev/disk/by-partlabel/factory /factory
     # test can fail if done during manufacturing
@@ -123,46 +124,51 @@ setup_ap_ssid_and_passphrase () {
 get_retry_count
 retry_count=$?
 set_retry_count $((${retry_count} + 1))
-fi_echo "Starting First Install (try: ${retry_count})"
+fi_echo "Starting Post Install (try: ${retry_count})"
 
 systemctl start blink-led
-# format partition home to ext4
-mkfs.ext4 -m0 /dev/disk/by-partlabel/home
-fi_assert $? "Formatting home partition"
 
-# backup initial /home/root directory
-mkdir /tmp/oldhome
-cp -R /home/* /tmp/oldhome/
-fi_assert $? "Backup home/root contents of rootfs"
+ota_done=$(fw_printenv ota_done | tr -d "ota_done=")
+if [ "$ota_done" != "1" ];
+then
+    # backup initial /home/root directory
+    mkdir /tmp/oldhome
+    cp -R /home/* /tmp/oldhome/
+    fi_assert $? "Backup home/root contents of rootfs"
 
-# mount home partition on /home
-mount /dev/disk/by-partlabel/home /home
-fi_assert $? "Mount /home partition"
+    # format partition home to ext4
+    mkfs.ext4 -m0 /dev/disk/by-partlabel/home
+    fi_assert $? "Formatting home partition"
 
-# copy back contents to /home and cleanup
-mv /tmp/oldhome/* /home/
-rm -rf /tmp/oldhome
-fi_assert $? "Restore home/root contents on new /home partition"
+    # mount home partition on /home
+    mount /dev/disk/by-partlabel/home /home
+    fi_assert $? "Mount /home partition"
 
-# create a fat32 primary partition on all available space
-echo -ne "n\np\n1\n\n\nt\nb\np\nw\n" | fdisk /dev/disk/by-partlabel/update
+    # copy back contents to /home and cleanup
+    cp -R /tmp/oldhome/* /home/
+    rm -rf /tmp/oldhome
+    fi_assert $? "Restore home/root contents on new /home partition"
 
-# silent error code for now because fdisk failed to reread MBR correctly
-# MBR is correct but fdisk understand it as the main system MBR, which is
-# not the case.
-fi_assert 0 "Formatting update partition Step 1"
+    # create a fat32 primary partition on all available space
+    echo -ne "n\np\n1\n\n\nt\nb\np\nw\n" | fdisk /dev/disk/by-partlabel/update
 
-# create a loop device on update disk
-losetup -o 8192 /dev/loop0 /dev/disk/by-partlabel/update
-fi_assert $? "Formatting update partition Step 2"
+    # silent error code for now because fdisk failed to reread MBR correctly
+    # MBR is correct but fdisk understand it as the main system MBR, which is
+    # not the case.
+    fi_assert 0 "Formatting update partition Step 1"
 
-# format update partition
-mkfs.vfat /dev/loop0 -n "Edison" -F 32
-fi_assert $? "Formatting update partition Step 3"
+    # create a loop device on update disk
+    losetup -o 8192 /dev/loop0 /dev/disk/by-partlabel/update
+    fi_assert $? "Formatting update partition Step 2"
 
-# remove loop device on update disk
-losetup -d /dev/loop0
-fi_assert $? "Formatting update partition Step 4 final"
+    # format update partition
+    mkfs.vfat /dev/loop0 -n "Edison" -F 32
+    fi_assert $? "Formatting update partition Step 3"
+
+    # remove loop device on update disk
+    losetup -d /dev/loop0
+    fi_assert $? "Formatting update partition Step 4 final"
+fi
 
 # handle factory partition
 factory_partition
@@ -179,7 +185,7 @@ fi_assert $? "Update file system table /etc/fstab"
 setup_ap_ssid_and_passphrase
 fi_assert $? "Generating Wifi Access Point SSID and passphrase"
 
-fi_echo "First install success"
+fi_echo "Post install success"
 
 systemctl stop blink-led
 # end main part
