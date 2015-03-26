@@ -169,5 +169,12 @@ do_install () {
 	fi
 }
 
-BBCLASSEXTEND = "native nativesdk"
+do_install_append_virtclass-native() {
+	create_wrapper ${D}${bindir}/openssl \
+	    OPENSSL_CONF=${libdir}/ssl/openssl.cnf \
+	    SSL_CERT_DIR=${libdir}/ssl/certs \
+	    SSL_CERT_FILE=${libdir}/ssl/cert.pem \
+	    OPENSSL_ENGINES=${libdir}/ssl/engines
+}
 
+BBCLASSEXTEND = "native nativesdk"
