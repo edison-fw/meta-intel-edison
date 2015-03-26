@@ -1,4 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/base-files:"
+SRC_URI += "file://release"
 SRC_URI += "file://fstab"
 SRC_URI += "file://media-sdcard.mount"
 SRC_URI += "file://media-sdcard.automount"
@@ -9,6 +10,7 @@ SRC_URI += "file://share/dot.profile"
 volatiles = "tmp"
 
 do_install_append() {
+	install -m 0644 ${WORKDIR}/release ${D}${sysconfdir}/release
 	install -m 0644 ${WORKDIR}/fstab ${D}${sysconfdir}/fstab
 	install -m 0755 ${WORKDIR}/share/dot.profile ${D}${sysconfdir}/skel/.profile
 
