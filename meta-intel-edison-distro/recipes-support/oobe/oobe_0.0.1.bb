@@ -1,11 +1,12 @@
 DESCRIPTION="The out-of-box configuration service"
 LICENSE = "MIT"
 
-S = "${EDISONREPO_TOP_DIR}/mw/oobe"
+SRC_URI = "git://github.com/01org/edison-oobe.git;protocol=https"
+SRCREV = "e50c93cd5124bb1112a9e992a1569975df6c9a8a"
 
-LIC_FILES_CHKSUM = " \
-        file://LICENSE;md5=ea398a763463b76b18da15f013c0c531 \
-"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=ea398a763463b76b18da15f013c0c531"
+
+S = "${WORKDIR}/git"
 
 DEPENDS = "nodejs-native"
 

@@ -17,4 +17,3 @@ fi
 bitbake -c cleansstate virtual/kernel
 bitbake -c cleansstate u-boot
 bitbake -c cleansstate bcm43340-mod
-bitbake -c cleansstate oobe
