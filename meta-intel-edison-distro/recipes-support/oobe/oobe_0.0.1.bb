@@ -1,10 +1,7 @@
 DESCRIPTION="The out-of-box configuration service"
 LICENSE = "MIT"
 
-S = "${WORKDIR}"
-
-SRC_URI = "file://oobe_${PV}.zip"
-
+S = "${EDISONREPO_TOP_DIR}/mw/oobe"
 
 LIC_FILES_CHKSUM = " \
         file://LICENSE;md5=ea398a763463b76b18da15f013c0c531 \
