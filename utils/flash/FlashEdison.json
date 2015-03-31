@@ -2,6 +2,25 @@
  "flash" :  {
   "commands" : [
    {
+    "duration" : 42000,
+    "restrict" : null,
+    "source" : "${helperFile}",
+    "tool" : "notifier"
+   },
+   {
+    "description" : "Waiting for device",
+    "restrict" : null,
+    "state" : "dnx_fw",
+    "timeout" : 42000,
+    "tool" : "waitForDevice"
+   },
+   {
+    "duration" : 5000,
+    "restrict" : null,
+    "source" : "Edison board plugged",
+    "tool" : "notifier"
+   },
+   {
     "gpflag" : "${gpflag}",
     "ifwi" : "${ifwi_file}",
     "ifwi_dnx" : "${fw_dnx_file}",
@@ -101,6 +120,15 @@
     "retry" : 2,
     "timeout" : 1200000,
     "tool" : "dfuDownloader"
+   },
+   {
+    "duration" : 60000,
+    "restrict" : null,
+    "source" : "Edison board needs to reboot<br />
+                Please do not unplug it for 2 minutes<br /><br />
+                On Arduino board, led will stop blinking at boot completed<br /><br />
+                <img src='images/Edison-arduino-blink-led.png' width='390' />",
+    "tool" : "notifier"
    }
   ],
   "configurations" :   {
@@ -108,6 +136,7 @@
     "brief" : "CDC USB driver (for Mac Osx & Linux)",
     "default" : false,
     "description" : "U-Boot CDC environment",
+    "documentation" : "",
     "groupsState" :     {
     },
     "name" : "CDC",
@@ -119,6 +148,7 @@
     "brief" : "RNDIS USB driver (for Windows)",
     "default" : true,
     "description" : "U-Boot RNDIS environment",
+    "documentation" : "",
     "groupsState" :     {
     },
     "name" : "RNDIS",
@@ -148,6 +178,12 @@
     "name" : "GP flag",
     "type" : "string",
     "value" : "0x80000007"
+   },
+   "helperFile" :    {
+    "description" : "helperFile",
+    "name" : "helperFile",
+    "type" : "file",
+    "value" : "helper/helper.html"
    },
    "ifwi_file" :    {
     "description" : "Firmware",
@@ -192,6 +228,6 @@
     "value" : "u-boot-edison.bin"
    }
   },
-  "version" : "2.1"
+  "version" : "2.2"
  }
 }
