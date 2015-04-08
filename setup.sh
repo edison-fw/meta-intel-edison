@@ -316,7 +316,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
   cd ${middleware_dir}
-  git checkout 48604925ea011b6dba2953b407aff0fce5e7cbbb
+  git checkout 4fdf3df4b2e7eb1ed7890ea8cd8402a6161d711c
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
