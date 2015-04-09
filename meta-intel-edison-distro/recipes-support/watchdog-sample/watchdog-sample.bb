@@ -13,6 +13,8 @@ SYSTEMD_SERVICE_${PN} = "watchdog-sample.service"
 RDEPENDS_${PN} = "systemd"
 DEPENDS = "systemd"
 
+inherit systemd
+
 S = "${WORKDIR}"
 
 do_compile() {
@@ -24,18 +26,12 @@ do_install() {
 	install -d ${D}${systemd_unitdir}/system
 	install -c -m 0644 ${WORKDIR}/watchdog-sample.service ${D}${systemd_unitdir}/system
 
-	# enable the service
-	install -d ${D}${sysconfdir}/systemd/system/basic.target.wants
-	ln -sf ${systemd_unitdir}/system/watchdog-sample.service \
-		${D}${sysconfdir}/systemd/system/basic.target.wants/watchdog-sample.service
-
 	# install watchdog binary
 	install -d ${D}${bindir}
 	install -c -m 0755 ${B}/watchdog-sample ${D}${bindir}
 }
 
 FILES_${PN} = "${base_libdir}/systemd/system/watchdog-sample.service"
-FILES_${PN} += "${sysconfdir}/systemd/system/basic.target.wants/watchdog-sample.service"
 FILES_${PN} += "${bindir}/watchdog-sample"
 
 # As this package is tied to systemd, only build it when we're also building systemd.

@@ -24,14 +24,8 @@ do_install() {
 
         # Copy service file
         install -d ${D}/${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/pwr-button-handler.service ${D}/${systemd_unitdir}/system
-
-        # And enable it at startup
-        install -d ${D}${sysconfdir}/systemd/system/default.target.wants
-        ln -sf ${systemd_unitdir}/system/pwr-button-handler.service \
-        ${D}${sysconfdir}/systemd/system/default.target.wants/pwr-button-handler.service
+        install -c -m 644 ${WORKDIR}/pwr-button-handler.service ${D}/${systemd_unitdir}/system
 }
 
 FILES_${PN} = "${base_libdir}/systemd/system/pwr-button-handler.service"
-FILES_${PN} += "${sysconfdir}/systemd/system/default.target.wants/pwr-button-handler.service"
 FILES_${PN} += "${bindir}/pwr_button_handler"
