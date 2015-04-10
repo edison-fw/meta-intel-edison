@@ -1,0 +1,12 @@
+[global]
+OfflineMode=false
+
+[Bluetooth]
+Enable=true
+
+[WiFi]
+Enable=true
+Tethering=@TETHERING@
+Tethering.Identifier=@TETHERING_AP_SSID@
+Tethering.Passphrase=@TETHERING_AP_PASSPHRASE@
+

@@ -1,0 +1,13 @@
+[Unit]
+Description=Initialize ConnMan settings
+Before=connman.service
+ConditionFileNotEmpty=!/var/lib/connman/settings
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/connman/connmand.env
+ExecStart=-/usr/lib/connman/connman-init-settings.sh $TETHERING $AP_PASSPHRASE $AP_SSID
+StandardOutput=null
+
+[Install]
+WantedBy=connman.service

@@ -71,6 +71,7 @@ SYSTEMD_START_SUPPLICANT = "ExecStartPost=-${base_bindir}/systemctl start wpa_su
 inherit autotools-brokensep pkgconfig systemd update-rc.d
 
 do_configure_append () {
+	sed -i "s/After=dbus.socket/After=dbus.socket connman-init.service/" ${S}/src/connman.service
 	sed -i "s#ExecStart=#${SYSTEMD_WIRED_SETUP}\nExecStart=#" ${S}/src/connman.service
 	sed -i "s#ExecStart=#${SYSTEMD_STOP_SUPPLICANT}\nExecStart=#" ${S}/src/connman.service
 	sed -i "s#StandardOutput=#${SYSTEMD_START_SUPPLICANT}\nStandartOutput=#" ${S}/src/connman.service

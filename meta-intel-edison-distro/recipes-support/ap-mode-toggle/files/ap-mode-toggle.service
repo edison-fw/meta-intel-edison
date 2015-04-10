@@ -1,0 +1,10 @@
+[Unit]
+Description=Start or stop WiFI AP Mode in Edison
+After=connman.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ap-mode-toggle
+
+[Install]
+WantedBy=multi-user.target
