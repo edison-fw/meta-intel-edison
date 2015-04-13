@@ -69,10 +69,6 @@ mkdir -p $build_dir/symbols
 cp $build_dir/tmp/deploy/images/edison/vmlinux $build_dir/symbols/
 cp $build_dir/tmp/deploy/images/edison/u-boot-edison.bin $build_dir/symbols/
 
-
-# copy phoneflashtool xml file
-cp $top_repo_dir/meta-intel-edison/utils/flash/pft-config-edison.xml $build_dir/toFlash/
-
 # Copy flashing script
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.bat $build_dir/toFlash/

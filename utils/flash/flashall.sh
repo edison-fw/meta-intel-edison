@@ -22,8 +22,6 @@ USB_PID=0a99
 TIMEOUT_SEC=60
 
 DO_RECOVERY=0
-# Phone Flash tools configuration files
-PFT_XML_FILE="${BASE_DIR}/pft-config-edison.xml"
 
 # Handle Ifwi file for DFU update
 IFWI_DFU_FILE=${ESC_BASE_DIR}/edison_ifwi-dbg
@@ -79,22 +77,10 @@ function flash-debug {
 }
 
 function flash-ifwi {
-	if [ -x "$(which phoneflashtool)" ]; then
-		flash-ifwi-pft
-	elif [ -x "$(which xfstk-dldr-solo)" ]; then
+	if [ -x "$(which xfstk-dldr-solo)" ]; then
 		flash-ifwi-xfstk
 	else
 		echo "!!! You should install xfstk tools, please visit http://xfstk.sourceforge.net/"
-		exit -1
-	fi
-}
-
-function flash-ifwi-pft {
-	eval phoneflashtool --cli -f "$PFT_XML_FILE"
-	if [ $? -ne 0 ];
-	then
-		echo "Phoneflashtool error"
-		flash-debug
 		exit -1
 	fi
 }
@@ -164,11 +150,6 @@ then
 
 	echo "Starting Recovery mode"
 	echo "Please plug and reboot the board"
-	if [ ! -f "${PFT_XML_FILE}" ];
-	then
-		echo "${PFT_XML_FILE} does not exist"
-		exit -3
-	fi
 	echo "Flashing IFWI"
 	flash-ifwi
 	echo "Recovery Success..."

@@ -7,8 +7,6 @@ set /a TIMEOUT=60
 
 ::Phone flash tools configuration part
 set DO_RECOVERY=0
-set EDISON_XML_FILE="%BASE_DIR%pft-config-edison.xml"
-set PFT_XML_FILE="%BASE_DIR%pft-config-edison.xml"
 
 :: Handle Ifwi file for DFU update
 set IFWI_DFU_FILE=%BASE_DIR%edison_ifwi-dbg
@@ -52,10 +50,6 @@ echo ** Flashing Edison Board %date% %time% ** >> %LOG_FILENAME%
 if %DO_RECOVERY% == 0 goto :skip_flash_ifwi
 echo Starting Recovery mode
 echo Please plug and reboot the board
-if not exist %PFT_XML_FILE% (
-	echo %PFT_XML_FILE% does not exist
-	exit /b 3
-)
 echo Flashing IFWI
 call:flash-ifwi
 if %errorlevel% neq 0 ( exit /b %errorlevel%)
@@ -189,11 +183,6 @@ exit /b 0
 
 :flash-ifwi
 	for %%X in (xfstk-dldr-solo.exe) do (set xfstk_tool_found=%%~$PATH:X)
-	for %%X in (cflasher.exe) do (set pft_tool_found=%%~$PATH:X)
-	if defined pft_tool_found (
-		call:flash-ifwi-pft
-		exit /b %errorlevel%
-	)
 	if defined xfstk_tool_found (
 		call:flash-ifwi-xfstk
 		exit /b %errorlevel%
@@ -203,12 +192,6 @@ exit /b 0
 
 :flash-ifwi-xfstk
 	xfstk-dldr-solo.exe --gpflags 0x80000007 --osimage "%BASE_DIR%u-boot-edison.img"  --fwdnx "%BASE_DIR%edison_dnx_fwr.bin" --fwimage "%BASE_DIR%edison_ifwi-dbg-00.bin" --osdnx "%BASE_DIR%edison_dnx_osr.bin"
-	set /a err_num=%errorlevel%
-	if %err_num% neq 0 echo Ifwi Flash failed
-	exit /b %err_num%
-
-:flash-ifwi-pft
-	cflasher -f %PFT_XML_FILE%
 	set /a err_num=%errorlevel%
 	if %err_num% neq 0 echo Ifwi Flash failed
 	exit /b %err_num%
