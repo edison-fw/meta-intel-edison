@@ -1,9 +1,9 @@
-From 2d6252bac14c17011750efb7f49ec51d5226fc3d Mon Sep 17 00:00:00 2001
-From: Simon Desfarges <simon.desfarges@intel.com>
-Date: Tue, 24 Mar 2015 17:49:02 +0100
+From 5d6414be54b92c19799ccbc5fb9d18a3296d0383 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Lo=C3=AFc=20Akue?= <loicx.akue@intel.com>
+Date: Tue, 14 Apr 2015 15:16:45 +0200
 Subject: [PATCH] Squashed all commits from upstream to Edison
 
-Change-Id: If326dd107da9935adfe86cff8d693d1c09e03310
+Change-Id: Ic9484d90b0b1e9dac52429690e54e9767ab71ea5
 ---
  Documentation/kernel-parameters.txt                |    6 +-
  arch/x86/Kconfig                                   |   62 +-
@@ -952,7 +952,7 @@ index 6647ed4..a2eb6c6 100644
  cflags-$(CONFIG_MELAN)		+= -march=i486
 diff --git a/arch/x86/configs/i386_edison_defconfig b/arch/x86/configs/i386_edison_defconfig
 new file mode 100644
-index 0000000..d186936
+index 0000000..049b900
 --- /dev/null
 +++ b/arch/x86/configs/i386_edison_defconfig
 @@ -0,0 +1,3864 @@
@@ -2503,7 +2503,7 @@ index 0000000..d186936
 +CONFIG_I2C_DESIGNWARE_PCI_FORK=y
 +# CONFIG_I2C_DESIGNWARE_PLATFORM_FORK is not set
 +CONFIG_I2C_DW_SPEED_MODE_DEBUG=y
-+CONFIG_I2C_PMIC=y
++# CONFIG_I2C_PMIC is not set
 +# CONFIG_I2C_DESIGNWARE_PCI is not set
 +# CONFIG_I2C_EG20T is not set
 +CONFIG_I2C_GPIO=y
@@ -129931,5 +129931,5 @@ index 4b3be6c..8ecf448 100644
  		.channels_max	= 384,
  		.rates = STUB_RATES,
 -- 
-1.9.1
+1.7.9.5
 
