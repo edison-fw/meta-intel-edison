@@ -83,6 +83,12 @@ factory_partition () {
     fi
 }
 
+mount_home () {
+    # mount home partition on /home
+    mount /dev/disk/by-partlabel/home /home
+    fi_assert $? "Mount /home partition"
+}
+
 # generate sshd keys
 sshd_init () {
     rm -rf /etc/ssh/*key*
@@ -140,9 +146,8 @@ then
     mkfs.ext4 -m0 /dev/disk/by-partlabel/home
     fi_assert $? "Formatting home partition"
 
-    # mount home partition on /home
-    mount /dev/disk/by-partlabel/home /home
-    fi_assert $? "Mount /home partition"
+    # mount home partition
+    mount_home
 
     # copy back contents to /home and cleanup
     cp -R /tmp/oldhome/* /home/
@@ -168,6 +173,9 @@ then
     # remove loop device on update disk
     losetup -d /dev/loop0
     fi_assert $? "Formatting update partition Step 4 final"
+else
+    # just mount home partition after OTA update
+    mount_home
 fi
 
 # handle factory partition
