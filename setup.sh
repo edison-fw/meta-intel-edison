@@ -320,6 +320,8 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
+  cd $mingw_dir
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-Revert-machine-sdk-mingw32.conf-Disable-SDKTAROPTS.patch
   cd $poky_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B-poky-dora.patch
   git apply $top_repo_dir/meta-intel-edison/utils/sdk-populate-clean-broken-links.patch

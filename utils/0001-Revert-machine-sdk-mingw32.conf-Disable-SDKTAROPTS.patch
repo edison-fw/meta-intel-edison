@@ -1,0 +1,44 @@
+From 41a9f6705521b17c36780bef24199fa861913a97 Mon Sep 17 00:00:00 2001
+From: Fabien Rodriguez <fabienx.rodriguez@intel.com>
+Date: Tue, 14 Apr 2015 11:29:08 +0200
+Subject: [PATCH] Revert "machine-sdk/*-mingw32.conf: Disable SDKTAROPTS"
+
+This reverts commit 085e17cd4ad1d1a803117465012f9f22b5d09449.
+---
+ conf/machine-sdk/i686-mingw32.conf   |    4 +---
+ conf/machine-sdk/x86_64-mingw32.conf |    4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/conf/machine-sdk/i686-mingw32.conf b/conf/machine-sdk/i686-mingw32.conf
+index 7e309df..586bfe3 100644
+--- a/conf/machine-sdk/i686-mingw32.conf
++++ b/conf/machine-sdk/i686-mingw32.conf
+@@ -16,9 +16,7 @@ ALLOW_EMPTY_${PN}_mingw32 = "1"
+
+ # Do what amounts to a NOOP
+ SDK_PACKAGING_FUNC = "do_compile"
+-
+-# Causes an endless loop
+-#SDKTAROPTS_append = " -h --hard-dereference"
++SDKTAROPTS_append = " -h --hard-dereference"
+
+ SDKUSE_NLS = "no"
+
+diff --git a/conf/machine-sdk/x86_64-mingw32.conf b/conf/machine-sdk/x86_64-mingw32.conf
+index f026af4..7d1c016 100644
+--- a/conf/machine-sdk/x86_64-mingw32.conf
++++ b/conf/machine-sdk/x86_64-mingw32.conf
+@@ -16,9 +16,7 @@ ALLOW_EMPTY_${PN}_mingw32 = "1"
+
+ # Do what amounts to a NOOP
+ SDK_PACKAGING_FUNC = "do_compile"
+-
+-# Causes an endless loop
+-#SDKTAROPTS_append = " -h --hard-dereference"
++SDKTAROPTS_append = " -h --hard-dereference"
+
+ SDKUSE_NLS = "no"
+
+--
+1.7.9.5
+
