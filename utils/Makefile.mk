@@ -39,7 +39,7 @@ sdk: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake edison-image -c populate_sdk"
 
 src-package: pub
-	./meta-intel-edison/utils/create_src_package.sh
+	./meta-intel-edison-devenv/utils/create_src_package.sh
 	mv edison-src.tgz $(CURDIR)/pub/edison-src-$(BUILD_TAG).tgz
 
 clean:
