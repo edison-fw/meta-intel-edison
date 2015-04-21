@@ -6,3 +6,5 @@ SRCREV_meta = "6ad20f049abd52b515a8e0a4664861cfd331f684"
 
 SRC_URI += "file://defconfig"
 SRC_URI += "file://upstream_to_edison.patch"
+
+PV = "${LINUX_VERSION}"
