@@ -1,9 +1,9 @@
-From 5d6414be54b92c19799ccbc5fb9d18a3296d0383 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Lo=C3=AFc=20Akue?= <loicx.akue@intel.com>
-Date: Tue, 14 Apr 2015 15:16:45 +0200
+From 689f486a432dbe14c3acb9d3a9b936d5a5b925af Mon Sep 17 00:00:00 2001
+From: zhoushix <shimingx.zhou@intel.com>
+Date: Tue, 21 Apr 2015 21:29:43 +0800
 Subject: [PATCH] Squashed all commits from upstream to Edison
 
-Change-Id: Ic9484d90b0b1e9dac52429690e54e9767ab71ea5
+Change-Id: I1ed3e0e897b4e81c7fd47fe572b18b13becb1245
 ---
  Documentation/kernel-parameters.txt                |    6 +-
  arch/x86/Kconfig                                   |   62 +-
@@ -291,7 +291,7 @@ Change-Id: Ic9484d90b0b1e9dac52429690e54e9767ab71ea5
  drivers/rtc/rtc-mrst.c                             |  296 +-
  drivers/spi/Kconfig                                |    9 +
  drivers/spi/Makefile                               |    1 +
- drivers/spi/intel_mid_ssp_spi.c                    | 1787 ++++++
+ drivers/spi/intel_mid_ssp_spi.c                    | 1775 ++++++
  drivers/spi/spi-dw-mid.c                           |  133 +-
  drivers/spi/spi-dw-pci.c                           |  102 +-
  drivers/spi/spi-dw.c                               |  151 +-
@@ -385,7 +385,7 @@ Change-Id: Ic9484d90b0b1e9dac52429690e54e9767ab71ea5
  include/linux/serial_max3110.h                     |   16 +
  include/linux/serial_mfd.h                         |    7 +-
  include/linux/sfi.h                                |    5 +
- include/linux/spi/intel_mid_ssp_spi.h              |  352 ++
+ include/linux/spi/intel_mid_ssp_spi.h              |  354 ++
  include/linux/thermal.h                            |   26 +-
  include/linux/tty_ldisc.h                          |    5 +-
  include/linux/usb/debug.h                          |  253 +
@@ -480,7 +480,7 @@ Change-Id: Ic9484d90b0b1e9dac52429690e54e9767ab71ea5
  sound/soc/soc-jack.c                               |   14 +-
  sound/soc/soc-pcm.c                                |   83 +-
  sound/soc/soc-utils.c                              |   34 +-
- 475 files changed, 110421 insertions(+), 8173 deletions(-)
+ 475 files changed, 110411 insertions(+), 8173 deletions(-)
  create mode 100644 arch/x86/configs/i386_edison_defconfig
  create mode 100644 arch/x86/configs/i386_mrfl_defconfig
  create mode 100644 arch/x86/include/asm/bcm_bt_lpm.h
@@ -70448,10 +70448,10 @@ index 33f9c09..1ab0e90 100644
  obj-$(CONFIG_SPI_MPC52xx_PSC)		+= spi-mpc52xx-psc.o
 diff --git a/drivers/spi/intel_mid_ssp_spi.c b/drivers/spi/intel_mid_ssp_spi.c
 new file mode 100644
-index 0000000..d790620
+index 0000000..b68b1eb
 --- /dev/null
 +++ b/drivers/spi/intel_mid_ssp_spi.c
-@@ -0,0 +1,1787 @@
+@@ -0,0 +1,1775 @@
 +/*
 + * intel_mid_ssp_spi.c
 + * This driver supports Bulverde SSP core used on Intel MID platforms
@@ -71247,38 +71247,22 @@ index 0000000..d790620
 +	return IRQ_HANDLED;
 +}
 +
++static void poll_writer(struct work_struct *work)
++{
++	struct ssp_drv_context *sspc =
++		container_of(work, struct ssp_drv_context, poll_write);
++
++	while (sspc->tx < sspc->tx_end)
++		sspc->write(sspc);
++
++}
++
 +/*
 + * Perform a single transfer.
 + */
 +static void poll_transfer(unsigned long data)
 +{
 +	struct ssp_drv_context *sspc = (void *)data;
-+
-+	bool delay = false;
-+
-+	if ((intel_mid_identify_sim() == INTEL_MID_CPU_SIMULATION_VP) ||
-+	     intel_mid_identify_sim() == INTEL_MID_CPU_SIMULATION_HVP) {
-+		delay = true;
-+	}
-+
-+	while (sspc->tx < sspc->tx_end) {
-+		/* [REVERT ME] Tangier simulator requires a delay */
-+		if (delay)
-+			udelay(10);
-+		if (ssp_timing_wr) {
-+			int timeout = 100;
-+			/* It is used as debug UART on Tangier. Since
-+			   baud rate = 115200, it needs at least 312us
-+			   for one word transferring. Becuase of silicon
-+			   issue, it MUST check SFIFOL here instead of
-+			   TNF. It is the workaround for A0 stepping*/
-+			while (--timeout &&
-+					((read_SFIFOL(sspc->ioaddr)) & 0xFFFF))
-+				udelay(10);
-+		}
-+		sspc->write(sspc);
-+		sspc->read(sspc);
-+	}
 +
 +	while (!sspc->read(sspc))
 +		cpu_relax();
@@ -71625,6 +71609,7 @@ index 0000000..d790620
 +			dma_transfer(sspc);
 +		} else {
 +			/* Do the transfer syncronously */
++			queue_work(sspc->wq_poll_write, &sspc->poll_write);
 +			poll_transfer((unsigned long)sspc);
 +		}
 +
@@ -72024,6 +72009,9 @@ index 0000000..d790620
 +	spin_lock_init(&sspc->lock);
 +	INIT_WORK(&sspc->pump_messages, pump_messages);
 +	sspc->workqueue = create_singlethread_workqueue(dev_name(&pdev->dev));
++
++	INIT_WORK(&sspc->poll_write, poll_writer);
++	sspc->wq_poll_write = create_singlethread_workqueue("spi_poll_wr");
 +
 +	/* Register with the SPI framework */
 +	dev_info(dev, "register with SPI framework (bus spi%d)\n",
@@ -101592,10 +101580,10 @@ index fe81791..cd50488 100644
  	u16	addr;
 diff --git a/include/linux/spi/intel_mid_ssp_spi.h b/include/linux/spi/intel_mid_ssp_spi.h
 new file mode 100644
-index 0000000..2eed919
+index 0000000..b212eee
 --- /dev/null
 +++ b/include/linux/spi/intel_mid_ssp_spi.h
-@@ -0,0 +1,352 @@
+@@ -0,0 +1,354 @@
 +/*
 + *  Copyright (C) Intel 2009
 + *  Ken Mills <ken.k.mills@intel.com>
@@ -101855,7 +101843,9 @@ index 0000000..2eed919
 +
 +	spinlock_t lock;
 +	struct workqueue_struct *workqueue;
++	struct workqueue_struct *wq_poll_write;
 +	struct work_struct pump_messages;
++	struct work_struct poll_write;
 +	struct list_head queue;
 +	struct completion msg_done;
 +
