@@ -60,20 +60,6 @@ toolchain: meta-toolchain
 flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
 
-flash-kernel: _check_postbuild_was_done
-	dd if=./out/current/build/toFlash/edison-image-edison.hddimg | ssh root@192.168.2.15 "dd of=/dev/disk/by-partlabel/boot bs=1M"
-	ssh root@192.168.2.15 "/sbin/reboot -f"
-
-flash-bootloader: _check_postbuild_was_done
-	dfu-util -d 8087:0a99 --alt u-boot0 -D ./out/current/build/toFlash/u-boot-edison.bin -R
-
-cscope:
-	find linux-kernel/ u-boot -regex '.*\.\(c\|cpp\|h\)$\' > cscope.files
-	cscope -R -b -k
-
-list:
-	@sh -c "$(MAKE) -p _no_targets | awk -F':' '/^[a-zA-Z0-9][^\$$#\/\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | sort"
-
 debian_image:
 	$(MAKE) setup SETUP_ARGS="$(SETUP_ARGS) --deb_packages"
 	$(MAKE) image
