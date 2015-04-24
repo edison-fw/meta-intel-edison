@@ -2,7 +2,7 @@ DESCRIPTION="The out-of-box configuration service"
 LICENSE = "MIT"
 
 SRC_URI = "git://github.com/01org/edison-oobe.git;protocol=https"
-SRCREV = "6ef511cc01f6bed79cda5c21a45e7ee306af882e"
+SRCREV = "4b5f34eed15d15df33af000e474c453ca35245f0"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=ea398a763463b76b18da15f013c0c531"
 
