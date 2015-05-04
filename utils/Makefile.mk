@@ -45,7 +45,7 @@ src-package: pub
 clean:
 	rm -rf out
 
-u-boot linux-externalsrc edison-image meta-toolchain bootimg: _check_setup_was_done
+u-boot linux-externalsrc edison-image meta-toolchain arduino-toolchain bootimg: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake -c cleansstate $@ ; bitbake $@"
 	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 
@@ -80,6 +80,8 @@ help:
 	@echo ' flash       - flash the current build image'
 	@echo ' sdk         - build the SDK for the current build'
 	@echo ' toolchain   - build the cross compilation toolchain for the current build'
+	@echo ' arduino-toolchain'
+	@echo '             - build the Arduino toolchain for the current build'
 	@echo ' src-package - create the external source package'
 	@echo ' devtools_package - build some extra dev tools packages, results are in out/current/build/devtools_packages/'
 	@echo
@@ -127,6 +129,9 @@ _sdk_archive:
 _toolchain_archive:
 	cd $(CURDIR)/out/$(SDK_HOST)/build/tmp/deploy/sdk ; zip -r $(CURDIR)/pub/edison-meta-toolchain-$(SDK_HOST)-$(BUILD_TAG).zip `ls *-meta-toolchain-*`
 
+_arduino-toolchain_archive:
+	cd $(CURDIR)/out/$(SDK_HOST)/build/tmp/deploy/sdk ; zip -r $(CURDIR)/pub/edison-meta-toolchain-$(SDK_HOST)-$(BUILD_TAG).zip `ls arduino-toolchain-*`
+
 
 ###############################################################################
 # Continuous Integration targets: one per checkbox available in jenkins
@@ -140,6 +145,9 @@ _ci_sdk:
 
 _ci_toolchain:
 	$(MAKE) setup cleansstate toolchain _toolchain_archive SDK_HOST=$(SDK_HOST)
+
+_ci_arduino-toolchain:
+	$(MAKE) setup cleansstate arduino-toolchain _arduino-toolchain_archive SDK_HOST=$(SDK_HOST)
 
 ci_sdk_win32:
 	$(MAKE) _ci_sdk SDK_HOST=win32
@@ -171,6 +179,18 @@ ci_toolchain_linux64:
 ci_toolchain_macosx:
 	$(MAKE) _ci_toolchain SDK_HOST=macosx
 
+ci_arduino-toolchain_win32:
+	$(MAKE) _ci_arduino-toolchain SDK_HOST=win32
+
+ci_arduino-toolchain_linux32:
+	$(MAKE) _ci_arduino-toolchain SDK_HOST=linux32
+
+ci_arduino-toolchain_linux64:
+	$(MAKE) _ci_arduino-toolchain SDK_HOST=linux64
+
+ci_arduino-toolchain_macosx:
+	$(MAKE) _ci_arduino-toolchain SDK_HOST=macosx
+
 ci_image-from-src-package-and-GPL-LGPL-sources_archive: setup devtools_package _devtools_package_archive src-package
 	cp $(CURDIR)/pub/edison-src-$(BUILD_TAG).tgz $(CURDIR)/out/current
 	cd $(CURDIR)/out/current ; tar -xvf edison-src-$(BUILD_TAG).tgz
@@ -181,9 +201,9 @@ ci_image-from-src-package-and-GPL-LGPL-sources_archive: setup devtools_package _
 ci_full:
 	$(MAKE) ci_image                             BUILD_TAG=$(BUILD_TAG)
 	$(MAKE) ci_image-from-src-package-and-GPL-LGPL-sources_archive BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_win32   ci_toolchain_win32   BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_win64   ci_toolchain_win64   BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_linux32 ci_toolchain_linux32 BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_linux64 ci_toolchain_linux64 BUILD_TAG=$(BUILD_TAG)
-	$(MAKE) ci_sdk_macosx  ci_toolchain_macosx  BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_win32   ci_toolchain_win32   ci_arduino-toolchain_win32   BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_win64   ci_toolchain_win64                                BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_linux32 ci_toolchain_linux32 ci_arduino-toolchain_linux32 BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_linux64 ci_toolchain_linux64 ci_arduino-toolchain_linux64 BUILD_TAG=$(BUILD_TAG)
+	$(MAKE) ci_sdk_macosx  ci_toolchain_macosx  ci_arduino-toolchain_macosx  BUILD_TAG=$(BUILD_TAG)
 

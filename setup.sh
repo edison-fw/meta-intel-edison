@@ -78,6 +78,7 @@ BBLAYERS ?= " \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
   $poky_dir/meta-intel-iot-middleware \\
   $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
+  $top_repo_dir/meta-arduino \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
@@ -317,6 +318,13 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
   cd ${middleware_dir}
   git checkout b198e8f713d218db33090ed8a92a10f3494145fa
+
+  cd ${top_repo_dir}
+  echo "Cloning meta-arduino layer to ${top_repo_dir} directory from GitHub.com/01org/meta-arduino"
+  rm -rf meta-arduino || true
+  git clone -b 1.6.x https://github.com/01org/meta-arduino.git
+  cd meta-arduino
+  git checkout 1.6.x
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
