@@ -46,6 +46,9 @@
 /* We use 2 seconds for now */
 #define EDISON_OOBE_PRESS_TIMEOUT 2
 
+#define EDISON_SHUTDOWN_PRESS_COUNT 3
+#define EDISON_SHUTDOWN_PRESS_TIMEOUT 4
+
 struct input_event {
     struct timeval time;
     unsigned short type;
@@ -62,12 +65,13 @@ int main(int argc, char **argv)
     int fd, n;
     ssize_t len;
 
-    if (argc!=3)
+    if (argc!=4)
     {
         printf("Usage:\n");
-        printf("  %s \"command_line1\" \"command_line2\"\n", argv[0]);
+        printf("  %s \"command_line1\" \"command_line2\" \"command_line3\"\n", argv[0]);
         printf("     command_line1: a command line to execute when the PWR button is pressed for more than 2s\n");
         printf("     command_line2: a second command line to execute when the PWR button is released (after being pressed for more than 2s)\n");
+        printf("     command_line3: a third command line to execute when the PWR button is pressed three times (within 4s)\n");
         return -1;
     }
 
@@ -77,6 +81,9 @@ int main(int argc, char **argv)
     time_t time_at_last_press = 0;
 
     int event_already_fired = 0;
+
+    time_t shutdown_start_press_time = 0;
+    int shutdown_press_count = 0;
 
     fd = open("/dev/input/event1", O_RDONLY);
     if (fd < 0) {
@@ -138,6 +145,14 @@ int main(int argc, char **argv)
                 assert(time_at_last_press==0);
                 assert(event_already_fired==0);
                 time_at_last_press = tv.tv_sec;
+
+                /* When out of the time, next pwr press count will be started*/
+                if(tv.tv_sec - shutdown_start_press_time > EDISON_SHUTDOWN_PRESS_TIMEOUT) {
+                    shutdown_start_press_time = 0;
+                    shutdown_press_count = 0;
+                }
+                if(!shutdown_start_press_time)
+                    shutdown_start_press_time = tv.tv_sec;
                 break;
             case 2: /* Auto repeat press */
                 if (time_at_last_press == 0)
@@ -155,6 +170,20 @@ int main(int argc, char **argv)
                 }
                 time_at_last_press = 0;
                 event_already_fired = 0;
+
+                if(tv.tv_sec - shutdown_start_press_time > EDISON_SHUTDOWN_PRESS_TIMEOUT) {
+                    printf("shutdown press time out\n");
+                    shutdown_start_press_time = 0;
+                    shutdown_press_count = 0;
+                } else {
+                    if(++shutdown_press_count == EDISON_SHUTDOWN_PRESS_COUNT) {
+                        printf("Edison PWR button was pressed %d times\n", shutdown_press_count);
+                        fflush(stdout);
+                        shutdown_start_press_time = 0;
+                        shutdown_press_count = 0;
+                        system(argv[3]);
+                    }
+                }
                 break;
             default:
                 printf("Warning: unhandled PWR button event value: %u\n", event.value);
