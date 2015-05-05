@@ -3,6 +3,7 @@ SRC_URI += "file://journald.conf \
             file://timesyncd.conf \
             file://system.conf \
             file://systemd-reboot-service.patch \
+            file://shutdown-journal-before-reboot.patch \
             file://hsu-pm-runtime.service \
             file://usb0.network \
             file://edison-machine-id.service"
