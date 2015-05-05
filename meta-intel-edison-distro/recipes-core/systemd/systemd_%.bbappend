@@ -1,5 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI += "file://systemd-reboot-service.patch \
+            file://shutdown-journal-before-reboot.patch \
             file://usb0.network \
             file://edison-machine-id.service "
 
