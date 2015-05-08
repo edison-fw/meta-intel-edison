@@ -64,7 +64,6 @@ python __anonymous () {
 
 SYSTEMD_SERVICE_${PN} = "connman.service"
 SYSTEMD_SERVICE_${PN}-vpn = "connman-vpn.service"
-SYSTEMD_WIRED_SETUP = "ExecStartPre=-${libdir}/connman/wired-setup"
 SYSTEMD_STOP_SUPPLICANT = "ExecStartPre=-${base_bindir}/systemctl stop wpa_supplicant"
 SYSTEMD_START_SUPPLICANT = "ExecStartPost=-${base_bindir}/systemctl start wpa_supplicant"
 
@@ -72,7 +71,6 @@ inherit autotools-brokensep pkgconfig systemd update-rc.d
 
 do_configure_append () {
 	sed -i "s/After=dbus.socket/After=dbus.socket connman-init.service/" ${S}/src/connman.service
-	sed -i "s#ExecStart=#${SYSTEMD_WIRED_SETUP}\nExecStart=#" ${S}/src/connman.service
 	sed -i "s#ExecStart=#${SYSTEMD_STOP_SUPPLICANT}\nExecStart=#" ${S}/src/connman.service
 	sed -i "s#StandardOutput=#${SYSTEMD_START_SUPPLICANT}\nStandardOutput=#" ${S}/src/connman.service
 }
