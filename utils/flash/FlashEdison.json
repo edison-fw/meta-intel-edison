@@ -90,11 +90,9 @@
     "tool" : "dfuDownloader"
    },
    {
-    "description" : "Waiting for device",
+    "duration" : 6000,
     "restrict" : null,
-    "state" : "dnx_fw",
-    "timeout" : 120000,
-    "tool" : "waitForDevice"
+    "tool" : "sleep"
    },
    {
     "description" : "Waiting for device",
