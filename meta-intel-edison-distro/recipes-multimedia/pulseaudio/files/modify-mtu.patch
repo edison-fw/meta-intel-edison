@@ -1,0 +1,41 @@
+diff --git a/src/modules/bluetooth/backend-native.c b/src/modules/bluetooth/backend-native.c
+index 8d9d95c..0233d9e 100644
+--- a/src/modules/bluetooth/backend-native.c
++++ b/src/modules/bluetooth/backend-native.c
+@@ -144,14 +144,14 @@ static int bluez5_sco_acquire_cb(pa_bluetooth_transport *t, bool optional, size_
+         goto fail_close;
+     }
+
+-    /* The "48" below is hardcoded until we get meaningful MTU values exposed
++    /* The "60" below is hardcoded until we get meaningful MTU values exposed
+      * by the kernel */
+
+     if (imtu)
+-        *imtu = 48;
++        *imtu = 60;
+
+     if (omtu)
+-        *omtu = 48;
++        *omtu = 60;
+
+     return sock;
+
+diff --git a/src/modules/bluetooth/backend-ofono.c b/src/modules/bluetooth/backend-ofono.c
+index 755df9e..04d9331 100644
+--- a/src/modules/bluetooth/backend-ofono.c
++++ b/src/modules/bluetooth/backend-ofono.c
+@@ -168,11 +168,11 @@ static int hf_audio_agent_transport_acquire(pa_bluetooth_transport *t, bool opti
+      * the Bluetooth adapter and (for adapters in the USB bus) the MxPS
+      * value from the Isoc USB endpoint in use by btusb and should be
+      * made available to userspace by the Bluetooth kernel subsystem.
+-     * Meanwhile the empiric value 48 will be used. */
++     * Meanwhile the empiric value 60 will be used. */
+     if (imtu)
+-        *imtu = 48;
++        *imtu = 60;
+     if (omtu)
+-        *omtu = 48;
++        *omtu = 60;
+
+     t->codec = card->codec;
+
