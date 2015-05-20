@@ -164,9 +164,8 @@ do_update_cache () {
 
 main() {
   top_repo_dir=$(dirname $(dirname $(readlink -f $0)))
-  my_build_dir=$top_repo_dir
-  my_dl_dir="\${TOPDIR}/downloads"
-  my_sstate_dir="\${TOPDIR}/sstate-cache"
+  my_dl_dir="$top_repo_dir/bbcache/downloads"
+  my_sstate_dir="$top_repo_dir/bbcache/sstate-cache"
   my_bb_number_thread=4
   my_parallel_make=4
   my_build_name="Custom Edison build by $USER@$HOSTNAME "$(date +"%F %H:%M:%S %Z")
@@ -182,6 +181,8 @@ main() {
     *) arch="unknow" ;;
   esac
   my_sdk_host="$plat$arch"
+
+  my_build_dir="$top_repo_dir/out/$my_sdk_host"
 
   my_mode="external"
   if [ -d "$top_repo_dir/meta-intel-edison-devenv" ]; then
@@ -243,6 +244,10 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     esac
     shift
   done
+
+  if [ ! -d $my_build_dir ]; then
+    mkdir -p $my_build_dir
+  fi
 
   if [ -d "$top_repo_dir/meta-intel-edison-devtools" ]; then
     echo "Found a development tools layer, adding it to Edison list of layers"
