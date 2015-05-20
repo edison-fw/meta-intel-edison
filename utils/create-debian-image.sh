@@ -114,9 +114,6 @@ $CHROOTCMD apt-get -y --force-yes install dbus nano openssh-server sudo bash-com
 $CHROOTCMD apt-get -y --force-yes install bluez hostapd file ethtool network-manager
 $CHROOTCMD apt-get -y --force-yes install python
 
-# Necessary for the resize-rootfs service
-$CHROOTCMD apt-get -y --force-yes install e2fsprogs
-
 # This service is added by the network-manager debian package but we don't want it activated
 # as it causes an UART console corruption at boot
 $CHROOTCMD rm /etc/systemd/system/multi-user.target.wants/ModemManager.service /etc/systemd/system/dbus-org.freedesktop.ModemManager1.service
@@ -179,7 +176,6 @@ $CHROOTCMD dpkg -i /tmp/deb/edison/u-boot-fw-utils_2014.04-1-r0_i386.deb
 
 # First install script, probably not much needed for a debian
 $CHROOTCMD dpkg -i /tmp/deb/core2-32/post-install_1.0-r0_i386.deb
-$CHROOTCMD dpkg -i --force-depends /tmp/deb/core2-32/resize-rootfs_1.0-r0_i386.deb
 
 # Add this service as it's not present on debian, but is required by the first-install script
 cat > $ROOTDIR/lib/systemd/system/sshdgenkeys.service <<EOF
