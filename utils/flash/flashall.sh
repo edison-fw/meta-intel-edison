@@ -14,7 +14,7 @@ then
 	BASE_DIR="$(cygpath -m ${TEMP_DIR})"
 else
 	BASE_DIR="$(dirname $($READLINK -f $0))"
-	ESC_BASE_DIR=${BASE_DIR/' '/'\ '}
+	ESC_BASE_DIR=${BASE_DIR//' '/'\ '}
 fi;
 
 USB_VID=8087
