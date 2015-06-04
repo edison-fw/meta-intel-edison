@@ -171,3 +171,6 @@ IMAGE_INSTALL += "nfs-utils"
 # Add oFono
 IMAGE_INSTALL += "ofono"
 
+# Add battery level detection
+IMAGE_INSTALL += "battery-voltage"
+

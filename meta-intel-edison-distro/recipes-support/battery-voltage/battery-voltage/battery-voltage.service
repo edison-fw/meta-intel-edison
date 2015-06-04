@@ -1,0 +1,10 @@
+[Unit]
+Description=Battery Voltage daemon
+
+[Service]
+ExecStart=/usr/bin/battery-voltage
+Restart=on-failure
+
+[Install]
+WantedBy=basic.target
+

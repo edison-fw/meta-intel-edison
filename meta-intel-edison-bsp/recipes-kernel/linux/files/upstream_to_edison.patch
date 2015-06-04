@@ -1,9 +1,9 @@
-From 689f486a432dbe14c3acb9d3a9b936d5a5b925af Mon Sep 17 00:00:00 2001
-From: zhoushix <shimingx.zhou@intel.com>
-Date: Tue, 21 Apr 2015 21:29:43 +0800
+From 286f467bc51623abbab93760b746a621a46e407c Mon Sep 17 00:00:00 2001
+From: Shimin Zhou <shimingx.zhou@intel.com>
+Date: Tue, 9 Jun 2015 17:25:41 +0800
 Subject: [PATCH] Squashed all commits from upstream to Edison
 
-Change-Id: I1ed3e0e897b4e81c7fd47fe572b18b13becb1245
+Change-Id: Ice6b8fcf99b2da6c0fb5f10f9dd64d607a7e15a9
 ---
  Documentation/kernel-parameters.txt                |    6 +-
  arch/x86/Kconfig                                   |   62 +-
@@ -264,8 +264,8 @@ Change-Id: I1ed3e0e897b4e81c7fd47fe572b18b13becb1245
  drivers/power/battery_id.c                         |   68 +
  drivers/power/bq24261_charger.c                    | 1887 +++++++
  drivers/power/charging_algo_pse.c                  |  180 +
- drivers/power/pmic_ccsm.c                          | 1914 +++++++
- drivers/power/pmic_ccsm.h                          |  356 ++
+ drivers/power/pmic_ccsm.c                          | 2001 +++++++
+ drivers/power/pmic_ccsm.h                          |  366 ++
  drivers/power/power_supply.h                       |   21 +
  drivers/power/power_supply_charger.c               | 1151 ++++
  drivers/power/power_supply_charger.h               |  244 +
@@ -480,7 +480,7 @@ Change-Id: I1ed3e0e897b4e81c7fd47fe572b18b13becb1245
  sound/soc/soc-jack.c                               |   14 +-
  sound/soc/soc-pcm.c                                |   83 +-
  sound/soc/soc-utils.c                              |   34 +-
- 475 files changed, 110411 insertions(+), 8173 deletions(-)
+ 475 files changed, 110508 insertions(+), 8173 deletions(-)
  create mode 100644 arch/x86/configs/i386_edison_defconfig
  create mode 100644 arch/x86/configs/i386_mrfl_defconfig
  create mode 100644 arch/x86/include/asm/bcm_bt_lpm.h
@@ -63370,10 +63370,10 @@ index 0000000..2088594
 +module_init(pse_algo_init);
 diff --git a/drivers/power/pmic_ccsm.c b/drivers/power/pmic_ccsm.c
 new file mode 100644
-index 0000000..e5adebe7
+index 0000000..87ae3da
 --- /dev/null
 +++ b/drivers/power/pmic_ccsm.c
-@@ -0,0 +1,1914 @@
+@@ -0,0 +1,2001 @@
 +/*
 + * pmic_ccsm.c - Intel MID PMIC Charger Driver
 + *
@@ -63613,6 +63613,19 @@ index 0000000..e5adebe7
 +	return 0;
 +}
 +
++static int pmic_write_reg(u16 addr, u8 *val)
++{
++	int ret;
++
++	ret = intel_scu_ipc_iowrite8(addr, val);
++	if (ret) {
++		dev_err(chc.dev,
++			"Error in intel_scu_ipc_ioread8 0x%.4x\n", addr);
++		return -EIO;
++	}
++	return 0;
++}
++
 +static int pmic_read_reg(u16 addr, u8 *val)
 +{
 +	int ret;
@@ -63790,6 +63803,8 @@ index 0000000..e5adebe7
 +	PMIC_REG_DEF(THRMZN3H_ADDR_BC),
 +	PMIC_REG_DEF(THRMZN4L_ADDR_BC),
 +	PMIC_REG_DEF(THRMZN4H_ADDR_BC),
++	PMIC_REG_DEF(VBATRSLTH_ADDR_BC),
++	PMIC_REG_DEF(VBATRSLTL_ADDR_BC),
 +};
 +
 +static struct pmic_regs_def pmic_regs_sc[] = {
@@ -64360,6 +64375,43 @@ index 0000000..e5adebe7
 +	if (chc.invalid_batt)
 +		return -ENODEV;
 +	return pmic_read_adc_val(GPADC_BATTEMP0, temp, &chc);
++}
++
++int pmic_get_battery_voltage(int *vol)
++{
++	long tmp;
++	int ret;
++	u8 val;
++
++	ret = pmic_write_reg(GPADCREQ_ADDR_BC, GPADCREG_VIBATT_REQ);
++	if (ret != 0) {
++		dev_err(chc.dev,
++			"Error writing GPADCREQ_ADDR_BC-register\n");
++		return -EINVAL;
++	}
++	msleep(200);
++
++	ret = pmic_read_reg(VBATRSLTH_ADDR_BC, &val);
++	if (ret != 0) {
++		dev_err(chc.dev,
++			"Error reading VBATRSLTH_ADDR_BC-register\n");
++		return -EINVAL;
++	}
++	tmp = val * 0x100;
++
++	ret = pmic_read_reg(VBATRSLTL_ADDR_BC, &val);
++	if (ret != 0) {
++		dev_err(chc.dev,
++			"Error reading VBATRSLTL_ADDR_BC-register\n");
++		return -EINVAL;
++	}
++
++	tmp += val;
++	tmp *= GPADC_MAX_VOLTAGE;
++	tmp /= GPADC_MAX_RANGE;
++	*vol = tmp;
++
++	return 0;
 +}
 +
 +static int get_charger_type()
@@ -64937,6 +64989,34 @@ index 0000000..e5adebe7
 +	return ret;
 +}
 +
++static ssize_t
++pmic_show_battery_level(struct device *d, struct device_attribute *attr,
++			char *buf)
++{
++	int ret = 0;
++
++	ret = pmic_get_battery_voltage(&chc.battry_voltage);
++	if (ret != 0) {
++		dev_info(chc.dev, "read error!\n");
++		return -1;
++	}
++
++	return sprintf(buf, "0x%x\n", chc.battry_voltage);
++}
++
++static DEVICE_ATTR(battery_level, S_IWUSR | S_IRUGO, pmic_show_battery_level,
++		   NULL);
++
++static struct attribute *pmic_sysfs_entries[] = {
++	&dev_attr_battery_level.attr,
++	NULL
++};
++
++static struct attribute_group pmic_attribute_group = {
++	.name  = NULL,		/* put in device directory */
++	.attrs = pmic_sysfs_entries,
++};
++
 +/**
 + * pmic_charger_probe - PMIC charger probe function
 + * @pdev: pmic platform device structure
@@ -65104,6 +65184,12 @@ index 0000000..e5adebe7
 +	if (unlikely(retval))
 +		goto unmask_irq_failed;
 +
++	retval = sysfs_create_group(&pdev->dev.kobj, &pmic_attribute_group);
++	if (retval) {
++		dev_err(&pdev->dev, "failed to create sysfs device attributes\n");
++		goto unmask_irq_failed;
++	}
++
 +	chc.health = POWER_SUPPLY_HEALTH_GOOD;
 +#ifdef CONFIG_DEBUG_FS
 +	pmic_debugfs_init();
@@ -65152,6 +65238,7 @@ index 0000000..e5adebe7
 +		kfree(chc->sfi_bcprof);
 +		kfree(chc->actual_bcprof);
 +		kfree(chc->runtime_bcprof);
++		sysfs_remove_group(&pdev->dev.kobj, &pmic_attribute_group);
 +	}
 +
 +	return 0;
@@ -65290,10 +65377,10 @@ index 0000000..e5adebe7
 +MODULE_LICENSE("GPL");
 diff --git a/drivers/power/pmic_ccsm.h b/drivers/power/pmic_ccsm.h
 new file mode 100644
-index 0000000..7619389
+index 0000000..77b6b2e
 --- /dev/null
 +++ b/drivers/power/pmic_ccsm.h
-@@ -0,0 +1,356 @@
+@@ -0,0 +1,366 @@
 +/*
 + * pmic_ccsm.h - Intel MID PMIC CCSM Driver header file
 + *
@@ -65364,6 +65451,12 @@ index 0000000..7619389
 +#define THRMZN3L_ADDR_BC		0xD5
 +#define THRMZN4H_ADDR_BC		0xD6
 +#define THRMZN4L_ADDR_BC		0xD7
++
++#define GPADCREQ_ADDR_BC		0xDC
++#define GPADCREG_VIBATT_REQ		(0x01 << 5)
++
++#define VBATRSLTH_ADDR_BC		0xE9
++#define VBATRSLTL_ADDR_BC		0xEA
 +
 +#define THRMZN0H_ADDR_SC		0xD7
 +#define THRMZN0L_ADDR_SC		0xD8
@@ -65584,6 +65677,9 @@ index 0000000..7619389
 +#define PMIC_REG_NAME_LEN		28
 +#define PMIC_REG_DEF(x) { .reg_name = #x, .addr = x }
 +
++#define GPADC_MAX_VOLTAGE		450
++#define GPADC_MAX_RANGE 		1024
++
 +struct interrupt_info {
 +	/* Interrupt register mask*/
 +	u8 int_reg_mask;
@@ -65621,6 +65717,7 @@ index 0000000..7619389
 +	void __iomem *pmic_intr_iomap;
 +	struct device *dev;
 +	int health;
++	int battry_voltage;
 +	u8 pmic_id;
 +	bool is_internal_usb_phy;
 +	enum pmic_charger_cable_type charger_type;
