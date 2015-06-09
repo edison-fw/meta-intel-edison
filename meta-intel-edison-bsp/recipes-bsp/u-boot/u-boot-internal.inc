@@ -1,10 +1,9 @@
 PV = "2014.04-1"
-S = "${WORKDIR}/git"
+S = "${EDISONREPO_TOP_DIR}/u-boot"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-SRC_URI = "git://git.denx.de/u-boot.git;branch=master"
-SRC_URI += "file://upstream_to_edison.patch"
+SRC_URI = "git://github.com/01org/edison-u-boot.git;branch=edison-v2014.04;protocol=https;destsuffix=${EDISONREPO_TOP_DIR}/u-boot"
+SRCREV = "e4177b9f38f41f55eac05c7c1c9275d10653aa1b"
 SRC_URI += "file://${MACHINE}.env"
-SRC_URI += "file://target_env/*.env"
-SRCREV = "dda0dbfc69f3d560c87f5be85f127ed862ea6721"
+SRC_URI += "file://target/*.env"
