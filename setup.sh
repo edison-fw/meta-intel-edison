@@ -112,7 +112,6 @@ function usage()
   echo -e "\t--sstate_dir=$my_sstate_dir\tdefine the directory (absolute path) where bitbake places shared-state files"
   echo -e "\t--bb_number_thread=$my_bb_number_thread\t\tdefine how many tasks bitbake should run in parallel"
   echo -e "\t--parallel_make=$my_parallel_make\t\tdefine how many processes make should run in parallel when running compile tasks"
-  echo -e "\t--mode=$my_mode\t\t\tdefine whether we are working in development mode, i.e. with local version of the yocto recipes. Possible values are 'devenv' for setupping a development environment and 'external' for a regular build."
   echo -e "\t--build_name=$my_build_name\t\tdefines custom build name which can then be retrieved on a running linux in /etc/version"
   echo -e "\t--sdk_host=$my_sdk_host\t\tchoose host machine on which the generated SDK and cross compiler will be run. Must be one of [$all_sdk_hosts]"
   echo -e "\t-l --list_sdk_hosts\t\tlist availables sdk host supported machines"
@@ -184,11 +183,6 @@ main() {
 
   my_build_dir="$top_repo_dir/out/$my_sdk_host"
 
-  my_mode="external"
-  if [ -d "$top_repo_dir/meta-intel-edison-devenv" ]; then
-    my_mode="devenv"
-  fi
-
   while [ "$1" != "" ]; do
     PARAM=`echo $1 | awk -F= '{print $1}'`
     VALUE=`echo $1 | awk -F= '{print $2}'`
@@ -220,9 +214,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
       --parallel_make)
         my_parallel_make=$VALUE
         ;;
-      --mode)
-        my_mode=$VALUE
-        ;;
       --build_name)
         my_build_name=$VALUE
         ;;
@@ -253,24 +244,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     echo "Found a development tools layer, adding it to Edison list of layers"
     echo "Note that none of the recipes provided by this layer is compiled by default."
     do_append_layer $top_repo_dir/meta-intel-edison-devtools
-  fi
-
-  # Validate setup mode, can be devenv or external
-  if [ "$my_mode" = "devenv" ]
-  then
-    echo "We are building in devenv mode, i.e. with dependency on teamforge internal servers"
-    echo "and yocto recipes assuming local sources for some package."
-    echo "You can change this by passing the --mode=external option to this script."
-    do_append_layer $top_repo_dir/meta-intel-edison-devenv
-  else
-    if [ "$my_mode" = "external" ]
-    then
-      echo "We are building in external mode"
-    else
-      echo "Invalid mode, can be external or devenv. Default to external"
-      echo "excepted if the meta-intel-edison-devenv layer directory"
-      echo "is present, in which case a developer environment is assumed."
-    fi
   fi
 
   case $my_sdk_host in
