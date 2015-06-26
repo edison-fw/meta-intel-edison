@@ -174,3 +174,6 @@ IMAGE_INSTALL += "ofono"
 # Add battery level detection
 IMAGE_INSTALL += "battery-voltage"
 
+# Add linux performance monitoring tool
+IMAGE_INSTALL += "perf"
+
