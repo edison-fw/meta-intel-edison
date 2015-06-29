@@ -45,7 +45,11 @@ src-package: pub
 clean:
 	rm -rf out
 
-u-boot linux-externalsrc edison-image meta-toolchain arduino-toolchain virtual/kernel: _check_setup_was_done
+u-boot linux-externalsrc edison-image virtual/kernel: cleansstate
+	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake $@"
+	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
+
+meta-toolchain arduino-toolchain: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake -c cleansstate $@ ; bitbake $@"
 	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 
