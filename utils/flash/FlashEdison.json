@@ -137,7 +137,7 @@
     "documentation" : "",
     "groupsState" :     {
     },
-    "name" : "CDC",
+    "name" : "Linux or Mac OS",
     "parameters" :     {
     },
     "startState" : "dnx_fw"
@@ -149,7 +149,7 @@
     "documentation" : "",
     "groupsState" :     {
     },
-    "name" : "RNDIS",
+    "name" : "Windows",
     "parameters" :     {
     },
     "startState" : "dnx_fw"
