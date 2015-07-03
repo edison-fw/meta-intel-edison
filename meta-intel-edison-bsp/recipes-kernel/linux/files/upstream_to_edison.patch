@@ -1,9 +1,9 @@
-From d34dfcd0e0ee09beb805b5db6d9c7160e511edab Mon Sep 17 00:00:00 2001
+From 124a184ab7f65e97a998b20000b2aa5fe74638da Mon Sep 17 00:00:00 2001
 From: Shimin Zhou <shimingx.zhou@intel.com>
-Date: Fri, 3 Jul 2015 15:44:14 +0800
+Date: Fri, 3 Jul 2015 15:59:54 +0800
 Subject: [PATCH] Squashed all commits from upstream to Edison
 
-Change-Id: Ibe9204d40a3a74bb9cad41c66f536c35b80a0998
+Change-Id: Ie73b29d975f7ac912bca1e324ae9467c6083c860
 ---
  Documentation/kernel-parameters.txt                |    6 +-
  arch/x86/Kconfig                                   |   62 +-
@@ -306,7 +306,7 @@ Change-Id: Ibe9204d40a3a74bb9cad41c66f536c35b80a0998
  drivers/rtc/rtc-mrst.c                             |  296 +-
  drivers/spi/Kconfig                                |    9 +
  drivers/spi/Makefile                               |    1 +
- drivers/spi/intel_mid_ssp_spi.c                    | 1770 ++++++
+ drivers/spi/intel_mid_ssp_spi.c                    | 1787 ++++++
  drivers/spi/spi-dw-mid.c                           |  133 +-
  drivers/spi/spi-dw-pci.c                           |  102 +-
  drivers/spi/spi-dw.c                               |  151 +-
@@ -499,7 +499,7 @@ Change-Id: Ibe9204d40a3a74bb9cad41c66f536c35b80a0998
  sound/soc/soc-jack.c                               |   14 +-
  sound/soc/soc-pcm.c                                |   83 +-
  sound/soc/soc-utils.c                              |   34 +-
- 494 files changed, 112411 insertions(+), 8716 deletions(-)
+ 494 files changed, 112428 insertions(+), 8716 deletions(-)
  create mode 100644 arch/x86/configs/i386_edison_defconfig
  create mode 100644 arch/x86/configs/i386_mrfl_defconfig
  create mode 100644 arch/x86/include/asm/bcm_bt_lpm.h
@@ -73345,10 +73345,10 @@ index 33f9c09..1ab0e90 100644
  obj-$(CONFIG_SPI_MPC52xx_PSC)		+= spi-mpc52xx-psc.o
 diff --git a/drivers/spi/intel_mid_ssp_spi.c b/drivers/spi/intel_mid_ssp_spi.c
 new file mode 100644
-index 0000000..2d2385d
+index 0000000..d9d4e63
 --- /dev/null
 +++ b/drivers/spi/intel_mid_ssp_spi.c
-@@ -0,0 +1,1770 @@
+@@ -0,0 +1,1787 @@
 +/*
 + * intel_mid_ssp_spi.c
 + * This driver supports Bulverde SSP core used on Intel MID platforms
@@ -73520,18 +73520,20 @@ index 0000000..2d2385d
 +	write_SSDR(0, reg);
 +	sspc->tx += n_bytes;
 +
-+	return 1;
++	return n_bytes;
 +}
 +
 +static int null_reader(struct ssp_drv_context *sspc)
 +{
 +	void *reg = sspc->ioaddr;
 +	u8 n_bytes = sspc->n_bytes;
++	size_t pkg_len = sspc->len;
 +
 +	while ((read_SSSR(reg) & SSSR_RNE)
-+		&& (sspc->rx < sspc->rx_end)) {
++		&& (pkg_len > 0)) {
 +		read_SSDR(reg);
 +		sspc->rx += n_bytes;
++		pkg_len -= n_bytes;
 +	}
 +
 +	return sspc->rx == sspc->rx_end;
@@ -73553,10 +73555,13 @@ index 0000000..2d2385d
 +static int u8_reader(struct ssp_drv_context *sspc)
 +{
 +	void *reg = sspc->ioaddr;
++	size_t pkg_len = sspc->len;
++
 +	while ((read_SSSR(reg) & SSSR_RNE)
-+		&& (sspc->rx < sspc->rx_end)) {
++		&& (pkg_len > 0)) {
 +		*(u8 *)(sspc->rx) = read_SSDR(reg);
 +		++sspc->rx;
++		--pkg_len;
 +	}
 +
 +	return sspc->rx == sspc->rx_end;
@@ -73572,15 +73577,19 @@ index 0000000..2d2385d
 +	write_SSDR(*(u16 *)(sspc->tx), reg);
 +	sspc->tx += 2;
 +
-+	return 1;
++	return 2;
 +}
 +
 +static int u16_reader(struct ssp_drv_context *sspc)
 +{
 +	void *reg = sspc->ioaddr;
-+	while ((read_SSSR(reg) & SSSR_RNE) && (sspc->rx < sspc->rx_end)) {
++	size_t pkg_len = sspc->len;
++
++	while ((read_SSSR(reg) & SSSR_RNE)
++		&& (pkg_len > 0)) {
 +		*(u16 *)(sspc->rx) = read_SSDR(reg);
 +		sspc->rx += 2;
++		pkg_len -= 2;
 +	}
 +
 +	return sspc->rx == sspc->rx_end;
@@ -73596,15 +73605,19 @@ index 0000000..2d2385d
 +	write_SSDR(*(u32 *)(sspc->tx), reg);
 +	sspc->tx += 4;
 +
-+	return 1;
++	return 4;
 +}
 +
 +static int u32_reader(struct ssp_drv_context *sspc)
 +{
 +	void *reg = sspc->ioaddr;
-+	while ((read_SSSR(reg) & SSSR_RNE) && (sspc->rx < sspc->rx_end)) {
++	size_t pkg_len = sspc->len;
++
++	while ((read_SSSR(reg) & SSSR_RNE)
++		&& (pkg_len > 0)) {
 +		*(u32 *)(sspc->rx) = read_SSDR(reg);
 +		sspc->rx += 4;
++		pkg_len -= 4;
 +	}
 +
 +	return sspc->rx == sspc->rx_end;
@@ -74148,10 +74161,14 @@ index 0000000..2d2385d
 +{
 +	struct ssp_drv_context *sspc =
 +		container_of(work, struct ssp_drv_context, poll_write);
++	struct device *dev = &sspc->pdev->dev;
++	size_t pkg_len = sspc->len;
++	int ret;
 +
-+	while (sspc->tx < sspc->tx_end)
-+		sspc->write(sspc);
-+
++	while ((pkg_len > 0)) {
++		ret = sspc->write(sspc);
++		pkg_len -= ret;
++	}
 +}
 +
 +/*
