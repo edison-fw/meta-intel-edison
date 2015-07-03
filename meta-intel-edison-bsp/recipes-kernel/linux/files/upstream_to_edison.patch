@@ -1,9 +1,9 @@
-From e09177410977b8d0ba1fb98ae5cc0ddaa483a51c Mon Sep 17 00:00:00 2001
+From d34dfcd0e0ee09beb805b5db6d9c7160e511edab Mon Sep 17 00:00:00 2001
 From: Shimin Zhou <shimingx.zhou@intel.com>
-Date: Fri, 3 Jul 2015 15:19:44 +0800
+Date: Fri, 3 Jul 2015 15:44:14 +0800
 Subject: [PATCH] Squashed all commits from upstream to Edison
 
-Change-Id: I352a393069e4c8776a2f417b2066031e81303105
+Change-Id: Ibe9204d40a3a74bb9cad41c66f536c35b80a0998
 ---
  Documentation/kernel-parameters.txt                |    6 +-
  arch/x86/Kconfig                                   |   62 +-
@@ -183,7 +183,7 @@ Change-Id: I352a393069e4c8776a2f417b2066031e81303105
  drivers/cpufreq/sfi-cpufreq.c                      |  581 ++
  drivers/cpufreq/sfi-cpufreq.h                      |   65 +
  drivers/dma/Makefile                               |    2 +-
- drivers/dma/intel_mid_dma.c                        | 1280 +++--
+ drivers/dma/intel_mid_dma.c                        | 1323 +++--
  drivers/dma/intel_mid_dma_acpi.c                   |  192 +
  drivers/dma/intel_mid_dma_regs.h                   |  168 +-
  drivers/gpio/Kconfig                               |   11 +
@@ -306,7 +306,7 @@ Change-Id: I352a393069e4c8776a2f417b2066031e81303105
  drivers/rtc/rtc-mrst.c                             |  296 +-
  drivers/spi/Kconfig                                |    9 +
  drivers/spi/Makefile                               |    1 +
- drivers/spi/intel_mid_ssp_spi.c                    | 1775 ++++++
+ drivers/spi/intel_mid_ssp_spi.c                    | 1770 ++++++
  drivers/spi/spi-dw-mid.c                           |  133 +-
  drivers/spi/spi-dw-pci.c                           |  102 +-
  drivers/spi/spi-dw.c                               |  151 +-
@@ -499,7 +499,7 @@ Change-Id: I352a393069e4c8776a2f417b2066031e81303105
  sound/soc/soc-jack.c                               |   14 +-
  sound/soc/soc-pcm.c                                |   83 +-
  sound/soc/soc-utils.c                              |   34 +-
- 494 files changed, 112372 insertions(+), 8717 deletions(-)
+ 494 files changed, 112411 insertions(+), 8716 deletions(-)
  create mode 100644 arch/x86/configs/i386_edison_defconfig
  create mode 100644 arch/x86/configs/i386_mrfl_defconfig
  create mode 100644 arch/x86/include/asm/bcm_bt_lpm.h
@@ -17378,7 +17378,7 @@ index 0000000..c8ece32
 +#endif
 diff --git a/arch/x86/platform/intel-mid/device_libs/platform_spidev.c b/arch/x86/platform/intel-mid/device_libs/platform_spidev.c
 new file mode 100644
-index 0000000..c6b3f7b
+index 0000000..40827d6
 --- /dev/null
 +++ b/arch/x86/platform/intel-mid/device_libs/platform_spidev.c
 @@ -0,0 +1,73 @@
@@ -17409,8 +17409,8 @@ index 0000000..c6b3f7b
 +static struct intel_mid_ssp_spi_chip chip = {
 +	.burst_size = DFLT_FIFO_BURST_SIZE,
 +	.timeout = DFLT_TIMEOUT_VAL,
-+	/* SPI DMA is currently not usable on Tangier */
-+	.dma_enabled = false,
++	/* SPI DMA is currently usable on Tangier */
++	.dma_enabled = true,
 +	.cs_control = tng_ssp_spi_cs_control,
 +	.platform_pinmux = tng_ssp_spi_platform_pinmux,
 +};
@@ -32774,10 +32774,10 @@ index a2b0df5..4b82961 100644
  obj-$(CONFIG_INTEL_IOATDMA) += ioat/
  obj-$(CONFIG_INTEL_IOP_ADMA) += iop-adma.o
 diff --git a/drivers/dma/intel_mid_dma.c b/drivers/dma/intel_mid_dma.c
-index a0de82e..91c6f8f 100644
+index a0de82e..9f38076 100644
 --- a/drivers/dma/intel_mid_dma.c
 +++ b/drivers/dma/intel_mid_dma.c
-@@ -28,34 +28,41 @@
+@@ -28,34 +28,47 @@
  #include <linux/pm_runtime.h>
  #include <linux/intel_mid_dma.h>
  #include <linux/module.h>
@@ -32805,8 +32805,6 @@ index a0de82e..91c6f8f 100644
 -	u16 block_size;
 -	u32 pimr_mask;
 -};
--
--#define INFO(_max_chan, _ch_base, _block_size, _pimr_mask) \
 +#define INTEL_CLV_GP_DMAC2_ID		0x08EF
 +#define INTEL_CLV_DMAC1_ID		0x08F0
 +#define INTEL_MRFLD_GP_DMAC2_ID         0x11A2
@@ -32815,8 +32813,15 @@ index a0de82e..91c6f8f 100644
 +#define INTEL_BYT_LPIO2_DMAC_ID		0x0F40
 +#define INTEL_BYT_DMAC0_ID		0x0F28
 +
-+#define LNW_PERIPHRAL_MASK_SIZE		0x20
++#define PCI_DEVICE_ID_INTEL_GP_DMAC2_MOOR      0x1497
 +
++#define MRFL_INSTANCE_SPI3     3
++#define MRFL_INSTANCE_SPI5     5
++#define MRFL_INSTANCE_SPI6     6
++
++#define LNW_PERIPHRAL_MASK_SIZE		0x20
+ 
+-#define INFO(_max_chan, _ch_base, _block_size, _pimr_mask) \
 +#define INFO(_max_chan, _ch_base, _block_size, _pimr_mask,	\
 +		_pimr_base, _dword_trf, _pimr_offset, _pci_id,	\
 +			_pdma_ops)				\
@@ -32833,7 +32838,7 @@ index a0de82e..91c6f8f 100644
  	})
  
  /*****************************************************************************
-@@ -65,32 +72,90 @@ Utility Functions*/
+@@ -65,32 +78,90 @@ Utility Functions*/
   * @status: status mask
   * @base: dma ch base value
   *
@@ -32932,7 +32937,7 @@ index a0de82e..91c6f8f 100644
  {
  	int byte_width = 0, block_ts = 0;
  
-@@ -106,13 +171,46 @@ static int get_block_ts(int len, int tx_width, int block_size)
+@@ -106,13 +177,46 @@ static int get_block_ts(int len, int tx_width, int block_size)
  		byte_width = 4;
  		break;
  	}
@@ -32981,7 +32986,7 @@ index a0de82e..91c6f8f 100644
  /*****************************************************************************
  DMAC1 interrupt Functions*/
  
-@@ -129,9 +227,9 @@ static void dmac1_mask_periphral_intr(struct middma_device *mid)
+@@ -129,9 +233,9 @@ static void dmac1_mask_periphral_intr(struct middma_device *mid)
  	u32 pimr;
  
  	if (mid->pimr_mask) {
@@ -32993,7 +32998,7 @@ index a0de82e..91c6f8f 100644
  	}
  	return;
  }
-@@ -149,14 +247,37 @@ static void dmac1_unmask_periphral_intr(struct intel_mid_dma_chan *midc)
+@@ -149,14 +253,37 @@ static void dmac1_unmask_periphral_intr(struct intel_mid_dma_chan *midc)
  	u32 pimr;
  	struct middma_device *mid = to_middma_device(midc->chan.device);
  
@@ -33034,7 +33039,7 @@ index a0de82e..91c6f8f 100644
  /**
   * enable_dma_interrupt -	enable the periphral interrupt
   * @midc: dma channel for which enable interrupt is required
-@@ -167,10 +288,13 @@ static void dmac1_unmask_periphral_intr(struct intel_mid_dma_chan *midc)
+@@ -167,10 +294,13 @@ static void dmac1_unmask_periphral_intr(struct intel_mid_dma_chan *midc)
   */
  static void enable_dma_interrupt(struct intel_mid_dma_chan *midc)
  {
@@ -33048,7 +33053,7 @@ index a0de82e..91c6f8f 100644
  	iowrite32(UNMASK_INTR_REG(midc->ch_id), midc->dma_base + MASK_ERR);
  	return;
  }
-@@ -185,10 +309,39 @@ static void enable_dma_interrupt(struct intel_mid_dma_chan *midc)
+@@ -185,10 +315,39 @@ static void enable_dma_interrupt(struct intel_mid_dma_chan *midc)
   */
  static void disable_dma_interrupt(struct intel_mid_dma_chan *midc)
  {
@@ -33088,7 +33093,7 @@ index a0de82e..91c6f8f 100644
  	return;
  }
  
-@@ -243,7 +396,7 @@ static void midc_desc_put(struct intel_mid_dma_chan *midc,
+@@ -243,7 +402,7 @@ static void midc_desc_put(struct intel_mid_dma_chan *midc,
   * Load a transaction into the engine. This must be called with midc->lock
   * held and bh disabled.
   */
@@ -33097,7 +33102,7 @@ index a0de82e..91c6f8f 100644
  			struct intel_mid_dma_desc *first)
  {
  	struct middma_device *mid = to_middma_device(midc->chan.device);
-@@ -253,7 +406,7 @@ static void midc_dostart(struct intel_mid_dma_chan *midc,
+@@ -253,7 +412,7 @@ static void midc_dostart(struct intel_mid_dma_chan *midc,
  		/*error*/
  		pr_err("ERR_MDMA: channel is busy in start\n");
  		/* The tasklet will hopefully advance the queue... */
@@ -33106,7 +33111,7 @@ index a0de82e..91c6f8f 100644
  	}
  	midc->busy = true;
  	/*write registers and en*/
-@@ -264,12 +417,13 @@ static void midc_dostart(struct intel_mid_dma_chan *midc,
+@@ -264,12 +423,13 @@ static void midc_dostart(struct intel_mid_dma_chan *midc,
  	iowrite32(first->cfg_lo, midc->ch_regs + CFG_LOW);
  	iowrite32(first->ctl_lo, midc->ch_regs + CTL_LOW);
  	iowrite32(first->ctl_hi, midc->ch_regs + CTL_HIGH);
@@ -33122,7 +33127,7 @@ index a0de82e..91c6f8f 100644
  }
  
  /**
-@@ -303,46 +457,65 @@ static void midc_descriptor_complete(struct intel_mid_dma_chan *midc,
+@@ -303,46 +463,65 @@ static void midc_descriptor_complete(struct intel_mid_dma_chan *midc,
  		else
  			desc->current_lli = 0;
  	}
@@ -33211,7 +33216,7 @@ index a0de82e..91c6f8f 100644
  /**
   * midc_lli_fill_sg -		Helper function to convert
   *				SG list to Linked List Items.
-@@ -357,7 +530,8 @@ static void midc_scan_descriptors(struct middma_device *mid,
+@@ -357,7 +536,8 @@ static void midc_scan_descriptors(struct middma_device *mid,
   */
  static int midc_lli_fill_sg(struct intel_mid_dma_chan *midc,
  				struct intel_mid_dma_desc *desc,
@@ -33221,7 +33226,7 @@ index a0de82e..91c6f8f 100644
  				unsigned int sglen,
  				unsigned int flags)
  {
-@@ -366,18 +540,18 @@ static int midc_lli_fill_sg(struct intel_mid_dma_chan *midc,
+@@ -366,18 +546,18 @@ static int midc_lli_fill_sg(struct intel_mid_dma_chan *midc,
  	dma_addr_t lli_next, sg_phy_addr;
  	struct intel_mid_dma_lli *lli_bloc_desc;
  	union intel_mid_dma_ctl_lo ctl_lo;
@@ -33244,7 +33249,7 @@ index a0de82e..91c6f8f 100644
  		/*Populate CTL_LOW and LLI values*/
  		if (i != sglen - 1) {
  			lli_next = lli_next +
-@@ -389,29 +563,37 @@ static int midc_lli_fill_sg(struct intel_mid_dma_chan *midc,
+@@ -389,29 +569,37 @@ static int midc_lli_fill_sg(struct intel_mid_dma_chan *midc,
  				lli_next = desc->lli_phys;
  			} else {
  				lli_next = 0;
@@ -33289,7 +33294,7 @@ index a0de82e..91c6f8f 100644
  	}
  	/*Copy very first LLI values to descriptor*/
  	desc->ctl_lo = desc->lli->ctl_lo;
-@@ -421,13 +603,14 @@ static int midc_lli_fill_sg(struct intel_mid_dma_chan *midc,
+@@ -421,13 +609,14 @@ static int midc_lli_fill_sg(struct intel_mid_dma_chan *midc,
  
  	return 0;
  }
@@ -33305,7 +33310,7 @@ index a0de82e..91c6f8f 100644
   */
  static dma_cookie_t intel_mid_dma_tx_submit(struct dma_async_tx_descriptor *tx)
  {
-@@ -436,6 +619,14 @@ static dma_cookie_t intel_mid_dma_tx_submit(struct dma_async_tx_descriptor *tx)
+@@ -436,6 +625,14 @@ static dma_cookie_t intel_mid_dma_tx_submit(struct dma_async_tx_descriptor *tx)
  	dma_cookie_t		cookie;
  
  	spin_lock_bh(&midc->lock);
@@ -33320,7 +33325,7 @@ index a0de82e..91c6f8f 100644
  	cookie = dma_cookie_assign(tx);
  
  	if (list_empty(&midc->active_list))
-@@ -461,11 +652,74 @@ static void intel_mid_dma_issue_pending(struct dma_chan *chan)
+@@ -461,11 +658,74 @@ static void intel_mid_dma_issue_pending(struct dma_chan *chan)
  
  	spin_lock_bh(&midc->lock);
  	if (!list_empty(&midc->queue))
@@ -33396,7 +33401,7 @@ index a0de82e..91c6f8f 100644
   * intel_mid_dma_tx_status -	Return status of txn
   * @chan: chan for where status needs to be checked
   * @cookie: cookie for txn
-@@ -483,7 +737,7 @@ static enum dma_status intel_mid_dma_tx_status(struct dma_chan *chan,
+@@ -483,7 +743,7 @@ static enum dma_status intel_mid_dma_tx_status(struct dma_chan *chan,
  	ret = dma_cookie_status(chan, cookie, txstate);
  	if (ret != DMA_SUCCESS) {
  		spin_lock_bh(&midc->lock);
@@ -33405,7 +33410,7 @@ index a0de82e..91c6f8f 100644
  		spin_unlock_bh(&midc->lock);
  
  		ret = dma_cookie_status(chan, cookie, txstate);
-@@ -509,6 +763,7 @@ static int dma_slave_control(struct dma_chan *chan, unsigned long arg)
+@@ -509,6 +769,7 @@ static int dma_slave_control(struct dma_chan *chan, unsigned long arg)
  	midc->mid_slave = mid_slave;
  	return 0;
  }
@@ -33413,7 +33418,7 @@ index a0de82e..91c6f8f 100644
  /**
   * intel_mid_dma_device_control -	DMA device control
   * @chan: chan for DMA control
-@@ -523,8 +778,8 @@ static int intel_mid_dma_device_control(struct dma_chan *chan,
+@@ -523,8 +784,8 @@ static int intel_mid_dma_device_control(struct dma_chan *chan,
  	struct intel_mid_dma_chan	*midc = to_intel_mid_dma_chan(chan);
  	struct middma_device	*mid = to_middma_device(chan->device);
  	struct intel_mid_dma_desc	*desc, *_desc;
@@ -33423,7 +33428,7 @@ index a0de82e..91c6f8f 100644
  	if (cmd == DMA_SLAVE_CONFIG)
  		return dma_slave_control(chan, arg);
  
-@@ -536,30 +791,25 @@ static int intel_mid_dma_device_control(struct dma_chan *chan,
+@@ -536,30 +797,25 @@ static int intel_mid_dma_device_control(struct dma_chan *chan,
  		spin_unlock_bh(&midc->lock);
  		return 0;
  	}
@@ -33465,7 +33470,7 @@ index a0de82e..91c6f8f 100644
  /**
   * intel_mid_dma_prep_memcpy -	Prep memcpy txn
   * @chan: chan for DMA transfer
-@@ -580,10 +830,12 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
+@@ -580,10 +836,12 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
  	struct intel_mid_dma_desc *desc = NULL;
  	struct intel_mid_dma_slave *mids;
  	union intel_mid_dma_ctl_lo ctl_lo;
@@ -33479,7 +33484,7 @@ index a0de82e..91c6f8f 100644
  
  	pr_debug("MDMA: Prep for memcpy\n");
  	BUG_ON(!chan);
-@@ -596,6 +848,11 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
+@@ -596,6 +854,11 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
  	mids = midc->mid_slave;
  	BUG_ON(!mids);
  
@@ -33491,7 +33496,7 @@ index a0de82e..91c6f8f 100644
  	pr_debug("MDMA:called for DMA %x CH %d Length %zu\n",
  				midc->dma->pci_id, midc->ch_id, len);
  	pr_debug("MDMA:Cfg passed Mode %x, Dirn %x, HS %x, Width %x\n",
-@@ -634,36 +891,41 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
+@@ -634,36 +897,41 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
  			}
  		} else {
  			cfg_hi.cfgx.protctl = 0x1; /*default value*/
@@ -33551,7 +33556,7 @@ index a0de82e..91c6f8f 100644
  	if (mids->cfg_mode == LNW_DMA_MEM_TO_MEM) {
  		ctl_lo.ctlx.tt_fc = 0;
  		ctl_lo.ctlx.sinc = 0;
-@@ -681,7 +943,7 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
+@@ -681,7 +949,7 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
  	}
  
  	pr_debug("MDMA:Calc CTL LO %x, CTL HI %x, CFG LO %x, CFG HI %x\n",
@@ -33560,7 +33565,7 @@ index a0de82e..91c6f8f 100644
  
  	enable_dma_interrupt(midc);
  
-@@ -694,7 +956,7 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
+@@ -694,7 +962,7 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_memcpy(
  	desc->cfg_hi = cfg_hi.cfg_hi;
  	desc->cfg_lo = cfg_lo.cfg_lo;
  	desc->ctl_lo = ctl_lo.ctl_lo;
@@ -33569,7 +33574,7 @@ index a0de82e..91c6f8f 100644
  	desc->width = width;
  	desc->dirn = mids->dma_slave.direction;
  	desc->lli_phys = 0;
-@@ -707,59 +969,193 @@ err_desc_get:
+@@ -707,59 +975,232 @@ err_desc_get:
  	midc_desc_put(midc, desc);
  	return NULL;
  }
@@ -33632,29 +33637,68 @@ index a0de82e..91c6f8f 100644
 +	cfg_lo.cfgx_v2.dst_burst_align = 1;
 +	cfg_lo.cfgx_v2.src_burst_align = 1;
 +
-+	/*calculate CFG_HI*/
-+	if (mids->cfg_mode == LNW_DMA_MEM_TO_MEM) {
-+		/*SW HS only*/
-+		cfg_hi.cfg_hi = 0;
-+	} else {
-+		cfg_hi.cfg_hi = 0;
++	/* For  mem to mem transfer, it's SW HS only*/
++	cfg_hi.cfg_hi = 0;
++	/*calculate CFG_HI for mem to/from dev scenario */
++	if (mids->cfg_mode != LNW_DMA_MEM_TO_MEM) {
 +		if (midc->dma->pimr_mask) {
++			/* device_instace => SSP0 = 0, SSP1 = 1, SSP2 = 2*/
++			if (mids->device_instance > 2) {
++				pr_err("Invalid SSP identifier\n");
++				return NULL;
++			}
++			cfg_hi.cfgx_v2.src_per = 0;
++			cfg_hi.cfgx_v2.dst_per = 0;
++			if (mids->dma_slave.direction == DMA_MEM_TO_DEV)
++				/* SSP DMA in Tx direction */
++				cfg_hi.cfgx_v2.dst_per = (2 * mids->device_instance) + 1;
++			else if (mids->dma_slave.direction == DMA_DEV_TO_MEM)
++				/* SSP DMA in Rx direction */
++				cfg_hi.cfgx_v2.src_per = (2 * mids->device_instance);
++			else
++				return NULL;
++
++		} else if ((midc->dma->pci_id == INTEL_MRFLD_GP_DMAC2_ID) ||
++				(midc->dma->pci_id == PCI_DEVICE_ID_INTEL_GP_DMAC2_MOOR)) {
 +			if (mids->dma_slave.direction == DMA_MEM_TO_DEV) {
 +				cfg_hi.cfgx_v2.src_per = 0;
-+				if (mids->device_instance == 0)
-+					cfg_hi.cfgx_v2.dst_per = 1;
-+				if (mids->device_instance == 1)
-+					cfg_hi.cfgx_v2.dst_per = 3;
-+			} else if (mids->dma_slave.direction == DMA_DEV_TO_MEM) {
-+				if (mids->device_instance == 0)
-+					cfg_hi.cfgx_v2.src_per = 0;
-+				if (mids->device_instance == 1)
-+					cfg_hi.cfgx_v2.src_per = 2;
++
++				if (mids->device_instance ==
++					MRFL_INSTANCE_SPI3)
++					cfg_hi.cfgx_v2.dst_per = 0xF;
++				else if (mids->device_instance ==
++					MRFL_INSTANCE_SPI5)
++					cfg_hi.cfgx_v2.dst_per = 0xD;
++				else if (mids->device_instance ==
++					MRFL_INSTANCE_SPI6)
++					cfg_hi.cfgx_v2.dst_per = 0xB;
++				else
++					cfg_hi.cfgx_v2.dst_per = midc->ch_id
++						- midc->dma->chan_base;
++			} else if (mids->dma_slave.direction
++				== DMA_DEV_TO_MEM) {
++				if (mids->device_instance ==
++					MRFL_INSTANCE_SPI3)
++					cfg_hi.cfgx_v2.src_per = 0xE;
++				else if (mids->device_instance ==
++					MRFL_INSTANCE_SPI5)
++					cfg_hi.cfgx_v2.src_per = 0xC;
++				else if (mids->device_instance ==
++					MRFL_INSTANCE_SPI6)
++					cfg_hi.cfgx_v2.src_per = 0xA;
++				else
++					cfg_hi.cfgx_v2.src_per = midc->ch_id
++						- midc->dma->chan_base;
++
 +				cfg_hi.cfgx_v2.dst_per = 0;
++			} else {
++				cfg_hi.cfgx_v2.dst_per =
++					cfg_hi.cfgx_v2.src_per = 0;
 +			}
 +		} else {
-+			cfg_hi.cfgx_v2.src_per = cfg_hi.cfgx_v2.dst_per =
-+					midc->ch_id - midc->dma->chan_base;
++			cfg_hi.cfgx_v2.src_per =
++				cfg_hi.cfgx_v2.dst_per =
++				midc->ch_id - midc->dma->chan_base;
 +		}
 +	}
 +	/*calculate CTL_HI*/
@@ -33794,7 +33838,7 @@ index a0de82e..91c6f8f 100644
  	if (NULL == txd) {
  		pr_err("MDMA: Prep memcpy failed\n");
  		return NULL;
-@@ -768,35 +1164,113 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_slave_sg(
+@@ -768,35 +1209,113 @@ static struct dma_async_tx_descriptor *intel_mid_dma_prep_slave_sg(
  	desc = to_intel_mid_dma_desc(txd);
  	desc->dirn = direction;
  	ctl_lo.ctl_lo = desc->ctl_lo;
@@ -33920,7 +33964,7 @@ index a0de82e..91c6f8f 100644
  }
  
  /**
-@@ -811,31 +1285,52 @@ static void intel_mid_dma_free_chan_resources(struct dma_chan *chan)
+@@ -811,31 +1330,52 @@ static void intel_mid_dma_free_chan_resources(struct dma_chan *chan)
  	struct middma_device	*mid = to_middma_device(chan->device);
  	struct intel_mid_dma_desc	*desc, *_desc;
  
@@ -33982,7 +34026,7 @@ index a0de82e..91c6f8f 100644
  }
  
  /**
-@@ -853,20 +1348,19 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
+@@ -853,20 +1393,19 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
  	dma_addr_t		phys;
  	int	i = 0;
  
@@ -34007,7 +34051,7 @@ index a0de82e..91c6f8f 100644
  		return -EIO;
  	}
  	dma_cookie_init(chan);
-@@ -874,10 +1368,10 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
+@@ -874,10 +1413,10 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
  	spin_lock_bh(&midc->lock);
  	while (midc->descs_allocated < DESCS_PER_CHANNEL) {
  		spin_unlock_bh(&midc->lock);
@@ -34020,7 +34064,7 @@ index a0de82e..91c6f8f 100644
  			return -ENOMEM;
  			/*check*/
  		}
-@@ -889,9 +1383,10 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
+@@ -889,9 +1428,10 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
  		i = ++midc->descs_allocated;
  		list_add_tail(&desc->desc_node, &midc->free_list);
  	}
@@ -34032,7 +34076,7 @@ index a0de82e..91c6f8f 100644
  	pr_debug("MID_DMA: Desc alloc done ret: %d desc\n", i);
  	return i;
  }
-@@ -906,7 +1401,8 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
+@@ -906,7 +1446,8 @@ static int intel_mid_dma_alloc_chan_resources(struct dma_chan *chan)
  static void midc_handle_error(struct middma_device *mid,
  		struct intel_mid_dma_chan *midc)
  {
@@ -34042,7 +34086,7 @@ index a0de82e..91c6f8f 100644
  }
  
  /**
-@@ -922,24 +1418,25 @@ static void dma_tasklet(unsigned long data)
+@@ -922,24 +1463,25 @@ static void dma_tasklet(unsigned long data)
  	struct intel_mid_dma_chan *midc = NULL;
  	u32 status, raw_tfr, raw_block;
  	int i;
@@ -34074,7 +34118,7 @@ index a0de82e..91c6f8f 100644
  		midc = &mid->ch[i];
  		if (midc == NULL) {
  			pr_err("ERR_MDMA:Null param midc\n");
-@@ -947,38 +1444,69 @@ static void dma_tasklet(unsigned long data)
+@@ -947,38 +1489,69 @@ static void dma_tasklet(unsigned long data)
  		}
  		pr_debug("MDMA:Tx complete interrupt %x, Ch No %d Index %d\n",
  				status, midc->ch_id, i);
@@ -34120,7 +34164,7 @@ index a0de82e..91c6f8f 100644
 +		if (midc == NULL) {
 +			pr_err("ERR_MDMA:Null param midc\n");
 +			return;
-+		}
+ 		}
 +		pr_debug("MDMA:Tx complete interrupt raw block  %x, Ch No %d Index %d\n",
 +				status, midc->ch_id, i);
 +		spin_lock_bh(&midc->lock);
@@ -34131,7 +34175,7 @@ index a0de82e..91c6f8f 100644
 +		if (midc->block_intr_status) {
 +			midc_collect_descriptors(mid, midc);
 +			midc_start_descriptors(mid, midc);
- 		}
++		}
 +
 +		iowrite32(UNMASK_INTR_REG(midc->ch_id),
 +					mid->dma_base + MASK_BLOCK);
@@ -34158,7 +34202,7 @@ index a0de82e..91c6f8f 100644
  			return;
  		}
  		pr_debug("MDMA:Tx complete interrupt %x, Ch No %d Index %d\n",
-@@ -1018,33 +1546,59 @@ static void dma_tasklet2(unsigned long data)
+@@ -1018,33 +1591,59 @@ static void dma_tasklet2(unsigned long data)
  static irqreturn_t intel_mid_dma_interrupt(int irq, void *data)
  {
  	struct middma_device *mid = data;
@@ -34233,7 +34277,7 @@ index a0de82e..91c6f8f 100644
  
  	return IRQ_HANDLED;
  }
-@@ -1059,6 +1613,41 @@ static irqreturn_t intel_mid_dma_interrupt2(int irq, void *data)
+@@ -1059,6 +1658,41 @@ static irqreturn_t intel_mid_dma_interrupt2(int irq, void *data)
  	return intel_mid_dma_interrupt(irq, data);
  }
  
@@ -34275,7 +34319,7 @@ index a0de82e..91c6f8f 100644
  /**
   * mid_setup_dma -	Setup the DMA controller
   * @pdev: Controller PCI device structure
-@@ -1066,33 +1655,33 @@ static irqreturn_t intel_mid_dma_interrupt2(int irq, void *data)
+@@ -1066,33 +1700,33 @@ static irqreturn_t intel_mid_dma_interrupt2(int irq, void *data)
   * Initialize the DMA controller, channels, registers with DMA engine,
   * ISR. Initialize DMA controller channels.
   */
@@ -34318,7 +34362,7 @@ index a0de82e..91c6f8f 100644
  
  	pr_debug("MDMA:Adding %d channel for this controller\n", dma->max_chan);
  	/*init CH structures*/
-@@ -1137,18 +1726,17 @@ static int mid_setup_dma(struct pci_dev *pdev)
+@@ -1137,18 +1771,17 @@ static int mid_setup_dma(struct pci_dev *pdev)
  	dma_cap_set(DMA_MEMCPY, dma->common.cap_mask);
  	dma_cap_set(DMA_SLAVE, dma->common.cap_mask);
  	dma_cap_set(DMA_PRIVATE, dma->common.cap_mask);
@@ -34346,7 +34390,7 @@ index a0de82e..91c6f8f 100644
  
  	/*enable dma cntrl*/
  	iowrite32(REG_BIT0, dma->dma_base + DMA_CFG);
-@@ -1156,23 +1744,23 @@ static int mid_setup_dma(struct pci_dev *pdev)
+@@ -1156,23 +1789,23 @@ static int mid_setup_dma(struct pci_dev *pdev)
  	/*register irq */
  	if (dma->pimr_mask) {
  		pr_debug("MDMA:Requesting irq shared for DMAC1\n");
@@ -34375,7 +34419,7 @@ index a0de82e..91c6f8f 100644
  	}
  	if (dma->pimr_mask) {
  		pr_debug("setting up tasklet1 for DMAC1\n");
-@@ -1181,15 +1769,15 @@ static int mid_setup_dma(struct pci_dev *pdev)
+@@ -1181,15 +1814,15 @@ static int mid_setup_dma(struct pci_dev *pdev)
  		pr_debug("setting up tasklet2 for DMAC2\n");
  		tasklet_init(&dma->tasklet, dma_tasklet2, (unsigned long)dma);
  	}
@@ -34398,7 +34442,7 @@ index a0de82e..91c6f8f 100644
  err_dma_pool:
  	pr_err("ERR_MDMA:setup_dma failed: %d\n", err);
  	return err;
-@@ -1198,25 +1786,42 @@ err_dma_pool:
+@@ -1198,25 +1831,42 @@ err_dma_pool:
  
  /**
   * middma_shutdown -	Shutdown the DMA controller
@@ -34450,7 +34494,7 @@ index a0de82e..91c6f8f 100644
  /**
   * intel_mid_dma_probe -	PCI Probe
   * @pdev: Controller PCI device structure
-@@ -1255,42 +1860,41 @@ static int intel_mid_dma_probe(struct pci_dev *pdev,
+@@ -1255,42 +1905,41 @@ static int intel_mid_dma_probe(struct pci_dev *pdev,
  	if (err)
  		goto err_set_dma_mask;
  
@@ -34509,7 +34553,7 @@ index a0de82e..91c6f8f 100644
  err_kzalloc:
  err_set_dma_mask:
  	pci_release_regions(pdev);
-@@ -1310,31 +1914,26 @@ err_enable_device:
+@@ -1310,31 +1959,26 @@ err_enable_device:
   */
  static void intel_mid_dma_remove(struct pci_dev *pdev)
  {
@@ -34546,7 +34590,7 @@ index a0de82e..91c6f8f 100644
  	pr_debug("MDMA: dma_suspend called\n");
  
  	for (i = 0; i < device->max_chan; i++) {
-@@ -1343,93 +1942,106 @@ static int dma_suspend(struct device *dev)
+@@ -1343,93 +1987,106 @@ static int dma_suspend(struct device *dev)
  	}
  	dmac1_mask_periphral_intr(device);
  	device->state = SUSPENDED;
@@ -34693,7 +34737,7 @@ index a0de82e..91c6f8f 100644
  	.id_table	=	intel_mid_dma_ids,
  	.probe		=	intel_mid_dma_probe,
  	.remove		=	intel_mid_dma_remove,
-@@ -1440,17 +2052,55 @@ static struct pci_driver intel_mid_dma_pci_driver = {
+@@ -1440,17 +2097,55 @@ static struct pci_driver intel_mid_dma_pci_driver = {
  #endif
  };
  
@@ -34751,7 +34795,7 @@ index a0de82e..91c6f8f 100644
  }
  module_exit(intel_mid_dma_exit);
  
-@@ -1458,3 +2108,5 @@ MODULE_AUTHOR("Vinod Koul <vinod.koul@intel.com>");
+@@ -1458,3 +2153,5 @@ MODULE_AUTHOR("Vinod Koul <vinod.koul@intel.com>");
  MODULE_DESCRIPTION("Intel (R) MID DMAC Driver");
  MODULE_LICENSE("GPL v2");
  MODULE_VERSION(INTEL_MID_DMA_DRIVER_VERSION);
@@ -73301,10 +73345,10 @@ index 33f9c09..1ab0e90 100644
  obj-$(CONFIG_SPI_MPC52xx_PSC)		+= spi-mpc52xx-psc.o
 diff --git a/drivers/spi/intel_mid_ssp_spi.c b/drivers/spi/intel_mid_ssp_spi.c
 new file mode 100644
-index 0000000..b68b1eb
+index 0000000..2d2385d
 --- /dev/null
 +++ b/drivers/spi/intel_mid_ssp_spi.c
-@@ -0,0 +1,1775 @@
+@@ -0,0 +1,1770 @@
 +/*
 + * intel_mid_ssp_spi.c
 + * This driver supports Bulverde SSP core used on Intel MID platforms
@@ -74348,16 +74392,7 @@ index 0000000..b68b1eb
 +			sspc->read = u32_reader;
 +			sspc->write = u32_writer;
 +		}
-+		sspc->tx  = (void *)transfer->tx_buf;
-+		sspc->rx  = (void *)transfer->rx_buf;
-+		sspc->len = transfer->len;
-+		sspc->cs_change = transfer->cs_change;
 +
-+		if (likely(dma_enabled)) {
-+			sspc->dma_mapped = map_dma_buffers(sspc);
-+			if (unlikely(!sspc->dma_mapped))
-+				return 0;
-+		}
 +		sspc->tx  = (void *)transfer->tx_buf;
 +		sspc->rx  = (void *)transfer->rx_buf;
 +		sspc->len = transfer->len;
@@ -74368,10 +74403,11 @@ index 0000000..b68b1eb
 +			sspc->dma_mapped = map_dma_buffers(sspc);
 +			if (unlikely(!sspc->dma_mapped))
 +				return 0;
-+		} else {
-+			sspc->write = sspc->tx ? sspc->write : null_writer;
-+			sspc->read  = sspc->rx ? sspc->read : null_reader;
 +		}
++
++		sspc->write = sspc->tx ? sspc->write : null_writer;
++		sspc->read  = sspc->rx ? sspc->read : null_reader;
++
 +		sspc->tx_end = sspc->tx + transfer->len;
 +		sspc->rx_end = sspc->rx + transfer->len;
 +
@@ -74620,10 +74656,11 @@ index 0000000..b68b1eb
 +		sspc->rx_fifo_threshold = 4;
 +	else
 +		sspc->rx_fifo_threshold = 1;
-+	/*FIXME:this is workaround.
-+	On MRST, in DMA mode, it is very strang that RX fifo can't reach
-+	burst size.*/
-+	if (sspc->quirks & QUIRKS_PLATFORM_MRFL && chip->dma_enabled)
++	/* FIXME: This is a workaround. */
++	/* When speed is lower than 800KHz, the transfer data will be */
++	/* incorrect on MRFL by DMA method*/
++	if (sspc->quirks & QUIRKS_PLATFORM_MRFL && chip->dma_enabled
++			&& (spi->max_speed_hz < 800000))
 +		sspc->rx_fifo_threshold = 1;
 +	tx_fifo_threshold = SPI_FIFO_SIZE - sspc->rx_fifo_threshold;
 +	chip->cr1 |= (SSCR1_RxTresh(sspc->rx_fifo_threshold) &
@@ -74671,7 +74708,9 @@ index 0000000..b68b1eb
 +
 +	if (chip->dma_enabled) {
 +		sspc->n_bytes = chip->n_bytes;
++		spin_unlock_irqrestore(&sspc->lock, flags);
 +		intel_mid_ssp_spi_dma_init(sspc);
++		spin_lock_irqsave(&sspc->lock, flags);
 +		sspc->cr1_sig = SSCR1_TSRE | SSCR1_RSRE;
 +		sspc->mask_sr = SSSR_ROR | SSSR_TUR;
 +		if (sspc->quirks & QUIRKS_DMA_USE_NO_TRAIL)
