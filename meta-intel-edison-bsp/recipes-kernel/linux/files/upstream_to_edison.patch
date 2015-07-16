@@ -1,9 +1,9 @@
-From 124a184ab7f65e97a998b20000b2aa5fe74638da Mon Sep 17 00:00:00 2001
+From c8fa13449960b1c72d386171a2eec6d5d3597b80 Mon Sep 17 00:00:00 2001
 From: Shimin Zhou <shimingx.zhou@intel.com>
-Date: Fri, 3 Jul 2015 15:59:54 +0800
+Date: Thu, 16 Jul 2015 14:31:09 +0800
 Subject: [PATCH] Squashed all commits from upstream to Edison
 
-Change-Id: Ie73b29d975f7ac912bca1e324ae9467c6083c860
+Change-Id: Ib1fa7a1a1ac7af9c8efdf6d4269b77d71d356d92
 ---
  Documentation/kernel-parameters.txt                |    6 +-
  arch/x86/Kconfig                                   |   62 +-
@@ -87612,7 +87612,7 @@ index 0000000..adae9ef
 +MODULE_VERSION(VERSION);
 diff --git a/drivers/usb/dwc3/dwc3-intel-mrfl.c b/drivers/usb/dwc3/dwc3-intel-mrfl.c
 new file mode 100644
-index 0000000..981c841
+index 0000000..ecd9b49
 --- /dev/null
 +++ b/drivers/usb/dwc3/dwc3-intel-mrfl.c
 @@ -0,0 +1,992 @@
@@ -88126,7 +88126,7 @@ index 0000000..981c841
 +int dwc3_intel_enable_vbus(struct dwc_otg2 *otg, int enable)
 +{
 +	atomic_notifier_call_chain(&otg->usb2_phy.notifier,
-+			USB_EVENT_DRIVE_VBUS, &enable);
++			USB_EVENT_VBUS, &enable);
 +
 +	return 0;
 +}
