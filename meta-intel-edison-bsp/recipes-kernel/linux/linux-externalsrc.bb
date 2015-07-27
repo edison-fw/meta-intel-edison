@@ -8,7 +8,7 @@ require recipes-kernel/linux/linux-yocto.inc
 #inherit externalsrc
 
 SRC_URI = "git://github.com/01org/edison-linux.git;protocol=https;branch=edison-3.10.17"
-SRCREV = "43befd916a21fcd96acf222e1da766012e085486"
+SRCREV = "65fe76300c984b17d06429f0dd0c8cf2a638fb21"
 
 # Don't use Yocto kernel configuration system, we instead simply override do_configure
 # to copy our defconfig in the build directory just before building.
