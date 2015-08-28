@@ -44,7 +44,7 @@ crashlog_path=/home/root
 wakesrc=$(journalctl -k -b -0 | grep WAKESRC | awk -F'[][]' '{print $4}')
 
 # any watchdog boot implies a crash
-tmp=$(echo -n "${wakesrc}" | grep watchdog)
+tmp=$(echo -n "${wakesrc}" | grep -E "watchdog|HWWDT")
 if [ -n "${tmp}" ]; then
     # get the last sequence number (ie for crashlog_00001, get the 1)
     last_sequence_number=$(ls ${crashlog_path}/crashlog_* | tail -1 | awk -F_ '{print $NF}' | awk -F. '{print $NR}')
@@ -61,7 +61,16 @@ if [ -n "${tmp}" ]; then
     # write crashfile
     crashfile_path=${crashlog_path}/${new_name}/crashfile
 
-    event="CRASH"
+    if [ -n "$(echo -n "${wakesrc}" | grep HWWDT)" ]; then
+        event="HWWDG"
+    else
+        if [ -e ${ipanic_console_path} ]; then
+            event="IPANIC"
+        else
+            event="SWWDG"
+        fi
+    fi
+
     manufacturer="Intel Corporation"
     product_name=$(cat /factory/hardware_model)
     version=$(cat /factory/hardware_version)
