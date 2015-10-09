@@ -1,0 +1,35 @@
+From 8492e143af25bf64d07fc117e7f1607aadf89f09 Mon Sep 17 00:00:00 2001
+From: Martin Stolpe <martinstolpe@gmail.com>
+Date: Wed, 10 Jun 2015 16:28:26 +0200
+Subject: [PATCH] ncurses: fix native builds when host has gcc5
+
+GCC"s preprocessor starts to add newlines which are not
+handled properly by ncurses build system startin from
+version 5.0.
+
+See also: https://bugzilla.yoctoproject.org/show_bug.cgi?id=7870
+
+(From OE-Core rev: 3a5435b371c84ec28b6936b8c8fa6541a592d061)
+
+Signed-off-by: Martin Stolpe <martin.stolpe@gmail.com>
+Signed-off-by: Joshua Lock <joshua.lock@collabora.co.uk>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+---
+ meta/recipes-core/ncurses/ncurses.inc |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meta/recipes-core/ncurses/ncurses.inc b/meta/recipes-core/ncurses/ncurses.inc
+index 10f7dd1..b438f8a 100644
+--- a/meta/recipes-core/ncurses/ncurses.inc
++++ b/meta/recipes-core/ncurses/ncurses.inc
+@@ -27,6 +27,7 @@ ENABLE_WIDEC ?= "true"
+ # for target objects.  But it must be set manually for native and sdk
+ # builds.
+ BUILD_CPPFLAGS += "-D_GNU_SOURCE"
++BUILD_CPPFLAGS_append_virtclass-native = " -P"
+ 
+ # natives don't generally look in base_libdir
+ base_libdir_class-native = "${libdir}"
+-- 
+1.7.9.5
+

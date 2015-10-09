@@ -316,6 +316,10 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B.patch
   git apply $top_repo_dir/meta-intel-edison/utils/sdk-populate-clean-broken-links.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0002-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/binutils-fix-native-builds-when-host-has-gcc5.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/ncurses-fix-native-builds-when-host-has-gcc5.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/subversion-Fix-subversion-native-on-Fedora22.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/glibc-fix-native-builds-when-host-has-gcc5.patch
 
   if [[ $my_sdk_host == win* ]]
   then
