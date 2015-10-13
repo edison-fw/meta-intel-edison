@@ -71,7 +71,9 @@ IMAGE_INSTALL += "post-install"
 IMAGE_INSTALL += "resize-rootfs"
 IMAGE_INSTALL += "systemd-analyze"
 IMAGE_INSTALL += "wget"
-
+IMAGE_INSTALL += "sudo"
+# Allows to enable open pam feature
+IMAGE_INSTALL += "libpam"
 # Allows to enable OpenMP feature
 IMAGE_INSTALL += "libgomp"
 
@@ -176,4 +178,3 @@ IMAGE_INSTALL += "battery-voltage"
 
 # Add linux performance monitoring tool
 IMAGE_INSTALL += "perf"
-

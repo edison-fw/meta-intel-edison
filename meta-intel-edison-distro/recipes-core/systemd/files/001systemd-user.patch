@@ -1,0 +1,13 @@
+diff -Naur systemd-213.org/src/login/systemd-user systemd-213/src/login/systemd-user
+--- systemd-213.org/src/login/systemd-user	2014-01-28 18:08:51.000000000 +0800
++++ systemd-213/src/login/systemd-user	2015-10-14 10:07:54.648645305 +0800
+@@ -2,7 +2,7 @@
+ 
+ # Used by systemd when launching systemd user instances.
+ 
+-account include system-auth
+-session include system-auth
++account include common-account
++session include common-session
+ auth required pam_deny.so
+ password required pam_deny.so

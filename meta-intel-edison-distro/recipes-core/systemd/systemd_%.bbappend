@@ -6,7 +6,8 @@ SRC_URI += "file://journald.conf \
             file://shutdown-journal-before-reboot.patch \
             file://hsu-pm-runtime.service \
             file://usb0.network \
-            file://edison-machine-id.service"
+            file://edison-machine-id.service \
+            file://001systemd-user.patch "
 
 do_install_append() {
     # Push the custom conf files on target
