@@ -2,6 +2,7 @@
  "flash" :  {
   "commands" : [
    {
+    "description" : "Init",
     "duration" : 42000,
     "restrict" : null,
     "source" : "${helperFile}",
@@ -15,12 +16,14 @@
     "tool" : "waitForDevice"
    },
    {
+    "description" : "Notify",
     "duration" : 5000,
     "restrict" : null,
     "source" : "Edison board plugged",
     "tool" : "notifier"
    },
    {
+    "description" : "flash fw",
     "gpflag" : "${gpflag}",
     "ifwi" : "${ifwi_file}",
     "ifwi_dnx" : "${fw_dnx_file}",
@@ -28,6 +31,12 @@
     "os_dnx" : "${os_dnx_file}",
     "restrict" : null,
     "tool" : "xfstkDownloader"
+   },
+   {
+    "description" : "Sleep",
+    "duration" : 5000,
+    "restrict" : null,
+    "tool" : "sleep"
    },
    {
     "description" : "Waiting for device",
@@ -90,7 +99,8 @@
     "tool" : "dfuDownloader"
    },
    {
-    "duration" : 6000,
+    "description" : "Sleep",
+    "duration" : 5000,
     "restrict" : null,
     "tool" : "sleep"
    },
@@ -98,7 +108,7 @@
     "description" : "Waiting for device",
     "restrict" : null,
     "state" : "pos",
-    "timeout" : 120000,
+    "timeout" : 100000,
     "tool" : "waitForDevice"
    },
    {
@@ -120,6 +130,7 @@
     "tool" : "dfuDownloader"
    },
    {
+    "description" : "Waiting for device",
     "duration" : 60000,
     "restrict" : null,
     "source" : "Edison board needs to reboot<br />
