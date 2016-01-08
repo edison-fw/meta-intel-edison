@@ -178,3 +178,6 @@ IMAGE_INSTALL += "battery-voltage"
 
 # Add linux performance monitoring tool
 IMAGE_INSTALL += "perf"
+
+IMAGE_INSTALL += "sketch-check"
+

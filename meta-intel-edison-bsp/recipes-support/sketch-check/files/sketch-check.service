@@ -1,0 +1,10 @@
+[Unit]
+Description=Edison sketch check service
+
+[Service]
+ExecStart=/usr/bin/sketch-check.sh 
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
