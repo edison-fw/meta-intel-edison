@@ -139,9 +139,7 @@ IMAGE_INSTALL += "zeromq-dev"
 IMAGE_INSTALL += "cppzmq-dev"
 IMAGE_INSTALL += "paho-mqtt-dev"
 IMAGE_INSTALL += "mdns-dev"
-IMAGE_INSTALL += "iotkit-comm-c-dev"
 IMAGE_INSTALL += "iotkit-agent"
-IMAGE_INSTALL += "iotkit-lib-c-dev"
 IMAGE_INSTALL += "xdk-daemon"
 IMAGE_INSTALL += "oobe"
 
@@ -159,8 +157,6 @@ IMAGE_INSTALL += "mraa-doc"
 
 # UPM
 IMAGE_INSTALL += "upm-dev"
-
-
 
 # INTEL MCU FW
 IMAGE_INSTALL += "mcu-fw-load"
@@ -180,3 +176,12 @@ IMAGE_INSTALL += "perf"
 
 IMAGE_INSTALL += "sketch-check"
 
+# Java
+# Possible provider: cacao-initial-native and jamvm-initial-native
+PREFERRED_PROVIDER_virtual/java-initial-native = "cacao-initial-native"
+
+# Possible provider: cacao-native and jamvm-native
+PREFERRED_PROVIDER_virtual/java-native = "jamvm-native"
+
+# Optional since there is only one provider for now
+PREFERRED_PROVIDER_virtual/javac-native = "ecj-bootstrap-native"
