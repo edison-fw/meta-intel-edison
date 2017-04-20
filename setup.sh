@@ -155,7 +155,7 @@ do_update_cache () {
     git remote update
   else
     # The repo does not exist. Clone it.
-    git clone --mirror git://git.yoctoproject.org/$1.git $1-mirror.git
+    git clone --mirror $2/$1.git $1-mirror.git
   fi
   cd $my_position
 
@@ -269,10 +269,10 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   esac
 
   # Updating local git cache
-  do_update_cache "poky"
-  do_update_cache "meta-mingw"
-  do_update_cache "meta-darwin"
-  do_update_cache "meta-intel-iot-middleware"
+  do_update_cache "poky" "git://git.yoctoproject.org"
+  do_update_cache "meta-mingw" "git://git.yoctoproject.org"
+  do_update_cache "meta-darwin" "git://git.yoctoproject.org"
+  do_update_cache "meta-intel-iot-middleware" "https://github.com/htot"
 
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
@@ -299,7 +299,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
   cd ${middleware_dir}
-  git checkout c6d681475e76107e6c04c5f7a06034dc9e772d1e
+  git checkout dizzy-uptodate
 
   cd ${top_repo_dir}
   echo "Cloning meta-arduino layer to ${top_repo_dir} directory from GitHub.com/01org/meta-arduino"
