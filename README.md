@@ -37,7 +37,8 @@ You *really* need to build this on Ubuntu 14.04. With 16.10 you will get errors 
     sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 libsdl1.2-dev xterm python3
 
 Detailed Intel instruction are here: [https://software.intel.com/en-us/node/593591](URL)
-Containers: [https://linuxcontainers.org/lxd/getting-started-cli/](URL)
+
+How-to create a container: [https://linuxcontainers.org/lxd/getting-started-cli/](URL)
 
 1- Prepare your workspace:
 
@@ -51,10 +52,45 @@ Containers: [https://linuxcontainers.org/lxd/getting-started-cli/](URL)
 
     ln -s meta-intel-edison/utils/Makefile.mk Makefile
 
-4- Download all the needed dependencies:
+4- Checkout the version you want to use:
+
+    cd meta-intel-edison
+
+    git checkout dizzy-uptodate
+
+or
+
+    git checkout dizzy-latest
+
+or
+
+    git checkout dizzy-rt
+
+5- Download all the needed dependencies:
 
     make setup
 
-5- Build Intel Edison Yocto distribution:
+6- Build Intel Edison Yocto distribution:
+
+Change to the correct directory as instructed by the script.
+
+    cd /.../my_Edison_Workspace/test/out/linux64
+
+    source poky/oe-init-build-env
 
     bitbake -k edison-image
+
+Alternatively, from the same directory as `make setup`:
+
+    make image
+
+(or `make flash`, `make sdk`)
+
+# Cleaning up
+I didn't find a real easy way to clean up with bitbake (i.e. similar to `make clean`). It most cases that won't be needed anyway. What seems to work for now is:
+
+    make clean
+    rem -rf bbcache/sstate-cache/*
+    make setup
+
+This will delete everything in out, remove the sstate-cache, but keep all the downloaded packages.
