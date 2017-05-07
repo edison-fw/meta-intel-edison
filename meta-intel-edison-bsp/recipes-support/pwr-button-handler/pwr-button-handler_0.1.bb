@@ -29,3 +29,4 @@ do_install() {
 
 FILES_${PN} = "${base_libdir}/systemd/system/pwr-button-handler.service"
 FILES_${PN} += "${bindir}/pwr_button_handler"
+INSANE_SKIP_${PN} = "ldflags"
