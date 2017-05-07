@@ -113,7 +113,7 @@ IMAGE_INSTALL += "lsof"
 IMAGE_INSTALL += "iperf"
 
 # Add pulseaudio
-IMAGE_INSTALL += "pulseaudio-server libpulsecore libpulsecommon libpulse libpulse-simple pulseaudio-misc pulseaudio-service"
+IMAGE_INSTALL += "pulseaudio-server libpulsecore libpulsecommon libpulse libpulse-simple pulseaudio-misc"
 
 #Add Gstreamer
 IMAGE_INSTALL += "gstreamer1.0 gstreamer1.0-meta-base gstreamer1.0-meta-audio"
