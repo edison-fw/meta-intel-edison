@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="dizzy"
-yocto_tag="yocto-1.7.2"
+yocto_branch="morty"
+yocto_tag="morty"
 
 do_local_conf () {
   cat > $yocto_conf_dir/local.conf <<EOF
@@ -72,20 +72,24 @@ BBPATH = "\${TOPDIR}"
 BBFILES ?= ""
 BBLAYERS ?= " \\
   $poky_dir/meta \\
-  $poky_dir/meta-yocto \\
+  $poky_dir/meta-poky \\
   $poky_dir/meta-yocto-bsp \\
+  $poky_dir/meta-openembedded/meta-oe \\
+  $poky_dir/meta-openembedded/meta-python \\
+  $poky_dir/meta-openembedded/meta-networking \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
-  $poky_dir/meta-intel-iot-middleware \\
-  $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
-  $top_repo_dir/meta-arduino \\
+  $top_repo_dir/meta-intel-iot-middleware \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
   $poky_dir/meta \\
-  $poky_dir/meta-yocto \\
+  $poky_dir/meta-poky \\
   "
 EOF
+# we might want to add these back later
+#  $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
+#  $top_repo_dir/meta-arduino \\
 }
 
 function check_path()
@@ -270,6 +274,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 
   # Updating local git cache
   do_update_cache "poky" "git://git.yoctoproject.org"
+  do_update_cache "meta-openembedded" "https://github.com/openembedded"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
   do_update_cache "meta-intel-iot-middleware" "https://github.com/htot"
@@ -295,11 +300,26 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Update-gcc-patch.patch
 
   cd $poky_dir
-  middleware_dir=$poky_dir/meta-intel-iot-middleware
-  echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
-  git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
-  cd ${middleware_dir}
-  git checkout dizzy-latest
+  oe_dir=$poky_dir/meta-openembedded
+  echo "Cloning Openembedded layer to ${oe_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-openembedded-mirror.git meta-openembedded
+  cd ${oe_dir}
+  git checkout morty
+  
+  cd ${top_repo_dir}
+  middleware_dir=${top_repo_dir}/meta-intel-iot-middleware
+  if [ ! -d "${middleware_dir}" ]; then
+    # directory does not exist, create it
+    echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
+    git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
+    cd ${middleware_dir}
+    git checkout dizzy-latest
+  else
+    echo "meta-intel-iot-middleware already exists, rebasing from local cache"
+    cd ${middleware_dir}
+    git pull --rebase origin dizzy-latest
+  fi
+
 
   cd ${top_repo_dir}
   echo "Cloning meta-arduino layer to ${top_repo_dir} directory from GitHub.com/01org/meta-arduino"
@@ -313,13 +333,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Revert-machine-sdk-mingw32.conf-Disable-SDKTAROPTS.patch
   cd $poky_dir
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-kernel-yocto-fix-external-src-builds-when-S-B.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/sdk-populate-clean-broken-links.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0002-toolchain-fix-buggy-shell-behaviour-on-unbutu-after-.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/binutils-fix-native-builds-when-host-has-gcc5.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/ncurses-fix-native-builds-when-host-has-gcc5.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/subversion-Fix-subversion-native-on-Fedora22.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/glibc-fix-native-builds-when-host-has-gcc5.patch
 
   if [[ $my_sdk_host == win* ]]
   then
@@ -345,7 +358,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Now run these two commands to setup and build the flashable image:"
   echo "cd $my_build_dir"
   echo "source poky/oe-init-build-env"
-  echo "bitbake edison-image"
+  echo "bitbake -k edison-image"
   echo "*************"
 }
 
