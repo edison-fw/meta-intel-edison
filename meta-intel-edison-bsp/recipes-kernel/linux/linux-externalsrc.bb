@@ -7,44 +7,14 @@ require recipes-kernel/linux/linux-yocto.inc
 # Allows to avoid fetching, unpacking and patching, since our code is already cloned by repo
 #inherit externalsrc
 
-SRC_URI = "git://github.com/htot/edison-linux.git;protocol=https;branch=edison-3.10.17-rt"
-SRCREV = "edison-3.10.17-rt"
+PV = "4.11.0"
 
-# Don't use Yocto kernel configuration system, we instead simply override do_configure
-# to copy our defconfig in the build directory just before building.
-# I agree this is very ad hoc, but maybe it's good enough for our development environment
-do_configure() {
-  cp "${EDISONREPO_TOP_DIR}/linux-kernel/arch/x86/configs/i386_edison_defconfig" "${B}/.config"
-}
+SRC_URI = "git://github.com/andy-shev/linux.git;protocol=https;branch=eds"
+SRCREV = "a07f9462cf8595c72c6f817aa9f795e2f17ae7b2"
 
-EXTERNALSRC_pn-linux-externalsrc = "${S}"
-EXTERNALSRC_BUILD_pn-linux-externalsrc = "${B}"
+KBUILD_DEFCONFIG_pn-linux-externalsrc = "i386_defconfig"
 
-LINUX_VERSION ?= "3.10"
+LINUX_VERSION ?= "4.11"
 LINUX_VERSION_EXTENSION = "-edison-${LINUX_KERNEL_TYPE}"
 
-S = "${EDISONREPO_TOP_DIR}/linux-kernel"
-B = "${WORKDIR}/${BP}"
-
-# This is required for kernel to do the build out-of-tree.
-# If this is not set, most of the kernel make targets won't work properly
-# as they'll be executed in the sources
-export KBUILD_OUTPUT="${B}"
-
-# The previous line should not be necessary when those 2 are added
-# but it doesn't work..
-KBUILD_OUTPUT = "${B}"
-OE_TERMINAL_EXPORTS += "KBUILD_OUTPUT"
-
-PR = "r2"
-
 COMPATIBLE_MACHINE = "edison"
-
-do_deploy() {
-  kernel_do_deploy
-  install ${B}/vmlinux ${DEPLOYDIR}/vmlinux
-}
-
-do_kernel_configme() {
-  echo "skip this option"
-}

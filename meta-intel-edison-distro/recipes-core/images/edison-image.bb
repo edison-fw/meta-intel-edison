@@ -86,18 +86,15 @@ IMAGE_INSTALL += "alsa-lib"
 IMAGE_INSTALL += "alsa-utils-alsamixer alsa-utils-alsactl alsa-utils-aplay alsa-utils-amixer"
 
 # Python and some basic modules
+# removed python-imaging python-pygobject python-dbus 
 IMAGE_INSTALL += "python"
-IMAGE_INSTALL += "python-dbus python-smartpm python-pygobject python-argparse"
-IMAGE_INSTALL += "python-distutils python-pkgutil python-audio python-image python-imaging python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc python-importlib"
+IMAGE_INSTALL += "python-smartpm python-argparse"
+IMAGE_INSTALL += "python-distutils python-pkgutil python-audio python-image python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc python-importlib"
 
 # Wifi firmware
-IMAGE_INSTALL += "bcm43340-fw"
-# Bluetooth Firmware patch for 43340 and its patch utility
-IMAGE_INSTALL += "bcm43340-bt"
+# removed firmware and modules, already built into kernel?
 # service daemon that listens to rfkill events and trigger FW patch download
 IMAGE_INSTALL += "bluetooth-rfkill-event"
-# Wifi driver built as a kernel module
-IMAGE_INSTALL += "bcm43340-mod"
 
 # Provides strace and gdb
 IMAGE_FEATURES += "tools-debug"
@@ -139,8 +136,9 @@ IMAGE_INSTALL += "iotkit-opkg"
 IMAGE_INSTALL += "zeromq-dev"
 IMAGE_INSTALL += "cppzmq-dev"
 IMAGE_INSTALL += "paho-mqtt-dev"
-IMAGE_INSTALL += "mdns-dev"
+IMAGE_INSTALL += "libnss-mdns-dev"
 IMAGE_INSTALL += "iotkit-agent"
+#IMAGE_INSTALL += "xdk-daemon"
 IMAGE_INSTALL += "oobe"
 
 # mosquitto and dependencies
