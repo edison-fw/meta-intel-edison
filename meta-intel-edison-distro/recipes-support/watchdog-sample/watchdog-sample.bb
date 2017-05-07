@@ -40,3 +40,4 @@ python () {
         raise bb.parse.SkipPackage("'systemd' not in DISTRO_FEATURES")
 }
 
+INSANE_SKIP_${PN} = "ldflags"
