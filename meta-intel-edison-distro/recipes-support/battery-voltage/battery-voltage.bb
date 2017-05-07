@@ -5,6 +5,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/battery-voltage/:"
 
+DEPENDS = "systemd"
+
 SRC_URI = "file://battery-voltage.c"
 SRC_URI += "file://battery-voltage.service"
 
@@ -28,4 +30,4 @@ do_install() {
 
 FILES_${PN} = "${base_libdir}/systemd/system/battery-voltage.service"
 FILES_${PN} += "${bindir}/battery-voltage"
-
+INSANE_SKIP_${PN} = "ldflags"
