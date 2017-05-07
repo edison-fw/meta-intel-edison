@@ -39,3 +39,4 @@ do_install() {
         install -v -d  ${D}/etc/firmware/
         install -m 0755 ${WORKDIR}/bcm43341.conf ${D}/etc/firmware/bcm43341.conf
 }
+INSANE_SKIP_${PN} = "ldflags"
