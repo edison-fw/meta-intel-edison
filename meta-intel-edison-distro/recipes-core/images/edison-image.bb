@@ -130,7 +130,7 @@ IMAGE_INSTALL += "swig"
 
 
 # Edison Arduino stuff
-IMAGE_INSTALL += "clloader"
+#IMAGE_INSTALL += "clloader"
 
 
 # Edison Middleware stuff
