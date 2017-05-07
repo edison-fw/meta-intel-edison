@@ -141,7 +141,6 @@ IMAGE_INSTALL += "cppzmq-dev"
 IMAGE_INSTALL += "paho-mqtt-dev"
 IMAGE_INSTALL += "mdns-dev"
 IMAGE_INSTALL += "iotkit-agent"
-IMAGE_INSTALL += "xdk-daemon"
 IMAGE_INSTALL += "oobe"
 
 # mosquitto and dependencies
