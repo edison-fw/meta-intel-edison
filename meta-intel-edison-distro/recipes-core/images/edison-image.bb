@@ -110,7 +110,7 @@ IMAGE_INSTALL += "cleanjournal"
 IMAGE_INSTALL += "tcpdump"
 IMAGE_INSTALL += "net-tools"
 IMAGE_INSTALL += "lsof"
-IMAGE_INSTALL += "iperf"
+IMAGE_INSTALL += "iperf3"
 
 # Add pulseaudio
 IMAGE_INSTALL += "pulseaudio-server libpulsecore libpulsecommon libpulse libpulse-simple pulseaudio-misc"
