@@ -34,7 +34,8 @@ inherit core-image
 # and this cancel creation of the boot hddimg
 NOHDD = "0"
 
-inherit bootimg
+#disabled this, don't know the effect
+#inherit bootimg
 do_bootimg[depends] += "${PN}:do_rootfs"
 
 IMAGE_ROOTFS_SIZE = "524288"
