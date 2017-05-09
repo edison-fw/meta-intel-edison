@@ -1,6 +1,5 @@
 #EXTERNALSRC_pn_u-boot = "${S}"
 #INHERIT += "externalsrc"
-UBOOT_MAKE_TARGET = "edison_defconfig"
 require recipes-bsp/u-boot/u-boot.inc
 require u-boot-internal.inc
 #require u-boot-target-env.inc
