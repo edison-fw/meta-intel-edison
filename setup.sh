@@ -77,6 +77,7 @@ BBLAYERS ?= " \\
   $poky_dir/meta-openembedded/meta-oe \\
   $poky_dir/meta-openembedded/meta-python \\
   $poky_dir/meta-openembedded/meta-networking \\
+  $poky_dir/meta-nodejs \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
   $top_repo_dir/meta-intel-iot-middleware \\
@@ -275,6 +276,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   # Updating local git cache
   do_update_cache "poky" "git://git.yoctoproject.org"
   do_update_cache "meta-openembedded" "https://github.com/openembedded"
+  do_update_cache "meta-nodejs" "https://github.com/imyller"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
   do_update_cache "meta-intel-iot-middleware" "https://github.com/htot"
@@ -306,6 +308,14 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd ${oe_dir}
   git checkout morty
   
+  cd $poky_dir
+  oe_dir=$poky_dir/meta-nodejs
+  echo "Cloning Nodejs layer to ${oe_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-nodejs-mirror.git meta-nodejs
+  cd ${oe_dir}
+  git checkout morty
+
+  
   cd ${top_repo_dir}
   middleware_dir=${top_repo_dir}/meta-intel-iot-middleware
   if [ ! -d "${middleware_dir}" ]; then
@@ -313,11 +323,11 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
     git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
     cd ${middleware_dir}
-    git checkout dizzy-latest
+    git checkout morty-latest
   else
     echo "meta-intel-iot-middleware already exists, rebasing from local cache"
     cd ${middleware_dir}
-    git pull --rebase origin dizzy-latest
+    git pull --rebase origin morty-latest
   fi
 
 
