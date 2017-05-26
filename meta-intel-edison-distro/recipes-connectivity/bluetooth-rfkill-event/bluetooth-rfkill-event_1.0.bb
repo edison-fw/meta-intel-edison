@@ -30,7 +30,7 @@ do_install() {
         install -v -d ${D}${sbindir}
         install -m 0755 bluetooth_rfkill_event ${D}${sbindir}
 
-        if ${@base_contains('DISTRO_FEATURES','systemd','true','false',d)}; then
+        if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
                 # Copy file service
                 install -d ${D}/${systemd_unitdir}/system
                 install -m 644 ${WORKDIR}/bluetooth-rfkill-event.service ${D}/${systemd_unitdir}/system
