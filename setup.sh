@@ -51,6 +51,18 @@ $extra_conf
 EOF
 }
 
+do_initramfs_conf () {
+  cat > $yocto_conf_dir/initramfs.conf <<EOF
+INITRAMFS_IMAGE = "core-image-minimal-initramfs"
+INITRAMFS_IMAGE_BUNDLE = "1"
+INITRAMFS_MAXSIZE ="15728640"
+ 
+IMAGE_FSTYPES = "cpio.gz"
+IMAGE_INSTALL+="kernel-modules"
+EOF
+}
+
+
 do_append_layer (){
   if [[ $extra_layers == \\ ]]; then
     extra_layers="$1 \\"
@@ -362,6 +374,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Setting up yocto configuration file (in build/conf/local.conf)"
   do_bblayers_conf
   do_local_conf
+  do_initramfs_conf
 
   echo "** Success **"
   echo "SDK will be generated for $my_sdk_host host"
