@@ -1,0 +1,45 @@
+From 5f48a5d5f4b04b4348c6cf1d4f2ad5a7d1744c81 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 27 May 2017 20:47:39 +0200
+Subject: [PATCH] [PATCH] usb: keep power-supply in host mode
+
+In host mode, when plugin a device to the board, the PSW signal to th PHY was
+de-asserted, resulting of a power-supply cut and enumeration issue.
+
+This patch re-assert PSW through the dwc ULPI registers.
+---
+ drivers/usb/dwc3/core.c | 5 +++++
+ drivers/usb/dwc3/core.h | 1 +
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 369bab16a824..b7356d136694 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -495,6 +495,11 @@ static int dwc3_phy_setup(struct dwc3 *dwc)
+ 		ret = dwc3_ulpi_init(dwc);
+ 		if (ret)
+ 			return ret;
++		if(dwc->dr_mode == USB_DR_MODE_HOST)
++		{
++                        reg |= DWC3_GUSB2PHYCFG_ULPI_EXT_VBUS_DRV;
++			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
++		}
+ 		/* FALLTHROUGH */
+ 	default:
+ 		break;
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 2b9e4ca3c932..0a9a578c2009 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -208,6 +208,7 @@
+ /* Global USB2 PHY Configuration Register */
+ #define DWC3_GUSB2PHYCFG_PHYSOFTRST	(1 << 31)
+ #define DWC3_GUSB2PHYCFG_U2_FREECLK_EXISTS	(1 << 30)
++#define DWC3_GUSB2PHYCFG_ULPI_EXT_VBUS_DRV	(1 << 17)
+ #define DWC3_GUSB2PHYCFG_SUSPHY		(1 << 6)
+ #define DWC3_GUSB2PHYCFG_ULPI_UTMI	(1 << 4)
+ #define DWC3_GUSB2PHYCFG_ENBLSLPM	(1 << 8)
+-- 
+2.11.0
+
