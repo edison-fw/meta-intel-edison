@@ -10,6 +10,7 @@ PV = "4.11.0"
 SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-4.11 \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
+        file://0001-PATCH-usb-keep-power-supply-in-host-mode.patch \
         "
 
 SRCREV = "a07f9462cf8595c72c6f817aa9f795e2f17ae7b2"
