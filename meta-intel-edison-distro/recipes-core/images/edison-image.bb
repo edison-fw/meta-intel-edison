@@ -161,7 +161,7 @@ IMAGE_INSTALL += "mcu-fw-load"
 IMAGE_INSTALL += "mcu-fw-bin"
 
 # nfs
-IMAGE_INSTALL += "nfs-utils"
+#IMAGE_INSTALL += "nfs-utils"
 
 # Add oFono
 IMAGE_INSTALL += "ofono"
