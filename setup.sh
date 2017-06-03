@@ -45,7 +45,7 @@ LICENSE_FLAGS_WHITELIST += "commercial"
 COPY_LIC_MANIFEST = "1"
 COPY_LIC_DIRS = "1"
 FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
-$extra_package_type
+PACKAGE_CLASSES ?= "$extra_package_type"
 $extra_archiving
 $extra_conf
 EOF
@@ -133,7 +133,7 @@ function usage()
   echo -e "\t--sdk_host=$my_sdk_host\t\tchoose host machine on which the generated SDK and cross compiler will be run. Must be one of [$all_sdk_hosts]"
   echo -e "\t-l --list_sdk_hosts\t\tlist availables sdk host supported machines"
   echo -e "\t--create_src_archive\t\twhen set, copies sources of all deployed packages into build/tmp/deploy/sources"
-  echo -e "\t--deb_packages\t\twhen set, use .deb package format instead of .ipk"
+  echo -e "\t--ipk_packages\t\twhen set, use .ipk package format instead of .deb"
   echo ""
 }
 
@@ -186,7 +186,7 @@ main() {
   my_parallel_make=4
   my_build_name="Custom Edison build by $USER@$HOSTNAME "$(date +"%F %H:%M:%S %Z")
   all_sdk_hosts="linux32 linux64 win32 win64 macosx"
-  extra_package_type=""
+  extra_package_type="package_deb"
 
   #probe my_sdk_host from uname
   plat=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -214,8 +214,8 @@ ARCHIVER_MODE[src] = \"original\"
 COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 "
         ;;
-      --deb_packages)
-        extra_package_type="PACKAGE_CLASSES = \"package_deb\""
+      --ipk_packages)
+        extra_package_type="package_ipk"
         ;;
       --dl_dir)
         check_path
