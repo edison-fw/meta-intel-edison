@@ -89,11 +89,12 @@ boot_root() {
     mkdir -p  /realroot
     mount -n --move ${ROOT_DISK} /realroot
 
-    # Move the mount points of some filesystems over to
-    # the corresponding directories under the real root filesystem.
-    for dir in `awk '/\/dev.* \/run\/media/{print $2}' /proc/mounts`; do
-        umount /run/media${dir}
+    # Unmount the remaining filesystems mounted on /run/media
+    for dir in `awk '/\/run\/media\/.* /{print $2}' /proc/mounts`; do
+        umount ${dir}
     done
+    # Move system mounts over to
+    # the corresponding directories under the real root filesystem.
     mount -n --move /proc /realroot/proc
     mount -n --move /sys /realroot/sys
     mount -n --move /dev /realroot/dev
