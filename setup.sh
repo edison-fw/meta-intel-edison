@@ -31,7 +31,7 @@ yocto_tag="morty"
 do_local_conf () {
   cat > $yocto_conf_dir/local.conf <<EOF
 BB_NUMBER_THREADS = "$my_bb_number_thread"
-PARALLEL_MAKE = "-j $my_parallel_make"
+PARALLEL_MAKE = "-j$my_parallel_make"
 MACHINE = "edison"
 DISTRO = "poky-edison"
 USER_CLASSES ?= "buildstats image-mklibs image-prelink"
