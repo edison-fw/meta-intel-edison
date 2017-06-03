@@ -92,7 +92,8 @@ IMAGE_INSTALL += "python-smartpm python-argparse"
 IMAGE_INSTALL += "python-distutils python-pkgutil python-audio python-image python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc python-importlib"
 
 # Wifi firmware
-# removed firmware and modules, already built into kernel?
+# removed modules, already built into kernel
+IMAGE_INSTALL += "bcm43340-fw"
 # service daemon that listens to rfkill events and trigger FW patch download
 IMAGE_INSTALL += "bluetooth-rfkill-event"
 
