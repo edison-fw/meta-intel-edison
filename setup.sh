@@ -183,7 +183,7 @@ main() {
   my_dl_dir="$top_repo_dir/bbcache/downloads"
   my_sstate_dir="$top_repo_dir/bbcache/sstate-cache"
   my_bb_number_thread=4
-  my_parallel_make=4
+  my_parallel_make=8
   my_build_name="Custom Edison build by $USER@$HOSTNAME "$(date +"%F %H:%M:%S %Z")
   all_sdk_hosts="linux32 linux64 win32 win64 macosx"
   extra_package_type="package_deb"
