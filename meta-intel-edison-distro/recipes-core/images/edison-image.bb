@@ -53,6 +53,8 @@ IMAGE_INSTALL += "wireless-tools"
 IMAGE_INSTALL += "wpa-supplicant"
 IMAGE_INSTALL += "hostapd"
 IMAGE_INSTALL += "bluez5-dev"
+IMAGE_INSTALL += "bluez5-noinst-tools"
+IMAGE_INSTALL += "bluez5-testtools"
 IMAGE_INSTALL += "bluez5-obex"
 IMAGE_INSTALL += "kernel-modules"
 IMAGE_INSTALL += "ethtool"
@@ -96,6 +98,7 @@ IMAGE_INSTALL += "python-distutils python-pkgutil python-audio python-image pyth
 IMAGE_INSTALL += "bcm43340-fw"
 # service daemon that listens to rfkill events and trigger FW patch download
 IMAGE_INSTALL += "bluetooth-rfkill-event"
+IMAGE_INSTALL += "bcm43340-bt"
 
 # Provides strace and gdb
 IMAGE_FEATURES += "tools-debug"
