@@ -79,6 +79,7 @@ IMAGE_INSTALL += "sudo"
 IMAGE_INSTALL += "libpam"
 # Allows to enable OpenMP feature
 IMAGE_INSTALL += "libgomp"
+IMAGE_INSTALL += "screen"
 
 # Add audio firmware
 IMAGE_INSTALL += "sst-fw-bin"
