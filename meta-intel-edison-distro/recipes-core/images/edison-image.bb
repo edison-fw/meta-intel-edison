@@ -38,7 +38,7 @@ NOHDD = "0"
 #inherit bootimg
 do_bootimg[depends] += "${PN}:do_rootfs"
 
-IMAGE_ROOTFS_SIZE = "524288"
+IMAGE_ROOTFS_SIZE = "1048576"
 
 IMAGE_FEATURES += "package-management ssh-server-openssh"
 # Allow passwordless root login and postinst logging
