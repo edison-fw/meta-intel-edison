@@ -30,10 +30,11 @@ ENV_IFWI_TARGET_NAME="ifwi"
 # Env image is U-Boot primary environment (where internal U-Boot variables are stored)
 # The same vairiable is also defined in u-boot-osip recip in charge of doing stitching
 # process for IFWI
-ENV_IMAGE = "${S}/env.bin"
+ENV_IMAGE = "${B}/env.bin"
 
 do_build_mkimage_tool () {
-   HOSTCC="${CC}" HOSTLD="${LD}" HOSTLDFLAGS="${LDFLAGS}" HOSTSTRIP=true oe_runmake  tools
+    cd ${B}
+    HOSTCC="${CC}" HOSTLD="${LD}" HOSTLDFLAGS="${LDFLAGS}" HOSTSTRIP=true oe_runmake  tools
 }
 
 python do_environment_mkimage() {
@@ -64,9 +65,9 @@ python do_environment_mkimage() {
         target_bin = os.path.join(env_bin_dir,
             d.getVar('ENV_BASE_NAME',True) + '-' + target_filename + '.bin')
         # generated mkenvimage tool command line
-        cmd_mkimg ='cat %s %s | grep -v -E "^$|^\#" |' \
+        cmd_mkimg ='cd %s && cat %s %s | grep -v -E "^$|^\#" |' \
                 ' ./tools/mkenvimage -s %s -r -o %s -' \
-                % ( d.getVar('ENV_BASE_FILE',True),target_env,
+                % ( d.getVar('B',True),d.getVar('ENV_BASE_FILE',True),target_env,
                 d.getVar("ENV_SIZE",True), target_bin)
         print ('Building binary for %s target:' % (target_filename))
         print ('%s' % cmd_mkimg)
