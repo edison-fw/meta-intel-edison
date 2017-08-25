@@ -5,6 +5,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 
+inherit systemd
+SYSTEMD_SERVICE_${PN} = "blink-led.service"
+
 SRC_URI = "file://blink-led"
 SRC_URI += "file://blink-led.service"
 
@@ -19,5 +22,3 @@ do_install() {
         install -m 644 ${WORKDIR}/blink-led.service ${D}/${systemd_unitdir}/system
 }
 
-FILES_${PN} += "${base_libdir}/systemd/system/blink-led.service"
-FILES_${PN} += "${bindir}/blink-led"
