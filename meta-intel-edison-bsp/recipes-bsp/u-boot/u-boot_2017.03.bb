@@ -2,8 +2,8 @@
 #INHERIT += "externalsrc"
 require recipes-bsp/u-boot/u-boot.inc
 require u-boot-internal.inc
-#require u-boot-target-env.inc
-#require u-boot-osip.inc
+require u-boot-target-env.inc
+require u-boot-osip.inc
 
 DEPENDS += "dtc-native"
 

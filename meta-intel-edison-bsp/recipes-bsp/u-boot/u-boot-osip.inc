@@ -5,17 +5,18 @@ OSIP_HANDOFF_POINTER = "17829888"
 # env is U-Boot primary environment where internal U-Boot variables are stored
 # this default generated binary environment, is embedded in a raw OSIP image
 # use by XFSTK tools to do the initial boot
-ENV_IMAGE = "${S}/env.bin"
-BASE_IMAGE = "${S}/u-boot.bin"
+ENV_IMAGE = "${B}/env.bin"
+BASE_IMAGE = "${B}/u-boot.bin"
 UBOOT_OSIP_SUFFIX = "img"
-UBOOT_TMP_IMG = "${S}/u-boot.${UBOOT_OSIP_SUFFIX}.no-osip"
-UBOOT_IMG = "${S}/u-boot.${UBOOT_OSIP_SUFFIX}"
+UBOOT_TMP_IMG = "${B}/u-boot.${UBOOT_OSIP_SUFFIX}.no-osip"
+UBOOT_IMG = "${B}/u-boot.${UBOOT_OSIP_SUFFIX}"
 UBOOT_OSIP_IMAGE = "u-boot-${MACHINE}-${PV}-${PR}.${UBOOT_OSIP_SUFFIX}"
 UBOOT_OSIP_BINARY = "u-boot.${UBOOT_OSIP_SUFFIX}"
 UBOOT_OSIP_SYMLINK = "u-boot-${MACHINE}.${UBOOT_OSIP_SUFFIX}"
 
 
 do_uboot_padding() {
+    cd ${B}
     # U-Boot.bin map
     # 0x000000 - 0x001000 | padding with 0
     # 0x001000 - 0x200000 | u-boot0
@@ -111,6 +112,7 @@ python do_osip_mkimage() {
     # 0x1FE       1         0x55
     # 0x1FF       1         0xaa
 
+    import codecs
     import os
     import sys
     import argparse
@@ -140,18 +142,18 @@ python do_osip_mkimage() {
     '000000000000000000000000000000000055aa'
 
     def main():
-        input_file = "${UBOOT_TMP_IMG}"
-        output_file = "${UBOOT_IMG}"
-        handoff_pointer =  "${OSIP_HANDOFF_POINTER}"
-        destination_pointer = "${OSIP_DESTINATION_POINTER}"
-        starting_lba = "${OSIP_STARTING_LBA}"
+        input_file = d.getVar('UBOOT_TMP_IMG', True)
+        output_file = d.getVar('UBOOT_IMG', True)
+        handoff_pointer = int(d.getVar('OSIP_HANDOFF_POINTER', True))
+        destination_pointer = int(d.getVar('OSIP_DESTINATION_POINTER', True))
+        starting_lba = int(d.getVar('OSIP_STARTING_LBA', True))
 
         in_file_data = open(input_file, 'rb').read()
 
         out_file = open(output_file, 'wb')
 
         # Write OSIP header data
-        osip_header_data = bytearray(OSIP_HEADER_HEX_DATA.decode('hex'))
+        osip_header_data = bytearray(codecs.decode(OSIP_HEADER_HEX_DATA, 'hex'))
 
         # Override some values
 
@@ -170,7 +172,7 @@ python do_osip_mkimage() {
         # The file needs to be padded to be multiple of 512 bytes
 
         # Overrides passed image size (in unit of 512 bytes blocks)
-        padding_len_packed_block = struct.pack("I", ( (6*1024*1024) / 512))
+        padding_len_packed_block = struct.pack("I", int( (6*1024*1024) / 512))
         osip_header_data[0x30:0x33+1]=padding_len_packed_block
 
         # Compute XOR checksum
