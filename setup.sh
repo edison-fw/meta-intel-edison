@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="morty"
-yocto_tag="morty"
+yocto_branch="pyro"
+yocto_tag="pyro"
 
 do_local_conf () {
   cat > $yocto_conf_dir/local.conf <<EOF
@@ -327,14 +327,14 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning Openembedded layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-openembedded-mirror.git meta-openembedded
   cd ${oe_dir}
-  git checkout morty
+  git checkout pyro
   
   cd $poky_dir
   oe_dir=$poky_dir/meta-nodejs
   echo "Cloning Nodejs layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-nodejs-mirror.git meta-nodejs
   cd ${oe_dir}
-  git checkout morty
+  git checkout master
 
   
   cd ${top_repo_dir}
