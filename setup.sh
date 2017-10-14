@@ -62,6 +62,15 @@ IMAGE_INSTALL+="kernel-modules"
 EOF
 }
 
+do_u-boot_conf () {
+  cat > $yocto_conf_dir/u-boot.conf <<EOF
+require conf/multilib.conf
+MULTILIBS = "multilib:lib32"
+DEFAULTTUNE_virtclass-multilib-lib32 = "core2-32"
+IMAGE_INSTALL_append = " lib32-libgcc"
+EOF
+}
+
 
 do_append_layer (){
   if [[ $extra_layers == \\ ]]; then
@@ -375,6 +384,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_bblayers_conf
   do_local_conf
   do_initramfs_conf
+  do_u-boot_conf
 
   echo "** Success **"
   echo "SDK will be generated for $my_sdk_host host"
