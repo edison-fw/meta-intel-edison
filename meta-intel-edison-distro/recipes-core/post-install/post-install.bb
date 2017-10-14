@@ -9,7 +9,7 @@ inherit allarch
                 
 SYSTEMD_SERVICE_${PN} = "post-install.service"
 
-RDEPENDS_${PN} = "systemd"
+RDEPENDS_${PN} = "systemd bash"
 
 do_install() {
 	install -d ${D}/sbin
