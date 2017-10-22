@@ -2,7 +2,7 @@ DESCRIPTION = "A fully functional image to run EDISON"
 LIC_FILES_CHKSUM = "file://${COREBASE}/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690 \
                     file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 LICENSE = "MIT"
-IMAGE_INSTALL = "packagegroup-core-boot ${ROOTFS_PKGMANAGE_BOOTSTRAP} ${CORE_IMAGE_EXTRA_INSTALL}"
+IMAGE_INSTALL = "packagegroup-core-boot  ${CORE_IMAGE_EXTRA_INSTALL}"
 IMAGE_INSTALL += "openssh-sftp-server"
 
 IMAGE_LINGUAS = " "
@@ -85,13 +85,13 @@ IMAGE_INSTALL += "screen"
 IMAGE_INSTALL += "sst-fw-bin"
 
 # ALSA lib and utilities
-IMAGE_INSTALL += "alsa-lib"
+#IMAGE_INSTALL += "alsa-lib"
 IMAGE_INSTALL += "alsa-utils-alsamixer alsa-utils-alsactl alsa-utils-aplay alsa-utils-amixer"
 
 # Python and some basic modules
 # removed python-imaging python-pygobject python-dbus 
 IMAGE_INSTALL += "python"
-IMAGE_INSTALL += "python-smartpm python-argparse"
+IMAGE_INSTALL += "python-argparse"
 IMAGE_INSTALL += "python-distutils python-pkgutil python-audio python-image python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc python-importlib"
 
 # Wifi firmware
