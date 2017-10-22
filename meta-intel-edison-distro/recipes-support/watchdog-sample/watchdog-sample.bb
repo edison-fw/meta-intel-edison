@@ -14,6 +14,7 @@ RDEPENDS_${PN} = "systemd"
 DEPENDS = "systemd"
 
 inherit systemd
+inherit pkgconfig
 
 S = "${WORKDIR}"
 
