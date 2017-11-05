@@ -21,8 +21,10 @@ Currently I am tracking origin/master but I have created four additional branche
   * **dizzy-uptodate** tracks origin/dizzy with 3.10.98 kernel. This branch pulls [https://github.com/htot/meta-intel-iot-middleware.git](URL) branch dizzy-uptodate with fixes for paho-mqtt relocated and iotkit-comm-js no longer supported. 
   * **dizzy-latest** tracks origin/master as much as possible with 3.10.98 kernel. This branch pulls [https://github.com/htot/meta-intel-iot-middleware.git](URL) branch dizzy-latest with fixes for paho-mqtt relocated and iotkit-comm-js no longer supported + java support removed. This gives mraa 0.9.0, upm 0.4.1 and mosquitto 1.4.
 * **dizzy-rt** same as dizzy-latest but with **real time** kernel. Switches the kernel to the PREEMPT_RT 3.10.17-rt kernel
-* **morty** experimental branch based on Yocto Morty, vanilla kernel 4.11
+* **morty** experimental branch based on Yocto Morty, vanilla kernel 4.13
+* **morty-64** experimental branch based on Yocto Morty, vanilla kernel 4.13 (64 bit)
+* **pyro64** experimental branch based on Yocto Pyro, vanilla kernel 4.13 (64 bit). This version actually builds u-boot with `bitbake -R conf/u-boot.conf lib32-u-boot` (wiki to be updated)
 
 # How to use this
 
-Yocto Morty will build on Ubuntu Zesty (17.04). For detailed instructions see the wiki [https://github.com/htot/meta-intel-edison/wiki](https://github.com/htot/meta-intel-edison/wiki)
+Yocto Morty / Pyro will build on Ubuntu Artful (17.10). For detailed instructions see the wiki [https://github.com/htot/meta-intel-edison/wiki](https://github.com/htot/meta-intel-edison/wiki)
