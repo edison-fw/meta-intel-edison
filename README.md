@@ -29,11 +29,17 @@ Currently I am tracking origin/master but I have created three additional branch
   * **dizzy-uptodate** tracks origin/dizzy with 3.10.98 kernel. This branch pulls [https://github.com/htot/meta-intel-iot-middleware.git](https://github.com/htot/meta-intel-iot-middleware.git) branch dizzy-uptodate with fixes for paho-mqtt relocated and iotkit-comm-js no longer supported. 
   * **dizzy-latest** tracks origin/master as much as possible with 3.10.98 kernel. This branch pulls [https://github.com/htot/meta-intel-iot-middleware.git](https://github.com/htot/meta-intel-iot-middleware.git) branch dizzy-latest with fixes for paho-mqtt relocated and iotkit-comm-js no longer supported + java support removed. This gives mraa 0.9.0, upm 0.4.1 and mosquitto 1.4.
 * **dizzy-rt** same as dizzy-latest but with **real time** kernel. Switches the kernel to the PREEMPT_RT 3.10.17-rt kernel
-* **morty** experimental branch based on Yocto Morty, vanilla kernel 4.11
+* **morty** experimental branch based on Yocto Morty, vanilla kernel 4.13
+* **morty-64** experimental branch based on Yocto Morty, vanilla kernel 4.13 (64 bit)
+* **pyro64** experimental branch based on Yocto Pyro, vanilla kernel 4.13 (64 bit). This version actually builds u-boot with `bitbake -R conf/u-boot.conf lib32-u-boot` (wiki to be updated)
 
 # How to use this
 
-You *really* need to build this on Ubuntu 14.04. With 16.10 you will get errors related to makenod etc from pseudo-native. that will prevent the image to build completely. You can do this by creating a container with Ubuntu 14.04, install and configure sshd, create a user for yourself, install the required build environment (may be a bit to much):
+You *really* need to build Yocto Dizzy versions on Ubuntu 14.04. 
+
+Yocto Morty / Pyro will build on Ubuntu Artful (17.10). For detailed instructions see the wiki [https://github.com/htot/meta-intel-edison/wiki](https://github.com/htot/meta-intel-edison/wiki)
+
+With Dizzy and Ubuntu 16.10 you will get errors related to makenod etc from pseudo-native. that will prevent the image to build completely. You can do this by creating a container with Ubuntu 14.04, install and configure sshd, create a user for yourself, install the required build environment (may be a bit to much):
 
     sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 libsdl1.2-dev xterm python3
 
