@@ -13,6 +13,14 @@ UBOOT_IMG = "${B}/u-boot.${UBOOT_OSIP_SUFFIX}"
 UBOOT_OSIP_IMAGE = "u-boot-${MACHINE}-${PV}-${PR}.${UBOOT_OSIP_SUFFIX}"
 UBOOT_OSIP_BINARY = "u-boot.${UBOOT_OSIP_SUFFIX}"
 UBOOT_OSIP_SYMLINK = "u-boot-${MACHINE}.${UBOOT_OSIP_SUFFIX}"
+DEPENDS = " coreutils-native"
+
+do_uboot_truncate() {
+    # If you never updated U-Boot you are still on v2014.04.
+    # In this case, or if you have edison-v2016.11, or edison-v2017.01 this is still needed
+
+    truncate -s %4096 ${BASE_IMAGE}
+}
 
 do_uboot_uboot_env_mkimage() {
 
@@ -185,5 +193,6 @@ do_deploy_append() {
     ln -sf ${UBOOT_OSIP_IMAGE} ${UBOOT_OSIP_BINARY}
 }
 
+addtask do_uboot_truncate before do_environment_mkimage before do_deploy after do_compile
 addtask uboot_uboot_env_mkimage  before do_osip_mkimage after do_environment_mkimage
 addtask osip_mkimage  before do_deploy after do_uboot_uboot_env_mkimage
