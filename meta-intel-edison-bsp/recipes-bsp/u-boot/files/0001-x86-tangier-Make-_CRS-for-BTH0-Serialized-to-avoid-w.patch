@@ -1,0 +1,37 @@
+From cabf20b893499a938eb0dc18a487394a5089a753 Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Tue, 9 Jan 2018 13:31:09 +0200
+Subject: [PATCH 1/6] x86: tangier: Make _CRS for BTH0 Serialized to avoid
+ warning
+
+ASL compiler warns:
+
+  ASL     board/intel/edison/dsdt.asl
+  board/intel/edison/dsdt.asl.tmp    238:             Method (_CRS, 0, NotSerialized)
+  Remark   2120 -      Control Method should be made Serialized ^  (due to creation of named objects within)
+
+Do as suggested by ASL compiler.
+
+Fixes: 5d8c4ebd95e2 ("x86: tangier: Add Bluetooth to ACPI table")
+Reported-by: Ferry Toth <fntoth@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/include/asm/arch-tangier/acpi/southcluster.asl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/arch-tangier/acpi/southcluster.asl b/arch/x86/include/asm/arch-tangier/acpi/southcluster.asl
+index 2b3b897c5b..5289b14957 100644
+--- a/arch/x86/include/asm/arch-tangier/acpi/southcluster.asl
++++ b/arch/x86/include/asm/arch-tangier/acpi/southcluster.asl
+@@ -284,7 +284,7 @@ Device (PCI0)
+                 Return (STA_VISIBLE)
+             }
+ 
+-            Method (_CRS, 0, NotSerialized)
++            Method (_CRS, 0, Serialized)
+             {
+                 Name (RBUF, ResourceTemplate ()
+                 {
+-- 
+2.14.1
+

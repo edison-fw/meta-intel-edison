@@ -1,0 +1,38 @@
+From 83813ba69290555215b425ff65f5abb934fb8ab8 Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Wed, 10 Jan 2018 19:18:03 +0200
+Subject: [PATCH 2/6] x86: Fix reference to QEMU variant of write_acpi_tables()
+
+The commit
+
+  eece493a7ac1 ("cmd: qfw: bring ACPI generation code into qfw core")
+
+moves ACPI related code to another file and missed an update of
+references in acpi_table.c.
+
+Do it now.
+
+Fixes: eece493a7ac1 ("cmd: qfw: bring ACPI generation code into qfw core")
+Cc: Miao Yan <yanmiaobest@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/lib/acpi_table.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/x86/lib/acpi_table.c b/arch/x86/lib/acpi_table.c
+index 3eb101105b..7b33cd371e 100644
+--- a/arch/x86/lib/acpi_table.c
++++ b/arch/x86/lib/acpi_table.c
+@@ -357,8 +357,7 @@ void enter_acpi_mode(int pm1_cnt)
+ }
+ 
+ /*
+- * QEMU's version of write_acpi_tables is defined in
+- * arch/x86/cpu/qemu/acpi_table.c
++ * QEMU's version of write_acpi_tables is defined in drivers/misc/qfw.c
+  */
+ ulong write_acpi_tables(ulong start)
+ {
+-- 
+2.14.1
+

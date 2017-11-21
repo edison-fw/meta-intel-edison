@@ -1,0 +1,224 @@
+From c48608cb8f563d183c1ea2e1a8c4456e9000911e Mon Sep 17 00:00:00 2001
+From: Brad <bradjc5@gmail.com>
+Date: Thu, 25 May 2017 14:16:31 -0400
+Subject: [PATCH 5/6] HACK: dfu: add optional timeout
+
+When the `dfu` command is called from the U-Boot environment, it now
+accepts an optional fourth parameter that specifies a timeout (in
+seconds). If a DFU connection is not made within that time the dfu
+command exits (as it would if ctrl+c was pressed). If the timeout is
+left empty the dfu command behaves as it does now.
+
+This is useful for allowing U-Boot to check to see if anything wants to
+upload new firmware before continuing to boot.
+
+This option is not compatible with the dfu "list" command. If "list" is
+specified that command takes priority.
+
+This patch is based on commit 5e966ccc3c65c18c9783741fa04e0c45e021780c
+from
+https://github.com/01org/edison-u-boot/commit/5e966ccc3c65c18c9783741fa04e0c45e021780c
+It updates that patch to the newer changes of u-boot which split the DFU
+functionality into multiple functions.
+
+Signed-off-by: Sebastien Colleur <sebastienx.colleur@intel.com>
+Signed-off-by: Brad Campbell <bradjc5@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ cmd/dfu.c                  | 11 +++++++++++
+ common/dfu.c               | 14 ++++++++++++++
+ configs/edison_defconfig   |  1 +
+ drivers/dfu/Kconfig        |  6 ++++++
+ drivers/dfu/dfu.c          | 27 +++++++++++++++++++++++++++
+ drivers/usb/gadget/f_dfu.c |  2 ++
+ include/dfu.h              |  4 ++++
+ 7 files changed, 65 insertions(+)
+
+diff --git a/cmd/dfu.c b/cmd/dfu.c
+index 04291f6c08..71fac0a3cf 100644
+--- a/cmd/dfu.c
++++ b/cmd/dfu.c
+@@ -49,6 +49,10 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+ 		dfu_show_entities();
+ 		goto done;
+ 	}
++#ifdef CONFIG_DFU_TIMEOUT
++	if (argc > 4)
++		dfu_set_timeout(simple_strtoul(argv[4], NULL, 0) * 1000);
++#endif
+ 
+ 	int controller_index = simple_strtoul(usb_controller, NULL, 0);
+ 
+@@ -61,11 +65,18 @@ done:
+ 
+ U_BOOT_CMD(dfu, CONFIG_SYS_MAXARGS, 1, do_dfu,
+ 	"Device Firmware Upgrade",
++#ifdef CONFIG_DFU_TIMEOUT
++	"<USB_controller> <interface> <dev> [list|timeout]\n"
++#else
+ 	"<USB_controller> <interface> <dev> [list]\n"
++#endif
+ 	"  - device firmware upgrade via <USB_controller>\n"
+ 	"    on device <dev>, attached to interface\n"
+ 	"    <interface>\n"
+ 	"    [list] - list available alt settings\n"
++#ifdef CONFIG_DFU_TIMEOUT
++	"    [timeout] - specify inactivity timeout in sec, doesn't work with list\n"
++#endif
+ #ifdef CONFIG_DFU_TFTP
+ 	"dfu tftp <interface> <dev> [<addr>]\n"
+ 	"  - device firmware upgrade via TFTP\n"
+diff --git a/common/dfu.c b/common/dfu.c
+index 07dff317a6..2f6a73b48f 100644
+--- a/common/dfu.c
++++ b/common/dfu.c
+@@ -35,6 +35,9 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
+ 		pr_err("g_dnl_register failed");
+ 		return CMD_RET_FAILURE;
+ 	}
++#ifdef CONFIG_DFU_TIMEOUT
++	ulong time_activity_start = get_timer(0);
++#endif
+ 
+ 	while (1) {
+ 		if (g_dnl_detach()) {
+@@ -80,6 +83,17 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
+ 			}
+ 		}
+ 
++#ifdef CONFIG_DFU_TIMEOUT
++		if (!dfu_enum_done() && dfu_get_timeout()) {
++			ulong cur_time = get_timer(time_activity_start);
++
++			if (cur_time > dfu_get_timeout()) {
++				debug("\nInactivity Timeout, Abort Dfu\n");
++				goto exit;
++			}
++		}
++#endif
++
+ 		WATCHDOG_RESET();
+ 		usb_gadget_handle_interrupts(usbctrl_index);
+ 	}
+diff --git a/configs/edison_defconfig b/configs/edison_defconfig
+index dabbee66bd..33aaac1456 100644
+--- a/configs/edison_defconfig
++++ b/configs/edison_defconfig
+@@ -26,6 +26,7 @@ CONFIG_CMD_FS_GENERIC=y
+ CONFIG_OF_EMBED=y
+ CONFIG_ENV_IS_IN_MMC=y
+ CONFIG_CPU=y
++CONFIG_DFU_TIMEOUT=y
+ CONFIG_DFU_MMC=y
+ CONFIG_DFU_RAM=y
+ CONFIG_DM_PCI_COMPAT=y
+diff --git a/drivers/dfu/Kconfig b/drivers/dfu/Kconfig
+index 56a98f5273..97e8071819 100644
+--- a/drivers/dfu/Kconfig
++++ b/drivers/dfu/Kconfig
+@@ -12,6 +12,12 @@ config DFU_TFTP
+ 
+ 	  Detailed description of this feature can be found at ./doc/README.dfutftp
+ 
++config DFU_TIMEOUT
++	bool "Timeout waiting for DFU"
++	help
++	  This option adds an optional timeout parameter for DFU which, if set,
++	  will cause DFU to only wait for that many seconds before exiting.
++
+ config DFU_MMC
+ 	bool "MMC back end for DFU"
+ 	help
+diff --git a/drivers/dfu/dfu.c b/drivers/dfu/dfu.c
+index 2c22b625b8..e4e172cf71 100644
+--- a/drivers/dfu/dfu.c
++++ b/drivers/dfu/dfu.c
+@@ -17,10 +17,14 @@
+ #include <linux/list.h>
+ #include <linux/compiler.h>
+ 
++static bool dfu_enum_request;
+ static LIST_HEAD(dfu_list);
+ static int dfu_alt_num;
+ static int alt_num_cnt;
+ static struct hash_algo *dfu_hash_algo;
++#ifdef CONFIG_DFU_TIMEOUT
++static ulong dfu_timeout = 0;
++#endif
+ 
+ /*
+  * The purpose of the dfu_usb_get_reset() function is to
+@@ -42,6 +46,28 @@ __weak bool dfu_usb_get_reset(void)
+ #endif
+ }
+ 
++bool dfu_enum_done(void)
++{
++	return dfu_enum_request;
++}
++
++void dfu_trigger_enum_done()
++{
++	dfu_enum_request = true;
++}
++
++#ifdef CONFIG_DFU_TIMEOUT
++void dfu_set_timeout(ulong timeout)
++{
++	dfu_timeout = timeout;
++}
++
++ulong dfu_get_timeout()
++{
++	return dfu_timeout;
++}
++#endif
++
+ static int dfu_find_alt_num(const char *s)
+ {
+ 	int i = 0;
+@@ -75,6 +101,7 @@ int dfu_init_env_entities(char *interface, char *devstr)
+ 		return ret;
+ 	}
+ 
++	dfu_enum_request = false;
+ 	free(env_bkp);
+ 	return 0;
+ }
+diff --git a/drivers/usb/gadget/f_dfu.c b/drivers/usb/gadget/f_dfu.c
+index bc4be712da..7e259a148b 100644
+--- a/drivers/usb/gadget/f_dfu.c
++++ b/drivers/usb/gadget/f_dfu.c
+@@ -596,6 +596,8 @@ dfu_handle(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
+ 	debug("req_type: 0x%x ctrl->bRequest: 0x%x f_dfu->dfu_state: 0x%x\n",
+ 	       req_type, ctrl->bRequest, f_dfu->dfu_state);
+ 
++	dfu_trigger_enum_done();
++
+ 	if (req_type == USB_TYPE_STANDARD) {
+ 		if (ctrl->bRequest == USB_REQ_GET_DESCRIPTOR &&
+ 		    (w_value >> 8) == DFU_DT_FUNC) {
+diff --git a/include/dfu.h b/include/dfu.h
+index 7e322d9d27..6114c9d35d 100644
+--- a/include/dfu.h
++++ b/include/dfu.h
+@@ -152,12 +152,16 @@ const char *dfu_get_layout(enum dfu_layout l);
+ struct dfu_entity *dfu_get_entity(int alt);
+ char *dfu_extract_token(char** e, int *n);
+ void dfu_trigger_reset(void);
++void dfu_trigger_enum_done(void);
+ int dfu_get_alt(char *name);
+ int dfu_init_env_entities(char *interface, char *devstr);
+ unsigned char *dfu_get_buf(struct dfu_entity *dfu);
++bool dfu_enum_done(void);
+ unsigned char *dfu_free_buf(void);
+ unsigned long dfu_get_buf_size(void);
+ bool dfu_usb_get_reset(void);
++ulong dfu_get_timeout(void);
++void dfu_set_timeout(ulong);
+ 
+ int dfu_read(struct dfu_entity *de, void *buf, int size, int blk_seq_num);
+ int dfu_write(struct dfu_entity *de, void *buf, int size, int blk_seq_num);
+-- 
+2.14.1
+
