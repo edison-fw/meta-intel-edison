@@ -8,7 +8,7 @@
 
 # In this makefile, all targets are phony because dependencies are managed at the bitbake level.
 # We don't need to specify all targets here because no files named like them exist at the top level directory.
-.PHONY : bbcache
+.PHONY : bbcache update
 
 # Use a default build tag when none is set by the caller
 NOWDATE := $(shell date +"%Y%m%d%H%M%S")
@@ -28,6 +28,10 @@ setup: pub bbcache
 	@rm -f out/current
 	@ln -s $(CURDIR)/out/$(SDK_HOST) $(CURDIR)/out/current
 	@if [ $(SDK_HOST) = macosx ]; then  /bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake odcctools2-crosssdk -c cleansstate" ; echo "Please make sure that OSX-sdk.zip is available in your bitbake download directory" ; fi
+
+update: _check_old_setup_exits
+	@echo Updating buildenv for SDK host $(SDK_HOST). If it does, try "make cleansstate". If no luck, try "make setup", this will clean out your out directory
+	./meta-intel-edison/setup.sh $(SETUP_ARGS) --dl_dir=$(BB_DL_DIR) --sstate_dir=$(BB_SSTATE_DIR) --build_dir=$(CURDIR)/out/$(SDK_HOST) --build_name=$(BUILD_TAG) --sdk_host=$(SDK_HOST)
 
 cleansstate: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; $(CURDIR)/meta-intel-edison/utils/invalidate_sstate.sh $(CURDIR)/out/current/build"
@@ -109,6 +113,9 @@ _no_targets:
 _check_setup_was_done:
 	@if [ ! -f $(CURDIR)/out/current/build/conf/local.conf ]; then echo Please run \"make setup\" first ; exit 1 ; fi
 
+_check_old_setup_exits:
+	@if [ ! -d $(CURDIR)/out/current/build/conf ]; then echo Please run \"make setup\" first ; exit 1 ; fi
+	
 _check_postbuild_was_done:
 	@if [ ! -f $(CURDIR)/out/current/build/toFlash/flashall.sh ]; then echo Please run \"make image/bootloader/kernel\" first ; exit 1 ; fi
 

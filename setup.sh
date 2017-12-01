@@ -28,48 +28,27 @@ set -e
 yocto_branch="pyro"
 yocto_tag="pyro"
 
+# The conf directory get's cleaned out with 'make setup' which deletes your changes
+# Instead we make a link to conf files in the the top repo dir. 
+# To make your changes permanent, # edit the file in the top repo dir and commit.
+# To make temporary changes delete the link and cp the file to conf, then edit the conf.
+# To restore, delete the changed file, then run 'make update'
 do_local_conf () {
-  cat > $yocto_conf_dir/local.conf <<EOF
-BB_NUMBER_THREADS = "$my_bb_number_thread"
-PARALLEL_MAKE = "-j$my_parallel_make"
-MACHINE = "edison"
-DISTRO = "poky-edison"
-USER_CLASSES ?= "buildstats image-mklibs image-prelink"
-PATCHRESOLVE = "noop"
-CONF_VERSION = "1"
-EDISONREPO_TOP_DIR = "$top_repo_dir"
-DL_DIR ?= "$my_dl_dir"
-SSTATE_DIR ?= "$my_sstate_dir"
-BUILDNAME = "$my_build_name"
-LICENSE_FLAGS_WHITELIST += "commercial"
-COPY_LIC_MANIFEST = "1"
-COPY_LIC_DIRS = "1"
-FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
-PACKAGE_CLASSES ?= "$extra_package_type"
-$extra_archiving
-$extra_conf
-$extra_nodejs_mraa_upm
-EOF
+if [ ! -f $yocto_conf_dir/local.conf ]; then
+  ln -s $top_repo_dir/meta-intel-edison/local.conf $yocto_conf_dir/local.conf
+fi
 }
 
 do_initramfs_conf () {
-  cat > $yocto_conf_dir/initramfs.conf <<EOF
-INITRAMFS_IMAGE = "core-image-minimal-initramfs"
-INITRAMFS_IMAGE_BUNDLE = "1"
-INITRAMFS_MAXSIZE ="15728640"
- 
-IMAGE_FSTYPES = "cpio.gz"
-IMAGE_INSTALL+="kernel-modules"
-EOF
+if [ ! -f $yocto_conf_dir/initramfs.conf ]; then
+  ln -s $top_repo_dir/meta-intel-edison/initramfs.conf $yocto_conf_dir/initramfs.conf
+fi
 }
 
 do_u-boot_conf () {
-  cat > $yocto_conf_dir/u-boot.conf <<EOF
-require conf/multilib.conf
-MULTILIBS = "multilib:lib32"
-DEFAULTTUNE_virtclass-multilib-lib32 = "core2-32"
-IMAGE_INSTALL_append = " lib32-libgcc"
-EOF
+if [ ! -f $yocto_conf_dir/u-boot.conf ]; then
+  ln -s $top_repo_dir/meta-intel-edison/u-boot.conf $yocto_conf_dir/u-boot.conf
+fi
 }
 
 
@@ -383,9 +362,6 @@ BINDINGS_pn-upm=\"python nodejs\"
     do_append_layer $darwin_dir
   fi
 
-  echo "Initializing yocto build environment"
-  source oe-init-build-env $my_build_dir/build > /dev/null
-
   yocto_conf_dir=$my_build_dir/build/conf
 
   echo "Setting up yocto configuration file (in build/conf/local.conf)"
@@ -393,6 +369,9 @@ BINDINGS_pn-upm=\"python nodejs\"
   do_local_conf
   do_initramfs_conf
   do_u-boot_conf
+
+  echo "Initializing yocto build environment"
+  source oe-init-build-env $my_build_dir/build > /dev/null
 
   echo "** Success **"
   echo "SDK will be generated for $my_sdk_host host"
