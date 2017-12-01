@@ -81,7 +81,7 @@ BBLAYERS ?= " \\
   $poky_dir/meta-nodejs \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
-  $top_repo_dir/meta-intel-iot-middleware \\
+  $top_repo_dir/meta-intel-edison/meta-intel-iot-middleware \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
@@ -278,16 +278,8 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "poky" "git://git.yoctoproject.org"
   do_update_cache "meta-openembedded" "https://github.com/openembedded"
   do_update_cache "meta-nodejs" "https://github.com/imyller"
-  # now that we have NodeJS layer cloned, set proper NodeJS version
-  # and enable NodeJS bindings for mraa and UPM
-  extra_nodejs_mraa_upm="PREFERRED_VERSION_nodejs = \"6.%\"
-PREFERRED_VERSION_nodejs-native = \"6.%\"
-BINDINGS_pn-mraa=\"python nodejs\"
-BINDINGS_pn-upm=\"python nodejs\"
-"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
-  do_update_cache "meta-intel-iot-middleware" "https://github.com/htot"
 
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
@@ -322,22 +314,6 @@ BINDINGS_pn-upm=\"python nodejs\"
   git clone ${my_dl_dir}/meta-nodejs-mirror.git meta-nodejs
   cd ${oe_dir}
   git checkout master
-
-  
-  cd ${top_repo_dir}
-  middleware_dir=${top_repo_dir}/meta-intel-iot-middleware
-  if [ ! -d "${middleware_dir}" ]; then
-    # directory does not exist, create it
-    echo "Cloning meta-intel-iot-middleware layer to ${middleware_dir} directory from local cache"
-    git clone ${my_dl_dir}/meta-intel-iot-middleware-mirror.git meta-intel-iot-middleware
-    cd ${middleware_dir}
-    git checkout pyro
-  else
-    echo "meta-intel-iot-middleware already exists, rebasing from local cache"
-    cd ${middleware_dir}
-    git pull --rebase origin pyro
-  fi
-
 
   cd ${top_repo_dir}
   echo "Cloning meta-arduino layer to ${top_repo_dir} directory from GitHub.com/01org/meta-arduino"
