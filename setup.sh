@@ -48,6 +48,7 @@ FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-dis
 PACKAGE_CLASSES ?= "$extra_package_type"
 $extra_archiving
 $extra_conf
+$extra_nodejs_mraa_upm
 EOF
 }
 
@@ -298,6 +299,13 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "poky" "git://git.yoctoproject.org"
   do_update_cache "meta-openembedded" "https://github.com/openembedded"
   do_update_cache "meta-nodejs" "https://github.com/imyller"
+  # now that we have NodeJS layer cloned, set proper NodeJS version
+  # and enable NodeJS bindings for mraa and UPM
+  extra_nodejs_mraa_upm="PREFERRED_VERSION_nodejs = \"6.%\"
+PREFERRED_VERSION_nodejs-native = \"6.%\"
+BINDINGS_pn-mraa=\"python nodejs\"
+BINDINGS_pn-upm=\"python nodejs\"
+"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
   do_update_cache "meta-intel-iot-middleware" "https://github.com/htot"
