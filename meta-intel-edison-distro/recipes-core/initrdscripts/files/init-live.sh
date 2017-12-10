@@ -68,7 +68,6 @@ read_args() {
                     console_params="$console_params $arg"
                 fi ;;
             debugshell*)
-                set -x
                 if [ -z "$optarg" ]; then
                         shelltimeout=30
                 else
