@@ -16,27 +16,12 @@ PCBIOS = "0"
 NOISO = "1"
 ROOTFS = ""
 
-# This is useless stuff, but necessary for building because
-# inheriting bootimg also brings syslinux in..
 AUTO_SYSLINUXCFG = "1"
-SYSLINUX_ROOT = ""
-SYSLINUX_TIMEOUT ?= "10"
-SYSLINUX_LABELS ?= "boot install"
-LABELS_append = " ${SYSLINUX_LABELS} "
-
 
 # Specify rootfs image type
-IMAGE_FSTYPES = "ext4"
-
-inherit core-image
-
-# This has to be set after including core-image otherwise it's overriden with "1"
-# and this cancel creation of the boot hddimg
+IMAGE_FSTYPES = "ext4 live"
 NOHDD = "0"
-
-#disabled this, don't know the effect
-#inherit bootimg
-do_bootimg[depends] += "${PN}:do_rootfs"
+inherit core-image
 
 IMAGE_ROOTFS_SIZE = "1048576"
 
