@@ -64,11 +64,6 @@ done
 # Copy rootfs
 cp $build_dir/tmp/deploy/images/edison/edison-image-edison.ext4 $build_dir/toFlash/
 
-# Copy symbols files
-mkdir -p $build_dir/symbols
-cp $build_dir/tmp/deploy/images/edison/vmlinux $build_dir/symbols/
-cp $build_dir/tmp/deploy/images/edison/u-boot-edison.bin $build_dir/symbols/
-
 # Copy flashing script
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.bat $build_dir/toFlash/
