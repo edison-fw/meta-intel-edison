@@ -8,6 +8,8 @@ require recipes-kernel/linux/linux-yocto.inc
 PV = "4.14.0"
 
 SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-4.14 \
+        file://0001-x86-platform-intel-mid-Revert-Make-bt_sfi_data-const.patch \
+        file://serial_dev_bus.cfg \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
