@@ -166,3 +166,7 @@ IMAGE_INSTALL += "battery-voltage"
 IMAGE_INSTALL += "perf"
 
 IMAGE_INSTALL += "sketch-check"
+
+# package management - where to find this?
+#IMAGE_INSTALL += "aptitude"
+
