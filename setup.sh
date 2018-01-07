@@ -34,23 +34,16 @@ yocto_tag="pyro"
 # To make temporary changes delete the link and cp the file to conf, then edit the conf.
 # To restore, delete the changed file, then run 'make update'
 do_local_conf () {
-if [ ! -f $yocto_conf_dir/local.conf ]; then
-  ln -s $top_repo_dir/meta-intel-edison/local.conf $yocto_conf_dir/local.conf
-fi
-}
-
-do_initramfs_conf () {
-if [ ! -f $yocto_conf_dir/initramfs.conf ]; then
-  ln -s $top_repo_dir/meta-intel-edison/initramfs.conf $yocto_conf_dir/initramfs.conf
+if [ ! -e "$yocto_conf_dir/local.conf" ]; then
+  ln -s "$top_repo_dir/meta-intel-edison/local.conf" "$yocto_conf_dir/local.conf"
 fi
 }
 
 do_u-boot_conf () {
-if [ ! -f $yocto_conf_dir/u-boot.conf ]; then
-  ln -s $top_repo_dir/meta-intel-edison/u-boot.conf $yocto_conf_dir/u-boot.conf
+if [ ! -e "$yocto_conf_dir/u-boot.conf" ]; then
+  ln -s "$top_repo_dir/meta-intel-edison/u-boot.conf" "$yocto_conf_dir/u-boot.conf"
 fi
 }
-
 
 do_append_layer (){
   if [[ $extra_layers == \\ ]]; then
@@ -79,9 +72,11 @@ BBLAYERS ?= " \\
   $poky_dir/meta-openembedded/meta-python \\
   $poky_dir/meta-openembedded/meta-networking \\
   $poky_dir/meta-nodejs \\
+  $poky_dir/meta-intel \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
   $top_repo_dir/meta-intel-edison/meta-intel-iot-middleware \\
+  $top_repo_dir/meta-acpi \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
@@ -278,8 +273,10 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "poky" "git://git.yoctoproject.org"
   do_update_cache "meta-openembedded" "https://github.com/openembedded"
   do_update_cache "meta-nodejs" "https://github.com/imyller"
+  do_update_cache "meta-intel" "git://git.yoctoproject.org"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
+  do_update_cache "meta-acpi" "https://github.com/htot"
 
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
@@ -315,6 +312,27 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd ${oe_dir}
   git checkout master
 
+  cd $poky_dir
+  oe_dir=$poky_dir/meta-intel
+  echo "Cloning meta-intel layer to ${oe_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-intel-mirror.git meta-intel
+  cd ${oe_dir}
+  git checkout pyro
+
+  cd ${top_repo_dir}
+  acpi_dir=${top_repo_dir}/meta-acpi
+  if [ ! -d "${acpi_dir}" ]; then
+    # directory does not exist, create it
+    echo "Cloning meta-acpi layer to ${top_repo_dir} directory from local cache"
+    git clone ${my_dl_dir}/meta-acpi-mirror.git meta-acpi
+    cd ${acpi_dir}
+    git checkout eds
+  else
+    echo "meta-acpi already exists, rebasing from local cache"
+    cd ${acpi_dir}
+    git pull --rebase origin eds
+  fi
+
   cd ${top_repo_dir}
   echo "Cloning meta-arduino layer to ${top_repo_dir} directory from GitHub.com/01org/meta-arduino"
   rm -rf meta-arduino || true
@@ -343,7 +361,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Setting up yocto configuration file (in build/conf/local.conf)"
   do_bblayers_conf
   do_local_conf
-  do_initramfs_conf
   do_u-boot_conf
 
   echo "Initializing yocto build environment"
