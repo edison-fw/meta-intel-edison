@@ -167,6 +167,8 @@ IMAGE_INSTALL += "perf"
 
 IMAGE_INSTALL += "sketch-check"
 
+IMAGE_INSTALL += "acpi-tables"
+
 # package management - where to find this?
 #IMAGE_INSTALL += "aptitude"
 
