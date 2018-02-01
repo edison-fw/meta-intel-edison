@@ -28,21 +28,28 @@ set -e
 yocto_branch="pyro"
 yocto_tag="pyro"
 
-# The conf directory get's cleaned out with 'make setup' which deletes your changes
-# Instead we make a link to conf files in the the top repo dir. 
-# To make your changes permanent, # edit the file in the top repo dir and commit.
-# To make temporary changes delete the link and cp the file to conf, then edit the conf.
-# To restore, delete the changed file, then run 'make update'
 do_local_conf () {
-if [ ! -e "$yocto_conf_dir/local.conf" ]; then
-  ln -s "$top_repo_dir/meta-intel-edison/local.conf" "$yocto_conf_dir/local.conf"
-fi
-}
-
-do_u-boot_conf () {
-if [ ! -e "$yocto_conf_dir/u-boot.conf" ]; then
-  ln -s "$top_repo_dir/meta-intel-edison/u-boot.conf" "$yocto_conf_dir/u-boot.conf"
-fi
+  cat > $yocto_conf_dir/local.conf <<EOF
+BB_NUMBER_THREADS = "$my_bb_number_thread"
+PARALLEL_MAKE = "-j$my_parallel_make"
+MACHINE = "edison"
+DISTRO = "poky-edison"
+USER_CLASSES ?= "buildstats image-mklibs image-prelink"
+PATCHRESOLVE = "noop"
+CONF_VERSION = "1"
+EDISONREPO_TOP_DIR = "$top_repo_dir"
+DL_DIR ?= "$my_dl_dir"
+SSTATE_DIR ?= "$my_sstate_dir"
+BUILDNAME = "$my_build_name"
+LICENSE_FLAGS_WHITELIST += "commercial"
+COPY_LIC_MANIFEST = "1"
+COPY_LIC_DIRS = "1"
+FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
+PACKAGE_CLASSES ?= "$extra_package_type"
+$extra_archiving
+$extra_conf
+$extra_nodejs_mraa_upm
+EOF
 }
 
 do_append_layer (){
@@ -358,13 +365,19 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 
   yocto_conf_dir=$my_build_dir/build/conf
 
-  echo "Setting up yocto configuration file (in build/conf/local.conf)"
-  do_bblayers_conf
-  do_local_conf
-  do_u-boot_conf
+# The conf directory get's cleaned out with 'make setup' which deletes your changes
+# With 'make update' we leave it alone
+# Only create a new if it doesn't exist
 
-  echo "Initializing yocto build environment"
-  source oe-init-build-env $my_build_dir/build > /dev/null
+  if [ ! -e "$yocto_conf_dir/local.conf" ]; then
+    echo "Initializing yocto build environment"
+    source oe-init-build-env $my_build_dir/build > /dev/null
+
+    echo "Setting up yocto configuration file (in build/conf/local.conf)"
+    do_local_conf
+    do_bblayers_conf
+  fi
+
 
   echo "** Success **"
   echo "SDK will be generated for $my_sdk_host host"
