@@ -34,7 +34,7 @@ do_compile() {
     npm set cache ${WORKDIR}/npm_cache
 
     # clear local cache prior to each compile
-    npm cache clear
+    npm cache clear --force
 
     # compile and install  node modules in source directory
     npm --arch=${TARGET_ARCH} --verbose install
