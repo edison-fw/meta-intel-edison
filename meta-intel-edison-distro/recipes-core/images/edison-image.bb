@@ -125,7 +125,6 @@ IMAGE_INSTALL_append = " libgpiod"
 
 # Edison Middleware stuff
 IMAGE_INSTALL_append = " packagegroup-core-buildessential"
-IMAGE_INSTALL_append = " iotkit-opkg"
 IMAGE_INSTALL_append = " zeromq-dev"
 IMAGE_INSTALL_append = " cppzmq-dev"
 IMAGE_INSTALL_append = " python-paho-mqtt-dev"
