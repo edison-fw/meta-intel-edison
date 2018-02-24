@@ -130,7 +130,6 @@ IMAGE_INSTALL_append = " zeromq-dev"
 IMAGE_INSTALL_append = " cppzmq-dev"
 IMAGE_INSTALL_append = " python-paho-mqtt-dev"
 IMAGE_INSTALL_append = " libnss-mdns-dev"
-IMAGE_INSTALL_append = " iotkit-agent"
 #IMAGE_INSTALL_append = " xdk-daemon"
 IMAGE_INSTALL_append = " oobe"
 
