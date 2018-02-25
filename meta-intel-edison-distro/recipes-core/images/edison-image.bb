@@ -121,16 +121,14 @@ IMAGE_INSTALL_append = " swig"
 
 # Edison Arduino stuff
 #IMAGE_INSTALL_append = " clloader"
-
+IMAGE_INSTALL_append = " libgpiod"
 
 # Edison Middleware stuff
 IMAGE_INSTALL_append = " packagegroup-core-buildessential"
-IMAGE_INSTALL_append = " iotkit-opkg"
 IMAGE_INSTALL_append = " zeromq-dev"
 IMAGE_INSTALL_append = " cppzmq-dev"
 IMAGE_INSTALL_append = " python-paho-mqtt-dev"
 IMAGE_INSTALL_append = " libnss-mdns-dev"
-IMAGE_INSTALL_append = " iotkit-agent"
 #IMAGE_INSTALL_append = " xdk-daemon"
 IMAGE_INSTALL_append = " oobe"
 
