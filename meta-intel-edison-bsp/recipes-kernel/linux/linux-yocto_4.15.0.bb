@@ -9,6 +9,7 @@ PV = "4.15.0"
 
 # this branch now contains both non-acpi kernel and acpi enabled kernel on top
 SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-4.15.0-unified \
+	file://serial-8250-Don-t-service-RX-FIFO-if-interrupts-are-disabled.patch \
         file://usb_phy.cfg \
         file://usb_dwc3.cfg \
         file://ftdi_sio.cfg \
