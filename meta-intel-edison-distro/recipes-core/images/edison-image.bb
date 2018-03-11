@@ -86,8 +86,6 @@ IMAGE_INSTALL_append = " python-distutils python-pkgutil python-audio python-ima
 # Wifi firmware
 # removed modules, already built into kernel
 IMAGE_INSTALL_append = " bcm43340-fw"
-# service daemon that listens to rfkill events and trigger FW patch download
-IMAGE_INSTALL_append = " bluetooth-rfkill-event"
 
 # Provides strace and gdb
 IMAGE_FEATURES += "tools-debug"
