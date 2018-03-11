@@ -11,6 +11,7 @@ PV = "4.15.0"
 SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-4.15.0-unified \
         file://serial-8250-Don-t-service-RX-FIFO-if-interrupts-are-disabled.patch \
         file://0001-perf-tools-Fix-compile-error-with-libunwind-x86.patch \
+	file://0001-Bluetooth-hci_serdev-Init-hci_uart-proto_lock-to-avo.patch \
         file://usb_phy.cfg \
         file://usb_dwc3.cfg \
         file://ftdi_sio.cfg \
