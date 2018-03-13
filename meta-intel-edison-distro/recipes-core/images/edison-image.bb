@@ -168,4 +168,7 @@ IMAGE_INSTALL_append = " acpi-tables"
 # package management - where to find this?
 #IMAGE_INSTALL_append = " aptitude"
 
+# Add monitoring tools
+IMAGE_INSTALL_append = " htop"
+
 DEPENDS += "u-boot"
