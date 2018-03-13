@@ -170,5 +170,6 @@ IMAGE_INSTALL_append = " acpi-tables"
 
 # Add monitoring tools
 IMAGE_INSTALL_append = " htop"
+IMAGE_INSTALL_append = " iotop"
 
 DEPENDS += "u-boot"
