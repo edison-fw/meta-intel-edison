@@ -75,10 +75,10 @@ cp -R $top_repo_dir/meta-intel-edison/utils/flash/helper $build_dir/toFlash/help
 ubootdir=$top_repo_dir/u-boot
 mkimage_tool_path=""
 if [ -a $ubootdir ]; then
-    mkimage_tool_path=$(find $top_repo_dir/u-boot -name mkimage)
+    mkimage_tool_path=$(find $top_repo_dir/u-boot -name mkimage -type f)
 fi
 if [ -z $mkimage_tool_path ]; then
-    mkimage_tool_path=$(find $build_dir/tmp/work/edison-poky-linux/u-boot -name mkimage)
+    mkimage_tool_path=$(find $build_dir/tmp/work/edison-poky-linux/u-boot -name mkimage -type f)
     if [ -z "$mkimage_tool_path" ]; then
         echo "Error : ota_update.scr creation failed, mkimage tool not found"
         exit 0
