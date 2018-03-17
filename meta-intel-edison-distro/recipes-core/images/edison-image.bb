@@ -98,6 +98,7 @@ IMAGE_INSTALL_append = " tcpdump"
 IMAGE_INSTALL_append = " net-tools"
 IMAGE_INSTALL_append = " lsof"
 IMAGE_INSTALL_append = " iperf3"
+IMAGE_INSTALL_append = " less"
 
 # Add pulseaudio
 IMAGE_INSTALL_append = " pulseaudio-server libpulsecore libpulsecommon libpulse libpulse-simple pulseaudio-misc"
