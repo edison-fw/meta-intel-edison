@@ -20,26 +20,22 @@ PE = "1"
 # otherwise we use upstream with the following patches
 
 EDISON-PATCHES = "\
-	file://0001-x86-tangier-Make-_CRS-for-BTH0-Serialized-to-avoid-w.patch \
-	file://0002-x86-Fix-reference-to-QEMU-variant-of-write_acpi_tabl.patch \
-	file://0003-x86-zImage-Move-subarch-assignment-out-of-cmd_line-c.patch \
-	file://0004-x86-zImage-Propagate-acpi_rsdp_addr-to-kernel-via-bo.patch \
 	file://0005-HACK-dfu-add-optional-timeout.patch \
 	file://0006-HACK-mmc-sdhci-SDHCI-controllers-also-need-power.patch \
 "
 
 SRC_URI = "${@bb.utils.contains('DISTRO_FEATURES', \
-	'acpi', 'git://github.com/htot/u-boot.git;branch=acpi-v2018.01;protocol=https', \
+	'acpi', 'git://github.com/htot/u-boot.git;branch=acpi-v2018.03;protocol=https', \
 		'git://github.com/u-boot/u-boot.git;branch=master;protocol=https', d)}"
 		
 SRCREV = "${@bb.utils.contains('DISTRO_FEATURES', \
-	'acpi', '1e974c4d2b3a6ee292c8ff22ffe4994efc1fdf23', \
-		'v2018.01', d)}"
+	'acpi', '82f001a9cce694bcb8a83ee92bfcce7b0163870c', \
+		'v2018.03', d)}"
 		
 SRC_URI += "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', ' ', '${EDISON-PATCHES}', d)}"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
 
-PV = "2018.01"
+PV = "2018.03"
 S = "${WORKDIR}/git"
