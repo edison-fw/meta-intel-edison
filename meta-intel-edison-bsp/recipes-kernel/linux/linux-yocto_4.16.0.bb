@@ -5,26 +5,25 @@ KBRANCH ?= "standard/base"
 
 require recipes-kernel/linux/linux-yocto.inc
 
-PV = "4.15.0"
+PV = "4.16.0"
 
 # this branch now contains both non-acpi kernel and acpi enabled kernel on top
-SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-4.15.0-unified \
-        file://serial-8250-Don-t-service-RX-FIFO-if-interrupts-are-disabled.patch \
-        file://0001-perf-tools-Fix-compile-error-with-libunwind-x86.patch \
-	file://0001-Bluetooth-hci_serdev-Init-hci_uart-proto_lock-to-avo.patch \
-        file://usb_phy.cfg \
-        file://usb_dwc3.cfg \
+SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-4.16.0-unified \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
         file://i2c_chardev.cfg \
         file://configfs.cfg \
+        file://usb_dwc3.cfg \
         "
 
-SRCREV ??= "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '18624e910ed7bb1c756342363fe783d399c19210', '5a8af845894982590bdde0f625547fdcf79dd374', d)}"
+# usefull kernel debug options here
+#
+
+SRCREV ??= "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '9d932425171e72e9378d07ad4ee964b2a611978f', '156bd82de94d55435fd91eef33e53459392e98ba', d)}"
 LINUX_VERSION_EXTENSION = "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '-edison-acpi-${LINUX_KERNEL_TYPE}', '-edison-no-acpi-${LINUX_KERNEL_TYPE}', d)}"
 
-LINUX_VERSION ?= "4.15.0"
+LINUX_VERSION ?= "4.16.0"
 
 
 COMPATIBLE_MACHINE = "edison"
