@@ -5,9 +5,9 @@ require recipes-kernel/linux/linux-yocto.inc
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-PV = "5.0.0"
+PV = "5.1.0"
 
-SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5.0.0 \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5.1.0 \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
@@ -22,16 +22,15 @@ SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
-SRC_URI_append = " file://0001-ACPI-device_sysfs-Avoid-OF-modalias-creation-for-rem.patch"
 SRC_URI_append = " file://0001-Bluetooth-btbcm-Add-default-address-for-BCM43341B.patch"
 
 # usefull kernel debug options here
 #
 
-SRCREV ??= "ea4db1ef366e5a7cf12a71da6d542a444abb269c"
+SRCREV ??= "4144713ee5fd75fd5c02143c04a0eea7d04afd67"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
-LINUX_VERSION ?= "5.0.0"
+LINUX_VERSION ?= "5.1.0"
 
 
 COMPATIBLE_MACHINE = "edison"
