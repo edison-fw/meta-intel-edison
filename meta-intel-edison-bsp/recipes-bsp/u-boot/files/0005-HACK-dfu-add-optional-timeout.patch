@@ -1,7 +1,7 @@
-From c48608cb8f563d183c1ea2e1a8c4456e9000911e Mon Sep 17 00:00:00 2001
+From 602d867fe5581718942a631a76d9e222e44346b6 Mon Sep 17 00:00:00 2001
 From: Brad <bradjc5@gmail.com>
 Date: Thu, 25 May 2017 14:16:31 -0400
-Subject: [PATCH 5/6] HACK: dfu: add optional timeout
+Subject: [PATCH] HACK: dfu: add optional timeout
 
 When the `dfu` command is called from the U-Boot environment, it now
 accepts an optional fourth parameter that specifies a timeout (in
@@ -35,10 +35,10 @@ Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
  7 files changed, 65 insertions(+)
 
 diff --git a/cmd/dfu.c b/cmd/dfu.c
-index 04291f6c08..71fac0a3cf 100644
+index 68b1a7fec9..bdb919a073 100644
 --- a/cmd/dfu.c
 +++ b/cmd/dfu.c
-@@ -49,6 +49,10 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+@@ -51,6 +51,10 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
  		dfu_show_entities();
  		goto done;
  	}
@@ -49,10 +49,10 @@ index 04291f6c08..71fac0a3cf 100644
  
  	int controller_index = simple_strtoul(usb_controller, NULL, 0);
  
-@@ -61,11 +65,18 @@ done:
- 
+@@ -65,11 +69,18 @@ done:
  U_BOOT_CMD(dfu, CONFIG_SYS_MAXARGS, 1, do_dfu,
  	"Device Firmware Upgrade",
+ #ifdef CONFIG_DFU_OVER_USB
 +#ifdef CONFIG_DFU_TIMEOUT
 +	"<USB_controller> <interface> <dev> [list|timeout]\n"
 +#else
@@ -65,9 +65,9 @@ index 04291f6c08..71fac0a3cf 100644
 +#ifdef CONFIG_DFU_TIMEOUT
 +	"    [timeout] - specify inactivity timeout in sec, doesn't work with list\n"
 +#endif
- #ifdef CONFIG_DFU_TFTP
- 	"dfu tftp <interface> <dev> [<addr>]\n"
- 	"  - device firmware upgrade via TFTP\n"
+ #endif
+ #ifdef CONFIG_DFU_OVER_TFTP
+ #ifdef CONFIG_DFU_OVER_USB
 diff --git a/common/dfu.c b/common/dfu.c
 index 07dff317a6..2f6a73b48f 100644
 --- a/common/dfu.c
@@ -101,10 +101,10 @@ index 07dff317a6..2f6a73b48f 100644
  		usb_gadget_handle_interrupts(usbctrl_index);
  	}
 diff --git a/configs/edison_defconfig b/configs/edison_defconfig
-index dabbee66bd..33aaac1456 100644
+index 7e095b9822..0152718296 100644
 --- a/configs/edison_defconfig
 +++ b/configs/edison_defconfig
-@@ -26,6 +26,7 @@ CONFIG_CMD_FS_GENERIC=y
+@@ -28,6 +28,7 @@ CONFIG_CMD_FS_GENERIC=y
  CONFIG_OF_EMBED=y
  CONFIG_ENV_IS_IN_MMC=y
  CONFIG_CPU=y
@@ -113,10 +113,10 @@ index dabbee66bd..33aaac1456 100644
  CONFIG_DFU_RAM=y
  CONFIG_DM_PCI_COMPAT=y
 diff --git a/drivers/dfu/Kconfig b/drivers/dfu/Kconfig
-index 56a98f5273..97e8071819 100644
+index 51ab484c2a..da5a848bf8 100644
 --- a/drivers/dfu/Kconfig
 +++ b/drivers/dfu/Kconfig
-@@ -12,6 +12,12 @@ config DFU_TFTP
+@@ -23,6 +23,12 @@ config DFU_TFTP
  
  	  Detailed description of this feature can be found at ./doc/README.dfutftp
  
