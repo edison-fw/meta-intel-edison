@@ -164,8 +164,6 @@ IMAGE_INSTALL_append = " perf"
 
 IMAGE_INSTALL_append = " sketch-check"
 
-IMAGE_INSTALL_append = " acpi-tables"
-
 # package management - where to find this?
 #IMAGE_INSTALL_append = " aptitude"
 

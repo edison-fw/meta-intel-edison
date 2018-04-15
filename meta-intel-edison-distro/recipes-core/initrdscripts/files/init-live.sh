@@ -44,6 +44,20 @@ early_setup() {
     udevadm trigger --action=add
 }
 
+acpi_load() {
+	if [ -d /sys/firmware/acpi ]; then
+		echo "Kernel with acpi enabled detected"
+		if [ -f /usr/bin/acpi-tables-load ]; then
+			echo "Loading acpi tables"
+			mount -t configfs configfs /sys/kernel/config
+			/usr/bin/acpi-tables-load
+			umount /sys/kernel/config
+		fi
+	else
+		echo "Kernel with SFI detected"
+	fi
+}
+
 read_args() {
     [ -z "$CMDLINE" ] && CMDLINE=`cat /proc/cmdline`
     for arg in $CMDLINE; do
@@ -112,6 +126,8 @@ fatal() {
 }
 
 early_setup
+
+acpi_load
 
 [ -z "$CONSOLE" ] && CONSOLE="/dev/console"
 
