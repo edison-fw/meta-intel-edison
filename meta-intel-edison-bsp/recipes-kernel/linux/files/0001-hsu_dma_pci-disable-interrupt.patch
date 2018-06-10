@@ -1,0 +1,26 @@
+From 6087625cd1dd7eb281ee77cdde9aef49d8ebe4fd Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 31 Mar 2018 18:26:45 +0200
+Subject: [PATCH] hsu_dma_pci: disable interrupt
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/dma/hsu/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/hsu/pci.c b/drivers/dma/hsu/pci.c
+index ad45cd344bba..294134cd1dd4 100644
+--- a/drivers/dma/hsu/pci.c
++++ b/drivers/dma/hsu/pci.c
+@@ -107,7 +107,7 @@ static int hsu_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	ret = request_irq(chip->irq, hsu_pci_irq, 0, "hsu_dma_pci", chip);
+ 	if (ret)
+ 		goto err_register_irq;
+-
++	disable_irq_nosync(chip->irq);
+ 	pci_set_drvdata(pdev, chip);
+ 
+ 	return 0;
+-- 
+2.17.1
+

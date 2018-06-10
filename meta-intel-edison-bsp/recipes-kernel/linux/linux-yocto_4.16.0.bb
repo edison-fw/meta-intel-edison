@@ -20,6 +20,8 @@ SRC_URI_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '', 'file://i
 
 # kernel patches
 SRC_URI_append = " ${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '', 'file://0001-Add-kernel-parameter-to-enable-i2c-6-pinctrl-mapping.patch', d)}"
+SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
+SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
 
 # usefull kernel debug options here
 #
