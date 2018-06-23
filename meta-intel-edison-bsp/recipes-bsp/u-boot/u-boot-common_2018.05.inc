@@ -25,7 +25,7 @@ EDISON-PATCHES = "\
 "
 
 SRC_URI = "${@bb.utils.contains('DISTRO_FEATURES', \
-	'acpi', 'git://github.com/htot/u-boot.git;branch=acpi-v2018.05;protocol=https', \
+	'acpi', 'git://github.com/edison-fw/u-boot.git;branch=acpi-v2018.05;protocol=https', \
 		'git://github.com/u-boot/u-boot.git;branch=master;protocol=https', d)}"
 		
 SRCREV = "${@bb.utils.contains('DISTRO_FEATURES', \

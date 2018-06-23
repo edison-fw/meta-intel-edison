@@ -27,4 +27,4 @@ Currently I am tracking origin/master but I have created four additional branche
 
 # How to use this
 
-Yocto Morty / Pyro will build on Ubuntu Artful (17.10). For detailed instructions see the wiki [https://github.com/htot/meta-intel-edison/wiki](https://github.com/htot/meta-intel-edison/wiki)
+Yocto Morty / Pyro will build on Ubuntu Artful (17.10). For detailed instructions see the wiki [https://github.com/edison-fw/meta-intel-edison/wiki](https://github.com/edison-fw/meta-intel-edison/wiki)

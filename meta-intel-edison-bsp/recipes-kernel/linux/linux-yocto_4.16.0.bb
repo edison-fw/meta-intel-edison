@@ -8,7 +8,7 @@ require recipes-kernel/linux/linux-yocto.inc
 PV = "4.16.0"
 
 # this branch now contains both non-acpi kernel and acpi enabled kernel on top
-SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-4.16.0-unified \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-4.16.0-unified \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \

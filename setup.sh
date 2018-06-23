@@ -283,7 +283,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "meta-intel" "git://git.yoctoproject.org"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
-  do_update_cache "meta-acpi" "https://github.com/htot"
+  do_update_cache "meta-acpi" "https://github.com/edison-fw"
 
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
