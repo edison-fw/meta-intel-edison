@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Prerequisites for building | Edison</title>
+    
+    <base>
+    <meta name="description" content=" Building Dizzy branches Building Morty, Pyro and Rocko branches Building under Windows (10)  Ubuntu for Windows Virtualbox... " >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" value="notranslate">
+    <link rel="icon"  type="image/x-icon" href="assets/favicon.ico">
+
+    <!-- FontAwesome (GPL license) -->
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- jQuery (MIT license)-->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <!-- jQuery cookie (MIT license)-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <!-- Navgoco (BSD license)-->
+    <script type="text/javascript" src="assets/js/jquery.navgoco.min.js"></script>
+    <!-- Bootstrap (MIT license)-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Anchor JS (MIT license)-->
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/2.0.0/anchor.min.js"></script>
+        <script>
+        $( document ).ready(function() {
+            anchors.add('h2,h3,h4,h5');
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        </script>
+    
+
+    <script>
+        $( document ).ready(function() {
+            $("#docnavsidebar").navgoco({
+                caretHtml: '',
+                accordion: false,
+                openClass: 'open', // open
+                save: true,
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 300,
+                    easing: 'swing'
+                }
+            });
+            $("#collapseAll").click(function(e) {
+                e.preventDefault();
+                $("#docnavsidebar").navgoco('toggle', false);
+            });
+
+            $("#expandAll").click(function(e) {
+                e.preventDefault();
+                $("#docnavsidebar").navgoco('toggle', true);
+            });
+        });
+
+    </script>
+
+ <!-- For responsive button to toggle sidebar -->
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle=offcanvas]').click(function() {
+                $('.row-offcanvas').toggleClass('active');
+            });
+        });
+    </script>
+
+    <!-- User defined js -->
+    <script src="assets/js/user_defined_javascript.js"></script>
+    <!--Bootstrap (MIT license) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <!-- Original theme from Bootstrap Bootswatch fork: http://www.codeply.com/go/rV7KhUjwCN (MIT license) -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/user_defined_web_styles.css" />
+    <style>
+        ul#markdown-toc::before  {
+        content: "Table of Contents"
+         }
+    </style>
+
+</head>
+<body class="default">
+<div class="page-container">
+
+
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container topnavlinks">
+            <div class="navbar-header">
+              
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="fa fa-bars fa-2x"></span>
+                </button>
+                
+                
+                <button type="button" class="navbar-toggle toggle-sidebar-button"  data-toggle="offcanvas" data-target=".sidebar-nav">
+                    <span class="sidebarToggle fa fa-columns fa-2x"></span>
+                </button>
+                
+
+
+                  
+
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-left">
+
+                    <!-- single item nav items appear here -->
+
+                    
+                    
+                    
+                    
+
+                          <!-- drop-down nav items appear here -->
+
+                    
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sample Menu<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+                            
+                            <li><a href="https://talk.jekyllrb.com" class="noExtIcon">First item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://amazon.com" class="noExtIcon">Second item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://nytimes.com" class="noExtIcon">Third item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://google.com" class="noExtIcon">Fourth item</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Another menu<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+                            
+                            <li><a href="index.html">Getting Started</a></li>
+                            
+                            
+                            
+                            <li><a href="jekyllhowto-content-and-formatting.html">Content and Formatting</a></li>
+                            
+                            
+                            
+                            <li><a href="jekyllhowto-sidebar-navigation.html">Sidebar navigation</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+
+                    
+                    
+
+                    
+                    <li><a target="_blank" href="https://github.com/htot/meta-intel-edison//_docs/Edison/Setting Up/1-Prerequisites-for-building.md" class="editButton noExtIcon"><i class="fa fa-github fa-lg"></i> Edit on GitHub</a>
+</li>
+                    
+
+
+                </ul>
+                
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+
+                     <div id="search-topnav-container">
+                        <form action="search.html" method="get">
+                          <div class="input-group search">
+                            <input type="text" id="search-box" name="query" class="form-control" placeholder="Search ...">
+                            <div class="input-group-btn">
+                              <button class="btn btn-default" type="submit" value="search">
+                                <i class="glyphicon glyphicon-search"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                        </div>
+
+
+                    </li>
+                </ul>
+                
+            </div>
+
+        </div>
+
+
+        <!-- /.container -->
+    </nav>
+
+<div class="container">
+        <div class="row row-offcanvas row-offcanvas-left">
+
+            <!-- sidebar -->
+            <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+
+                
+<div class="mydocsidebar">
+
+
+<div class="sidebar-inner">
+
+
+  
+
+
+<div class="productTitle">Generic</div>
+<p class="external">
+    <a href="#" id="collapseAll">Collapse All</a> | <a href="#" id="expandAll">Expand All</a>
+</p>
+
+
+
+    <ul id="docnavsidebar" class="docnav">
+    
+    
+        
+    
+    <li class="level1"><a href="#">Introduction</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="0.1-A-word-of-warning.html">A Word of Warning</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.2-About-me.html">About me</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.3-What-is-here.html">What is here</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.4-Bug-feature-testing.html">Bugs, Feature & Testing</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.5-Road-map.html">Roadmap</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">Setting up</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items open"><a href="1-Prerequisites-for-building.html">Prerequisites for building</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="2-Setting-up.html">Setting up</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">Building</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="3-Building-and-installing-the-rootfs.html">Building and installing the rootfs</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="4-Building-and-installing-the-kernel.html">Building and installing the kernel</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">SDK</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="3-Building-the-SDK.html">Building and installing the SDK</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+
+    </li>
+</ul>
+
+<hr class="resourceSeparator"></hr>
+<div class="relatedResources">Other Resources</div>
+<ul id="entrypages">
+        
+        <li><a class="noExtIcon" href="">Other Documentation</a></li>
+        
+    </li>
+</ul>
+</div>
+</div>
+<script>$("li.open").parents('li').toggleClass("open");</script>
+
+
+            </div>
+
+            <!-- main area -->
+            <div class="col-xs-12 col-sm-9 main">
+
+                    <div class="subtitle">
+                    
+
+
+<a href="http://pages.github.com/htot" class="noExtIcon productSubtitle">Home</a>&nbsp;&nbsp;>&nbsp;&nbsp;Edison&nbsp;&nbsp;>&nbsp;&nbsp;Setting Up
+    
+
+
+
+
+                      </div>
+
+                      
+
+
+                    <h1>Prerequisites for building</h1>
+
+                
+                    <ul id="markdown-toc">
+  <li><a href="#building-dizzy-branches" id="markdown-toc-building-dizzy-branches">Building Dizzy branches</a></li>
+  <li><a href="#building-morty-pyro-and-rocko-branches" id="markdown-toc-building-morty-pyro-and-rocko-branches">Building Morty, Pyro and Rocko branches</a></li>
+  <li><a href="#building-under-windows-10" id="markdown-toc-building-under-windows-10">Building under Windows (10)</a>    <ul>
+      <li><a href="#ubuntu-for-windows" id="markdown-toc-ubuntu-for-windows">Ubuntu for Windows</a></li>
+      <li><a href="#virtualbox" id="markdown-toc-virtualbox">Virtualbox</a></li>
+      <li><a href="#cross-platforms-crops" id="markdown-toc-cross-platforms-crops">CROss PlatformS (CROPS)</a></li>
+    </ul>
+  </li>
+</ul>
+<h2 id="building-dizzy-branches">Building Dizzy branches</h2>
+
+<p>You <em>really</em> need to build Yocto Dizzy versions on Ubuntu 14.04.</p>
+
+<p>With Dizzy and Ubuntu 16.10 you will get errors related to makenod etc from pseudo-native. that will prevent the image to build completely.</p>
+
+<p>If you have a later version of Ubuntu you can net native build speeds by creating a container with Ubuntu 14.04, install and configure sshd, create a user for yourself, and install the required build environment (may be a bit to much):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 libsdl1.2-dev xterm python3
+</code></pre></div></div>
+
+<p>Detailed Intel instruction are here: <a href="https://software.intel.com/en-us/node/593591">https://software.intel.com/en-us/node/593591</a></p>
+
+<p>How-to create a container: <a href="https://linuxcontainers.org/lxd/getting-started-cli/">https://linuxcontainers.org/lxd/getting-started-cli/</a></p>
+
+<h2 id="building-morty-pyro-and-rocko-branches">Building Morty, Pyro and Rocko branches</h2>
+
+<p>Yocto Morty / Pyro / Rocko will build on Ubuntu Artful (17.10), despite a warning that this is untested.</p>
+
+<p>Install the required build environment (may be a bit to much):</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 libsdl1.2-dev xterm python3
+</code></pre></div></div>
+
+<h2 id="building-under-windows-10">Building under Windows (10)</h2>
+
+<h3 id="ubuntu-for-windows">Ubuntu for Windows</h3>
+
+<p>I have tried building using Ubuntu for Windows, with no succes. Appearently Windows translation layer does not fully support all properties of a linux file system.</p>
+
+<h3 id="virtualbox">Virtualbox</h3>
+
+<p>If you want to get started quickly, you are probably better off installing a virtual machine (like Virtualbox) with a suitable version of Ubuntu (I don’t want to start a flame war, but Kubuntu is really nice). Keep in mind that bitbake will produce 60GB - 100GB of files and a virtual machine will be substantially slower than building native. And native can take 2.5 (ssd) - 6 (hdd) hours when building all from scratch.</p>
+
+<h3 id="cross-platforms-crops">CROss PlatformS (CROPS)</h3>
+
+<p>CROPS uses Docker Containers, on Windows this is done by running a linux kernel in a Virtual Machine (VM) then running containers in linux. In the end it is still a VM, which associated slowness, but without the desktop that Virtualbox provides.</p>
+
+<ol>
+  <li>
+    <p>Go to the <a href="https://docs.docker.com/docker-for-windows/install/">Docker Installation website</a> and download Docker for Windows (Stable). Docker is a software container platform that you need to install on the host development machine.</p>
+  </li>
+  <li>
+    <p>Set Up the Containers to Use the Yocto Project. Go to <a href="https://github.com/crops/docker-win-mac-docs/wiki">CROPS on github</a> and follow the directions for your particular development host (i.e. Linux, Mac, or Windows).</p>
+
+    <p>Once you complete the setup instructions for your machine, you have the Poky, Extensible SDK, and Toaster containers available.</p>
+  </li>
+</ol>
+
+                  
+
+                    
+
+
+
+            </div>
+        </div><!--/.container-->
+
+
+    </div><!--/.page-container-->
+    <!-- * Bootsnipp footer: http://bootsnipp.com/snippets/1KEEq (MIT license) -->
+
+<div class="footertop">
+    <div class="container">
+        <div class="col-md-6">
+            <p></p>
+        </div>
+        <div class="col-md-6">
+            <ul class="bottom_ul">
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 col-sm-6 footerleft ">
+
+
+              
+                        <div class="logofooter"> About the Documentation</div>
+                <p class="footer-description">This is the onofficial Yocto for Edison Arduino documentation. You will find instructions how to setup a current Yocto, build recent U-Boot and Linux kernel and install tools on the rootfs.
+</p>
+
+            </div>
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+                <h6 class="heading7">Column 1</h6>
+                <ul class="footer-ul">
+                  
+                    <li><a class="noExtIcon" href="http://someurl1.com"> Column 1 Link 1</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl2.com"> Column 1 Link 2</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl3.com"> Column 1 Link 3</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl4.com"> Column 1 Link 4</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl5.com"> Column 1 Link 5</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl6.com"> Column 1 Link 6</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl7.com"> Column 1 Link 7</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl8.com"> Column 1 Link 8</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">Column 2</h6>
+              <ul class="footer-ul">
+                
+                  <li><a class="noExtIcon" href="http://someurl1.com"> Column 2 Link 1</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl2.com"> Column 2 Link 2</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl3.com"> Column 2 Link 3</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl4.com"> Column 2 Link 4</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl5.com"> Column 2 Link 5</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl6.com"> Column 2 Link 6</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl7.com"> Column 2 Link 7</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl8.com"> Column 2 Link 8</a></li>
+                  
+              </ul>
+            </div>
+
+            <div class="col-md-3 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">Column 3</h6>
+              <ul class="footer-ul">
+                
+                  <li><a class="noExtIcon" href="http://someurl1.com"> Column 3 Link 1</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl2.com"> Column 3 Link 2</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl3.com"> Column 3 Link 3</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl4.com"> Column 3 Link 4</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl5.com"> Column 3 Link 5</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl6.com"> Column 3 Link 6</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl7.com"> Column 3 Link 7</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl8.com"> Column 3 Link 8</a></li>
+                  
+              </ul>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+</footer>
+<!--subfooter start from here -->
+
+<div class="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            <p>© 2018 Ferry Toth</p>
+        </div>
+    </div>
+</div>
+
+
+    <!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+
+</body>
+
+</html>

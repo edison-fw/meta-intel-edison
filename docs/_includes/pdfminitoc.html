@@ -1,0 +1,39 @@
+{% assign sidebar = site.data[site.sidebar].folders %}
+{% assign folderPath = site.folder_path %}
+
+**In this section:**
+<div id="navig">
+<ul id="docnavsidebar" class="docnav">
+
+{% for folder in sidebar %}
+{% if folder.jurl == page.permalink %}
+{% for folderitem in folder.folderitems %}
+{% if folderitem.pdf == true %}
+<li><a href="{{ folderitem.jurl | prepend: folderPath }}">{{ folderitem.title }}</a></li>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% for subfolder in folderitem.subfolders %}
+{% if subfolder.jurl == page.permalink %}
+{% for subfolderitem in subfolder.subfolderitems %}
+{% if subfolderitem.pdf == true %}
+<li><a href="{{ subfolderitem.jurl | prepend: folderPath }}">{{ subfolderitem.title }}</a></li>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% for subsubfolder in subfolderitem.subsubfolders %}
+{% if subsubfolder.jurl == page.permalink %}
+{% for subsubfolderitem in subsubfolder.subsubfolderitems %}
+{% if subsubfolderitem.pdf == true %}
+<li><a href="{{ subsubfolderitem.jurl | prepend: folderPath }}">{{ subsubfolderitem.title }}</a></li>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+{% endfor %}
+{% endfor %}
+</ul>
+</div>

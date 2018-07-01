@@ -1,0 +1,49 @@
+---
+title: Prerequisites for building
+permalink: 1-Prerequisites-for-building.html
+sidebar: edison
+product: Edison
+---
+* TOC
+{:toc}
+## Building Dizzy branches
+
+You *really* need to build Yocto Dizzy versions on Ubuntu 14.04. 
+
+With Dizzy and Ubuntu 16.10 you will get errors related to makenod etc from pseudo-native. that will prevent the image to build completely. 
+
+If you have a later version of Ubuntu you can net native build speeds by creating a container with Ubuntu 14.04, install and configure sshd, create a user for yourself, and install the required build environment (may be a bit to much):
+
+    sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 libsdl1.2-dev xterm python3
+
+Detailed Intel instruction are here: [https://software.intel.com/en-us/node/593591](https://software.intel.com/en-us/node/593591)
+
+How-to create a container: [https://linuxcontainers.org/lxd/getting-started-cli/](https://linuxcontainers.org/lxd/getting-started-cli/)
+
+## Building Morty, Pyro and Rocko branches
+
+Yocto Morty / Pyro / Rocko will build on Ubuntu Artful (17.10), despite a warning that this is untested.
+
+Install the required build environment (may be a bit to much):
+
+    sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 libsdl1.2-dev xterm python3
+
+## Building under Windows (10)
+
+### Ubuntu for Windows
+
+I have tried building using Ubuntu for Windows, with no succes. Appearently Windows translation layer does not fully support all properties of a linux file system.
+
+### Virtualbox
+
+If you want to get started quickly, you are probably better off installing a virtual machine (like Virtualbox) with a suitable version of Ubuntu (I don't want to start a flame war, but Kubuntu is really nice). Keep in mind that bitbake will produce 60GB - 100GB of files and a virtual machine will be substantially slower than building native. And native can take 2.5 (ssd) - 6 (hdd) hours when building all from scratch.
+
+### CROss PlatformS (CROPS)
+
+CROPS uses Docker Containers, on Windows this is done by running a linux kernel in a Virtual Machine (VM) then running containers in linux. In the end it is still a VM, which associated slowness, but without the desktop that Virtualbox provides.
+
+ 1. Go to the [Docker Installation website](https://docs.docker.com/docker-for-windows/install/) and download Docker for Windows (Stable). Docker is a software container platform that you need to install on the host development machine. 
+
+ 2. Set Up the Containers to Use the Yocto Project. Go to [CROPS on github](https://github.com/crops/docker-win-mac-docs/wiki) and follow the directions for your particular development host (i.e. Linux, Mac, or Windows).
+
+    Once you complete the setup instructions for your machine, you have the Poky, Extensible SDK, and Toaster containers available.

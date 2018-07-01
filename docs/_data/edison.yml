@@ -1,0 +1,110 @@
+sidebarTitle: Generic
+
+## See the generic.yml file as an example of the allowed yaml format.
+
+folders:
+
+- title: Frontmatter
+  jurl: /frontmatter.html
+  type: frontmatter
+  pdf: true
+  folderitems:
+
+  - title: Title page
+    jurl: /pdf_title_page.html
+    pdf: true
+
+  - title: Copyright
+    jurl: /pdf_copyright_page.html
+    pdf: true
+
+  - title: TOC page
+    jurl: /pdf_toc_page.html
+    pdf: true
+
+- title: Introduction
+  pdf: true
+  jurl: /minitoc_theme_intro.html
+
+  folderitems:
+  - title: A Word of Warning
+    jurl: /0.1-A-word-of-warning.html
+    ref: 0.1-A-word-of-warning
+    pdf: true
+    bookmarks: [breadcrumbsection]
+
+  - title: About me
+    jurl: /0.2-About-me.html
+    ref: 0.2-About-me
+    bookmarks: [sidebarentries]
+    pdf: true
+
+  - title: What is here
+    jurl: /0.3-What-is-here.html
+    ref: 0.3-What-is-here
+    bookmarks: [kramdowntoc, images_section]
+    pdf: true
+
+  - title: Bugs, Feature & Testing
+    jurl: /0.4-Bug-feature-testing.html
+    ref: 0.4-Bug-feature-testing
+    pdf: true
+
+  - title: Roadmap
+    jurl: /0.5-Road-map.html
+    ref: 0.5-Road-map
+    pdf: true
+
+- title: Setting up
+  pdf: true
+  jurl: /minitoc_general_jekyll_topics.html
+  folderitems:
+
+  - title: Prerequisites for building
+    jurl: /1-Prerequisites-for-building.html
+    ref: 1-Prerequisites-for-building
+    pdf: true
+
+  - title: Setting up
+    jurl: /2-Setting-up.html
+    ref: 2-Setting-up.html
+    pdf: true
+
+- title: Building
+  pdf: true
+  jurl: /minitoc_theme_build.html
+
+  folderitems:
+  - title: Building and installing the rootfs
+    jurl: /3-Building-and-installing-the-rootfs.html
+    ref: 3-Building-and-installing-the-rootfs
+    pdf: true
+
+  - title: Building and installing the kernel
+    jurl: /4-Building-and-installing-the-kernel.html
+    ref: 4-Building-and-installing-the-kernel
+    pdf: true
+
+- title: SDK
+  pdf: true
+  jurl: /minitoc_theme_build.html
+
+  folderitems:
+  - title: Building and installing the SDK
+    jurl: /3-Building-the-SDK.html
+    ref: 3-Building-the-SDK
+    pdf: true
+
+###########################
+
+related_resources_title: Other Resources
+
+related_resources_list:
+
+- title: Other Documentation
+  hurl: http://exalondelft.com/
+
+
+
+###########################
+

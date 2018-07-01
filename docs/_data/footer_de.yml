@@ -1,0 +1,86 @@
+about_title: About the Documentation
+about_description: >
+  This is a description about this documentation site. You can customize this description by modifying the text in
+  the about_description property of the footer.yml file.
+
+column1_title: Column 1
+column1_links:
+  -
+    target: http://someurl1.com
+    text: Column 1 Link 1
+  -
+    target: http://someurl2.com
+    text: Column 1 Link 2
+  -
+    target: http://someurl3.com
+    text: Column 1 Link 3
+  -
+    target: http://someurl4.com
+    text: Column 1 Link 4
+  -
+    target: http://someurl5.com
+    text: Column 1 Link 5
+  -
+    target: http://someurl6.com
+    text: Column 1 Link 6
+  -
+    target: http://someurl7.com
+    text: Column 1 Link 7
+  -
+    target: http://someurl8.com
+    text: Column 1 Link 8
+
+
+column2_title: Column 2
+column2_links:
+  -
+    target: http://someurl1.com
+    text: Column 2 Link 1
+  -
+    target: http://someurl2.com
+    text: Column 2 Link 2
+  -
+    target: http://someurl3.com
+    text: Column 2 Link 3
+  -
+    target: http://someurl4.com
+    text: Column 2 Link 4
+  -
+    target: http://someurl5.com
+    text: Column 2 Link 5
+  -
+    target: http://someurl6.com
+    text: Column 2 Link 6
+  -
+    target: http://someurl7.com
+    text: Column 2 Link 7
+  -
+    target: http://someurl8.com
+    text: Column 2 Link 8
+
+column3_title: Column 3
+column3_links:
+  -
+    target: http://someurl1.com
+    text: Column 3 Link 1
+  -
+    target: http://someurl2.com
+    text: Column 3 Link 2
+  -
+    target: http://someurl3.com
+    text: Column 3 Link 3
+  -
+    target: http://someurl4.com
+    text: Column 3 Link 4
+  -
+    target: http://someurl5.com
+    text: Column 3 Link 5
+  -
+    target: http://someurl6.com
+    text: Column 3 Link 6
+  -
+    target: http://someurl7.com
+    text: Column 3 Link 7
+  -
+    target: http://someurl8.com
+    text: Column 3 Link 8

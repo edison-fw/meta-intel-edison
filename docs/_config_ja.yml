@@ -1,0 +1,125 @@
+
+
+############# SITE PROPERTIES #############
+# title to appear in nav bar and page meta
+title: Jekyll Doc Project theme
+
+# appears in footer
+copyright: 2017 Your Company, Inc.
+
+############# TOP NAVIGATION BAR ################
+
+# if you want to use a text title (the "title" property as defined above) instead of a logo image in your nav bar, comment out the logo below. Logo images are constrained at 50px in height.
+logo: assets/companylogo.png
+
+
+# the links.html script requires you to list your sidebars here. this is if you're using managed links (see jekyllhowto-content-and-formatting.html#automatedlinks)
+sidebars:
+  - generic
+  - jekyllhowto
+
+
+############# FEEDBACK BUTTON #############
+
+# show feedback button in top nav bar?
+show_feedback: true
+
+# name of Feedback link
+feedback_link_name: Feedback
+
+# email address feedback gets sent to
+feedback_email: someemail@gmail.com
+
+# Auto-filled Subject link of email
+feedback_subject_line: Feedback about docs
+
+# note: to customize the auto-completed body text, overwrite it by adding _includes/feedback.html in your own theme.
+
+
+############# GITHUB BUTTON #############
+
+# inserts github link in top nav bar (recommended)
+github_button_location_top_navbar: true
+
+# inserts github link below page title
+github_button_location_below_title: false
+
+# inserts github link at bottom of page (least visible)
+github_button_location_page_bottom: false
+
+# text for github button
+github_edit_button_text: Edit on GitHub
+
+# link to your github repo. replace <organization> (if applicable) and <repo name> and <branch name>. Note that the github link will be {{site.github_editme_path}}/{{page.path}}
+github_editme_path: https://github.com/<organization>/<repo name>/blob/<branch name>
+
+
+# Url for Home path to point to
+breadcrumb_home_url: http://yourcompanysite.com
+
+
+
+
+
+language: japanese
+
+audio_path: docs_ja
+image_path: docs_ja
+
+
+collections:
+  docs_ja:
+    output: true
+  search_ja:
+    output: true
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
+      topnav: topnav_ja
+  -
+    scope:
+      path: ""
+      type: docs_ja
+    values:
+      layout: default
+      topnav: topnav_ja
+  -
+    scope:
+      path: ""
+      type: search_ja
+    values:
+      layout: default
+      topnav: topnav_ja
+
+      github_button: false
+      search: false
+
+########## UI text ###############
+
+uistring:
+    # Display name for "Home" path
+    breadcrumb_home_name: Home
+    github_edit_button_text: GitHub での編集
+    log_doc_issue: ログドキュメントの問題
+    tableofcontents: 目次
+    breadcrumb:
+      home: ホーム
+      documentation: ドキュメント
+    expandall: すべて展開
+    collapseall: すべて折りたたむ
+    title: Amazon開発者ポータル # Displays as site title on top nav bar and on site metadata
+    description: Fire TV・Fireタブレット・Amazonアプリストアでの開発など、Amazonのプロダクトやサービスに関する開発者向けドキュメントは、こちらからご覧いただけます。 # Displays as site description meta
+    search_placeholder: 検索
+    search_placeholder_global: 検索
+    search_placeholder_text: 検索
+    github_edit_button_text: githubで編集する
+    search_no_results_found: 条件に一致する情報は見つかりませんでした。
+    search_results_page_title: 検索結果
+    products: プロダクト・サービス
+    docindex_product: プロダクト
+    docindex_startpage: 開始ページ

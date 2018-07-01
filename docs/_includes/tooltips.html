@@ -1,0 +1,1 @@
+{% if include.capitalize == "true" %}<a data-toggle="tooltip" title="{{site.data.glossary[include.term].def}}">{{site.data.glossary[include.term].term | capitalize}}</a>{% else %}<a data-toggle="tooltip" title="{{site.data.glossary[include.term].def}}">{{site.data.glossary[include.term].term}}</a>{% endif %}

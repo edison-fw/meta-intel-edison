@@ -1,0 +1,1 @@
+Update done to make it build with Morty, some changes need to meta-intel-iot-middleware too. With Morty it builds under Ubuntu Zesty (17.04)

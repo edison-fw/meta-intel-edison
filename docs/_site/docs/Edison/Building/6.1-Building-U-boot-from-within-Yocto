@@ -1,0 +1,11 @@
+### 6.1 Building U-boot from within Yocto
+
+Starting from pyro64 U-Boot can be built directly from Yocto.
+
+The command is:
+
+        bitbake -R conf/u-boot.conf lib32-u-boot
+
+This uses a seperate `u-boot.conf` file, that installs multilib, and then builds the 32 bit version of U-Boot (not really, U-Boot is mixed 32/64 bit code, but requires a certain library that is only available in this manner).
+
+The procedure for installing then exactly the same as [[6.2 Build and Flash U-Boot outside of Yocto|6.2 Build and Flash U-Boot outside of Yocto]]

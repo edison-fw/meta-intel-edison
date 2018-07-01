@@ -1,0 +1,5 @@
+{% if site.use_logo == true %}
+  <div class="navbar-brand"><a class="noExtIcon" href="index.html"><img class="navbar-logo" src="{{site.logo}}"/></a></div>
+  {% elsif site.use_text_title == true %}
+  <div class="navbar-brand-text"><a class="noExtIcon navbarHomeLink" href="index.html"><i class="fa fa-home fa-lg"></i> {{site.uistring.title}}</a></div>
+{% endif %}

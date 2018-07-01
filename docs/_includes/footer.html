@@ -1,0 +1,65 @@
+<!-- * Bootsnipp footer: http://bootsnipp.com/snippets/1KEEq (MIT license) -->
+
+<div class="footertop">
+    <div class="container">
+        <div class="col-md-6">
+            <p></p>
+        </div>
+        <div class="col-md-6">
+            <ul class="bottom_ul">
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 col-sm-6 footerleft ">
+
+
+              {% assign footer = site.data[page.footer] %}
+                        <div class="logofooter"> {{footer.about_title}}</div>
+                <p class="footer-description">{{footer.about_description}}</p>
+
+            </div>
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+                <h6 class="heading7">{{footer.column1_title}}</h6>
+                <ul class="footer-ul">
+                  {% for link in footer.column1_links %}
+                    <li><a class="noExtIcon" href="{{link.target}}"> {{link.text}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">{{footer.column2_title}}</h6>
+              <ul class="footer-ul">
+                {% for link in footer.column2_links %}
+                  <li><a class="noExtIcon" href="{{link.target}}"> {{link.text}}</a></li>
+                  {% endfor %}
+              </ul>
+            </div>
+
+            <div class="col-md-3 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">{{footer.column3_title}}</h6>
+              <ul class="footer-ul">
+                {% for link in footer.column3_links %}
+                  <li><a class="noExtIcon" href="{{link.target}}"> {{link.text}}</a></li>
+                  {% endfor %}
+              </ul>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+</footer>
+<!--subfooter start from here -->
+
+<div class="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            <p>© {{site.uistring.copyright}}</p>
+        </div>
+    </div>
+</div>

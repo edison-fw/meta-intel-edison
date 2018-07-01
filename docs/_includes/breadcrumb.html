@@ -1,0 +1,11 @@
+{% if site.breadcrumb_display == true %}
+{% unless page.type == "search" or page.type == "homepage" or page.type == "error404" %}
+
+{% if site.breadcrumb_home_display == true %}<a href="{{site.breadcrumb_home_url}}" class="noExtIcon productSubtitle">{{site.uistring.breadcrumb_home_name}}</a>&nbsp;&nbsp;>&nbsp;&nbsp;{% endif %}{{page.path | remove: "_docs/" | remove: "_docs_ja" | remove: "_docs_de" | split: "/" | pop | join: "&nbsp;&nbsp;>&nbsp;&nbsp;" }}
+    {% endunless %}
+{% if page.type == "homepage" and page.custom_breadcrumb %}
+
+{% if site.breadcrumb_home_display == true %}<a href="{{site.breadcrumb_home_url}}" class="noExtIcon productSubtitle">{{site.uistring.breadcrumb_home_name}}</a>&nbsp;&nbsp;>&nbsp;&nbsp;{% endif %}{{page.custom_breadcrumb}}
+    {% endif %}
+
+{% endif %}

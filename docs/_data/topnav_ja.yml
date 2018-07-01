@@ -1,0 +1,33 @@
+## Topnav single links
+ ## if you want to list an external url, use url instead of url. the theme will apply a different link base.
+
+navbar_singleitems:
+- items:
+  # - title: Some entry
+  #   url: http://example.com
+  # - title: Contact
+  #   url: contact.html
+
+
+
+navbar_dropdowns:
+- title: Topnav dropdowns
+  folders:
+    - title: Sample Menu (JP)
+      folderitems:
+        - title: First item
+          url: https://talk.jekyllrb.com
+        - title: Second item
+          url: http://amazon.com
+        - title: Third item
+          url: http://nytimes.com
+        - title: Fourth item
+          url: http://google.com
+    - title: Another menu (JP)
+      folderitems:
+        - title: Getting Started
+          url: /index.html
+        - title: Content and Formatting
+          url: /jekyllhowto-content-and-formatting.html
+        - title: Sidebar navigation
+          url: /jekyllhowto-sidebar-navigation.html

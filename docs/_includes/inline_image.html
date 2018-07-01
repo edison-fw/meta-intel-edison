@@ -1,0 +1,1 @@
+<img {% if {{include.max-width}} %} style="max-width: {{include.max-width}}"{% endif %} class="inline {% if {{include.border}} == "true" %}border{% endif %}" src="{{site.image_path | append: "/"}}{{include.file}}" {% if {{include.alt}} %}alt="{{include.alt}}"{% endif %} />

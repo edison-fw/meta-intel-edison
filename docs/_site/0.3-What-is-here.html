@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>What is here | Edison</title>
+    
+    <base>
+    <meta name="description" content="In a nutshell Here are Yocto recipies that build a working system image for the Intel Edison based on Yocto Morty and Pyro. Yocto, of course, is a build... " >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" value="notranslate">
+    <link rel="icon"  type="image/x-icon" href="assets/favicon.ico">
+
+    <!-- FontAwesome (GPL license) -->
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- jQuery (MIT license)-->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <!-- jQuery cookie (MIT license)-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <!-- Navgoco (BSD license)-->
+    <script type="text/javascript" src="assets/js/jquery.navgoco.min.js"></script>
+    <!-- Bootstrap (MIT license)-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Anchor JS (MIT license)-->
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/2.0.0/anchor.min.js"></script>
+        <script>
+        $( document ).ready(function() {
+            anchors.add('h2,h3,h4,h5');
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        </script>
+    
+
+    <script>
+        $( document ).ready(function() {
+            $("#docnavsidebar").navgoco({
+                caretHtml: '',
+                accordion: false,
+                openClass: 'open', // open
+                save: true,
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 300,
+                    easing: 'swing'
+                }
+            });
+            $("#collapseAll").click(function(e) {
+                e.preventDefault();
+                $("#docnavsidebar").navgoco('toggle', false);
+            });
+
+            $("#expandAll").click(function(e) {
+                e.preventDefault();
+                $("#docnavsidebar").navgoco('toggle', true);
+            });
+        });
+
+    </script>
+
+ <!-- For responsive button to toggle sidebar -->
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle=offcanvas]').click(function() {
+                $('.row-offcanvas').toggleClass('active');
+            });
+        });
+    </script>
+
+    <!-- User defined js -->
+    <script src="assets/js/user_defined_javascript.js"></script>
+    <!--Bootstrap (MIT license) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <!-- Original theme from Bootstrap Bootswatch fork: http://www.codeply.com/go/rV7KhUjwCN (MIT license) -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/user_defined_web_styles.css" />
+    <style>
+        ul#markdown-toc::before  {
+        content: "Table of Contents"
+         }
+    </style>
+
+</head>
+<body class="default">
+<div class="page-container">
+
+
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container topnavlinks">
+            <div class="navbar-header">
+              
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="fa fa-bars fa-2x"></span>
+                </button>
+                
+                
+                <button type="button" class="navbar-toggle toggle-sidebar-button"  data-toggle="offcanvas" data-target=".sidebar-nav">
+                    <span class="sidebarToggle fa fa-columns fa-2x"></span>
+                </button>
+                
+
+
+                  
+
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-left">
+
+                    <!-- single item nav items appear here -->
+
+                    
+                    
+                    
+                    
+
+                          <!-- drop-down nav items appear here -->
+
+                    
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sample Menu<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+                            
+                            <li><a href="https://talk.jekyllrb.com" class="noExtIcon">First item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://amazon.com" class="noExtIcon">Second item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://nytimes.com" class="noExtIcon">Third item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://google.com" class="noExtIcon">Fourth item</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Another menu<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+                            
+                            <li><a href="index.html">Getting Started</a></li>
+                            
+                            
+                            
+                            <li><a href="jekyllhowto-content-and-formatting.html">Content and Formatting</a></li>
+                            
+                            
+                            
+                            <li><a href="jekyllhowto-sidebar-navigation.html">Sidebar navigation</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+
+                    
+                    
+
+                    
+                    <li><a target="_blank" href="https://github.com/htot/meta-intel-edison//_docs/Edison/Introduction/0.3-What-is-here.md" class="editButton noExtIcon"><i class="fa fa-github fa-lg"></i> Edit on GitHub</a>
+</li>
+                    
+
+
+                </ul>
+                
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+
+                     <div id="search-topnav-container">
+                        <form action="search.html" method="get">
+                          <div class="input-group search">
+                            <input type="text" id="search-box" name="query" class="form-control" placeholder="Search ...">
+                            <div class="input-group-btn">
+                              <button class="btn btn-default" type="submit" value="search">
+                                <i class="glyphicon glyphicon-search"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                        </div>
+
+
+                    </li>
+                </ul>
+                
+            </div>
+
+        </div>
+
+
+        <!-- /.container -->
+    </nav>
+
+<div class="container">
+        <div class="row row-offcanvas row-offcanvas-left">
+
+            <!-- sidebar -->
+            <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+
+                
+<div class="mydocsidebar">
+
+
+<div class="sidebar-inner">
+
+
+  
+
+
+<div class="productTitle">Generic</div>
+<p class="external">
+    <a href="#" id="collapseAll">Collapse All</a> | <a href="#" id="expandAll">Expand All</a>
+</p>
+
+
+
+    <ul id="docnavsidebar" class="docnav">
+    
+    
+        
+    
+    <li class="level1"><a href="#">Introduction</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="0.1-A-word-of-warning.html">A Word of Warning</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.2-About-me.html">About me</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items open"><a href="0.3-What-is-here.html">What is here</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.4-Bug-feature-testing.html">Bugs, Feature & Testing</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.5-Road-map.html">Roadmap</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">Setting up</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="1-Prerequisites-for-building.html">Prerequisites for building</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="2-Setting-up.html">Setting up</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">Building</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="3-Building-and-installing-the-rootfs.html">Building and installing the rootfs</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="4-Building-and-installing-the-kernel.html">Building and installing the kernel</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">SDK</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="3-Building-the-SDK.html">Building and installing the SDK</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+
+    </li>
+</ul>
+
+<hr class="resourceSeparator"></hr>
+<div class="relatedResources">Other Resources</div>
+<ul id="entrypages">
+        
+        <li><a class="noExtIcon" href="">Other Documentation</a></li>
+        
+    </li>
+</ul>
+</div>
+</div>
+<script>$("li.open").parents('li').toggleClass("open");</script>
+
+
+            </div>
+
+            <!-- main area -->
+            <div class="col-xs-12 col-sm-9 main">
+
+                    <div class="subtitle">
+                    
+
+
+<a href="http://pages.github.com/htot" class="noExtIcon productSubtitle">Home</a>&nbsp;&nbsp;>&nbsp;&nbsp;Edison&nbsp;&nbsp;>&nbsp;&nbsp;Introduction
+    
+
+
+
+
+                      </div>
+
+                      
+
+
+                    <h1>What is here</h1>
+
+                
+                    <h2 id="in-a-nutshell">In a nutshell</h2>
+
+<p>Here are Yocto recipies that build a working system image for the Intel Edison based on Yocto Morty and Pyro. Yocto, of course, is a build system, that downloads sources for a build environment, builds these, then downloads sources of a complete linux distribution, builds, packages (in this case as DEB’s) and installs them to the system image.
+It also builds a crosscompile environment (SDK) so you can devellop locally and deploy to the remote Edison. Using for instance Qt Creator, you can develop locally for your host machine and debug, or build for the remote Edison and remote debug. Qt Creator will upload the executable and start gdbserver for you.
+When your application works well, you can create a recipy and add it automatically to your system image.</p>
+
+<h2 id="dizzy-versions">Dizzy versions</h2>
+
+<p>The Edison comes of course with a system image preloaded based on Yocto Dizzy (Dizzy is the name of the version). Some of the recipies no longer build as the sources have disappeared. The branches starting with dizzy- have been updated by me, with either the broken recipies pointing to new sources, new versions of the sources, or otherwise removed.
+I haven’t build these recently, so more stuff might have broke. If so, let me know. As far as I’m concerned, the only interesting version right now is dizzy-rt that builds a preempt_rt version of the original 3.10.17 kernel.</p>
+
+<h2 id="the-system-image-parts">The system image parts</h2>
+
+<p>The system image consists of a few distinct image files that you can find under <code class="highlighter-rouge">out/linux64/build/tmp/deploy/images/edison/</code>:</p>
+
+<ul>
+  <li>
+    <p>U-Boot (the boot loader)<br />
+    For the Morty branches this needs to be generated outside Yocto as the recipe is not working well. It is a one time task to update U-Boot so you only need to build that once. Nevertheless, the Pyro and Rocko branches build U-Boot just fine.</p>
+  </li>
+  <li>
+    <p>Linux kernel with initramsfs<br />
+We need an initramfs because some kernel modules need to loaded late. To do this they can not be built-in. Unfortunately some of these modules are needed to access the sd card, where we have the root file system. To solve the ckicken-egg problems, the initramsfs holds a copy of the necessary modules, loads these, then mounts the sd card. It then performs a switch_root, continuing the boot from the sd card as if nothing happend.</p>
+
+    <p>Some people call initramfs initrd. Although they appear the same, they are different. Initramfs is a file system, Initrd a ram disk. Initramfs gets loaded into the kernel earlier. In our case we even build the Initramfs cpio into the kernel. Yocto does that by building a kernel and its modules. Then packing the necessary modules into a cpio, pass that to the kernel build system and build the kernel again.</p>
+
+    <p>Of course if script in the initramfs cannot find the rootfs, or the rootfs won’t boot, the initramfs can provide a busybox shell from which you can try to fix things.</p>
+  </li>
+  <li>
+    <p>Rootfs
+An ext4 formatted file system, containing the remaining kernel modules, systemd for maintaining services and other well known linux user space tools.</p>
+  </li>
+</ul>
+
+<h2 id="booting">Booting</h2>
+
+<p>During boot firmware in ROM loads certain stuff (ifwi) that we unfortunately can’t touch. After this it loads U-Boot. U-Boot then normally loads and boots the kernel that if finds on <code class="highlighter-rouge">/dev/mmcblk0p8</code>.</p>
+
+<p>To boot from sd card or usb, you will need to interrupt u-boot while booting from a terminal by pressing ESC and enter the command <code class="highlighter-rouge">run edsboot</code> or <code class="highlighter-rouge">run usbboot</code> to boot from <code class="highlighter-rouge">/dev/mmcblk1</code> or <code class="highlighter-rouge">/dev/sda</code> respectively. If you don’t manually interrupt, your old image will boot.</p>
+
+<p>After boot you can login, connect to ethernet (if you have a supported USB ethernet adapter) or connect to wifi (or both at the same time and the newer version of <code class="highlighter-rouge">connman</code> supports this) and start securing your device. You need to use a terminal program to connect via USB to the Edison for this, at least until you have wifi or ethernet working. I have used screen and Gnome Terminal (which works a bit better as you have a line buffer that you can scroll up).</p>
+
+                  
+
+                    
+
+
+
+            </div>
+        </div><!--/.container-->
+
+
+    </div><!--/.page-container-->
+    <!-- * Bootsnipp footer: http://bootsnipp.com/snippets/1KEEq (MIT license) -->
+
+<div class="footertop">
+    <div class="container">
+        <div class="col-md-6">
+            <p></p>
+        </div>
+        <div class="col-md-6">
+            <ul class="bottom_ul">
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 col-sm-6 footerleft ">
+
+
+              
+                        <div class="logofooter"> About the Documentation</div>
+                <p class="footer-description">This is the onofficial Yocto for Edison Arduino documentation. You will find instructions how to setup a current Yocto, build recent U-Boot and Linux kernel and install tools on the rootfs.
+</p>
+
+            </div>
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+                <h6 class="heading7">Column 1</h6>
+                <ul class="footer-ul">
+                  
+                    <li><a class="noExtIcon" href="http://someurl1.com"> Column 1 Link 1</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl2.com"> Column 1 Link 2</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl3.com"> Column 1 Link 3</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl4.com"> Column 1 Link 4</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl5.com"> Column 1 Link 5</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl6.com"> Column 1 Link 6</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl7.com"> Column 1 Link 7</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl8.com"> Column 1 Link 8</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">Column 2</h6>
+              <ul class="footer-ul">
+                
+                  <li><a class="noExtIcon" href="http://someurl1.com"> Column 2 Link 1</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl2.com"> Column 2 Link 2</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl3.com"> Column 2 Link 3</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl4.com"> Column 2 Link 4</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl5.com"> Column 2 Link 5</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl6.com"> Column 2 Link 6</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl7.com"> Column 2 Link 7</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl8.com"> Column 2 Link 8</a></li>
+                  
+              </ul>
+            </div>
+
+            <div class="col-md-3 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">Column 3</h6>
+              <ul class="footer-ul">
+                
+                  <li><a class="noExtIcon" href="http://someurl1.com"> Column 3 Link 1</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl2.com"> Column 3 Link 2</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl3.com"> Column 3 Link 3</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl4.com"> Column 3 Link 4</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl5.com"> Column 3 Link 5</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl6.com"> Column 3 Link 6</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl7.com"> Column 3 Link 7</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl8.com"> Column 3 Link 8</a></li>
+                  
+              </ul>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+</footer>
+<!--subfooter start from here -->
+
+<div class="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            <p>© 2018 Ferry Toth</p>
+        </div>
+    </div>
+</div>
+
+
+    <!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+
+</body>
+
+</html>

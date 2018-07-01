@@ -1,0 +1,98 @@
+sidebarTitle: Generic
+
+## See the generic.yml file as an example of the allowed yaml format.
+
+folders:
+
+- title: Frontmatter
+  jurl: /frontmatter.html
+  type: frontmatter
+  pdf: true
+  folderitems:
+
+  - title: Title page
+    jurl: /pdf_title_page.html
+    pdf: true
+
+  - title: Copyright
+    jurl: /pdf_copyright_page.html
+    pdf: true
+
+  - title: TOC page
+    jurl: /pdf_toc_page.html
+    pdf: true
+
+- title: Theme Instructions
+  pdf: true
+  jurl: /minitoc_theme_instructions.html
+
+  folderitems:
+  - title: Getting Started
+    jurl: /index.html
+    ref: jekyllhowto-getting-started
+    pdf: true
+    bookmarks: [breadcrumbsection]
+
+  - title: Sidebar Navigation
+    jurl: /jekyllhowto-sidebar-navigation.html
+    ref: jekyllhowto-sidebar-navigation
+    bookmarks: [sidebarentries]
+    pdf: true
+
+  - title: Content and Formatting
+    jurl: /jekyllhowto-content-and-formatting.html
+    ref: jekyllhowto-content-and-formatting
+    bookmarks: [kramdowntoc, images_section]
+    pdf: true
+
+  - title: Generate a PDF
+    jurl: /jekyllhowto-pdf.html
+    ref: jekyllhowto-pdf
+    pdf: true
+
+  - title: Troubleshooting
+    jurl: /jekyllhowto-troubleshooting.html
+    ref: jekyllhowto-troubleshooting
+    pdf: true
+
+- title: General Jekyll Topics
+  pdf: true
+  jurl: /minitoc_general_jekyll_topics.html
+  folderitems:
+
+  - title: Install Jekyll on Mac
+    jurl: /jekyllhowto-install-jekyll-on-mac.html
+    ref: jekyllhowto-install-jekyll-on-mac
+    pdf: true
+
+  - title: Install Jekyll on Windows
+    jurl: /jekyllhowto-install-jekyll-on-windows.html
+    ref: jekyllhowto-install-jekyll-on-windows
+    pdf: true
+
+  - title: Tips for Atom Text Editor
+    jurl: /jekyllhowto-atom-text-editor.html
+    ref: jekyllhowto-atom-text-editor
+    pdf: true
+
+###########################
+
+related_resources_title: Other Resources
+
+related_resources_list:
+
+- title: Forums
+  hurl: https://yourcompany.com/forums
+
+- title: Other Documentation
+  hurl: https://yourcompany.com/docs/somedocs
+
+- title: Support Portal
+  hurl: https://developer.yourcompany.com
+
+
+###########################
+
+forum:
+  forum_link: http://forums.yourcompany.com
+  forum_name: Company Forum

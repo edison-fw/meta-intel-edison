@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    $( document ).ready(function() {
+        var pgurl = window.location.href.split('?')[0];
+        pgurl = pgurl.split('#')[0];
+        //console.log("pgurl: " + pgurl);
+        $("ul#hipposidebar li a").each(function(){
+            var sidebaritem = ($(this).attr("href"));
+            if($(this).attr("href") == pgurl || $(this).attr("href") == pgurl + "/") {
+                $(this).addClass("open");
+                //console.log("sidebaritem: " + sidebaritem);
+            }
+        });
+    });
+</script>
+
+<script>$("a.open").parents('li').toggleClass("open");</script>
+
+<script>
+    // Initialize navgoco
+    $("#hipposidebar").navgoco({
+        caretHtml: '',
+        accordion: false,
+        openClass: 'open', // open
+        save: false, // leave false or nav highlighting doesn't work right
+        cookie: {
+            name: 'navgoco',
+            expires: false,
+            path: '/'
+        },
+        slide: {
+            duration: 400,
+            easing: 'swing'
+        }
+    });
+
+</script>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Intel Edison Image Builder | </title>
+    
+    <base>
+    <meta name="description" content="
+
+
+
+
+ " >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" value="notranslate">
+    <link rel="icon"  type="image/x-icon" href="assets/favicon.ico">
+
+    <!-- FontAwesome (GPL license) -->
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- jQuery (MIT license)-->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <!-- jQuery cookie (MIT license)-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <!-- Navgoco (BSD license)-->
+    <script type="text/javascript" src="assets/js/jquery.navgoco.min.js"></script>
+    <!-- Bootstrap (MIT license)-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Anchor JS (MIT license)-->
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/2.0.0/anchor.min.js"></script>
+        <script>
+        $( document ).ready(function() {
+            anchors.add('h2,h3,h4,h5');
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        </script>
+    
+
+    <script>
+        $( document ).ready(function() {
+            $("#docnavsidebar").navgoco({
+                caretHtml: '',
+                accordion: false,
+                openClass: 'open', // open
+                save: true,
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 300,
+                    easing: 'swing'
+                }
+            });
+            $("#collapseAll").click(function(e) {
+                e.preventDefault();
+                $("#docnavsidebar").navgoco('toggle', false);
+            });
+
+            $("#expandAll").click(function(e) {
+                e.preventDefault();
+                $("#docnavsidebar").navgoco('toggle', true);
+            });
+        });
+
+    </script>
+
+ <!-- For responsive button to toggle sidebar -->
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle=offcanvas]').click(function() {
+                $('.row-offcanvas').toggleClass('active');
+            });
+        });
+    </script>
+
+    <!-- User defined js -->
+    <script src="assets/js/user_defined_javascript.js"></script>
+    <!--Bootstrap (MIT license) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <!-- Original theme from Bootstrap Bootswatch fork: http://www.codeply.com/go/rV7KhUjwCN (MIT license) -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/user_defined_web_styles.css" />
+    <style>
+        ul#markdown-toc::before  {
+        content: "Table of Contents"
+         }
+    </style>
+
+</head>
+<body class="default">
+<div class="page-container">
+
+
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container topnavlinks">
+            <div class="navbar-header">
+              
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="fa fa-bars fa-2x"></span>
+                </button>
+                
+                
+                <button type="button" class="navbar-toggle toggle-sidebar-button"  data-toggle="offcanvas" data-target=".sidebar-nav">
+                    <span class="sidebarToggle fa fa-columns fa-2x"></span>
+                </button>
+                
+
+
+                  
+
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-left">
+
+                    <!-- single item nav items appear here -->
+
+                    
+                    
+                    
+                    
+
+                          <!-- drop-down nav items appear here -->
+
+                    
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sample Menu<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+                            
+                            <li><a href="https://talk.jekyllrb.com" class="noExtIcon">First item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://amazon.com" class="noExtIcon">Second item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://nytimes.com" class="noExtIcon">Third item</a></li>
+                            
+                            
+                            
+                            <li><a href="http://google.com" class="noExtIcon">Fourth item</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Another menu<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+                            
+                            <li class="dropdownActive"><a href="index.html">Getting Started</a></li>
+                            
+                            
+                            
+                            <li><a href="jekyllhowto-content-and-formatting.html">Content and Formatting</a></li>
+                            
+                            
+                            
+                            <li><a href="jekyllhowto-sidebar-navigation.html">Sidebar navigation</a></li>
+                            
+                            
+                        </ul>
+                    </li>
+
+                    
+                    
+
+                    
+                    <li><a target="_blank" href="https://github.com/htot/meta-intel-edison//index.md" class="editButton noExtIcon"><i class="fa fa-github fa-lg"></i> Edit on GitHub</a>
+</li>
+                    
+
+
+                </ul>
+                
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+
+                     <div id="search-topnav-container">
+                        <form action="search.html" method="get">
+                          <div class="input-group search">
+                            <input type="text" id="search-box" name="query" class="form-control" placeholder="Search ...">
+                            <div class="input-group-btn">
+                              <button class="btn btn-default" type="submit" value="search">
+                                <i class="glyphicon glyphicon-search"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                        </div>
+
+
+                    </li>
+                </ul>
+                
+            </div>
+
+        </div>
+
+
+        <!-- /.container -->
+    </nav>
+
+<div class="container">
+        <div class="row row-offcanvas row-offcanvas-left">
+
+            <!-- sidebar -->
+            <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+
+                
+<div class="mydocsidebar">
+
+
+<div class="sidebar-inner">
+
+
+  
+
+
+<div class="productTitle">Generic</div>
+<p class="external">
+    <a href="#" id="collapseAll">Collapse All</a> | <a href="#" id="expandAll">Expand All</a>
+</p>
+
+
+
+    <ul id="docnavsidebar" class="docnav">
+    
+    
+        
+    
+    <li class="level1"><a href="#">Introduction</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="0.1-A-word-of-warning.html">A Word of Warning</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.2-About-me.html">About me</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.3-What-is-here.html">What is here</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.4-Bug-feature-testing.html">Bugs, Feature & Testing</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="0.5-Road-map.html">Roadmap</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">Setting up</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="1-Prerequisites-for-building.html">Prerequisites for building</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="2-Setting-up.html">Setting up</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">Building</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="3-Building-and-installing-the-rootfs.html">Building and installing the rootfs</a></li>
+            
+            
+
+            
+
+            
+
+            
+            
+            <li class="level1items"><a href="4-Building-and-installing-the-kernel.html">Building and installing the kernel</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+    
+    <li class="level1"><a href="#">SDK</a>
+        <ul>
+            
+
+            
+            
+            <li class="level1items"><a href="3-Building-the-SDK.html">Building and installing the SDK</a></li>
+            
+            
+
+            
+
+            
+        </ul>
+
+        
+
+    </li>
+</ul>
+
+<hr class="resourceSeparator"></hr>
+<div class="relatedResources">Other Resources</div>
+<ul id="entrypages">
+        
+        <li><a class="noExtIcon" href="">Other Documentation</a></li>
+        
+    </li>
+</ul>
+</div>
+</div>
+<script>$("li.open").parents('li').toggleClass("open");</script>
+
+
+            </div>
+
+            <!-- main area -->
+            <div class="col-xs-12 col-sm-9 main">
+
+                    <div class="subtitle">
+                    
+
+
+
+<a href="http://pages.github.com/htot" class="noExtIcon productSubtitle">Home</a>&nbsp;&nbsp;>&nbsp;&nbsp;Getting Started
+    
+
+
+
+                      </div>
+
+                      
+
+
+                    <h1>Intel Edison Image Builder</h1>
+
+                
+                    <p><img src="images/edison-arduino.jpg" alt="Edison Arduino" /></p>
+
+
+<!-- left blank intentionally. intended to be overwritten in custom projects. -->
+
+
+                  
+
+                    
+
+
+
+            </div>
+        </div><!--/.container-->
+
+
+    </div><!--/.page-container-->
+    <!-- * Bootsnipp footer: http://bootsnipp.com/snippets/1KEEq (MIT license) -->
+
+<div class="footertop">
+    <div class="container">
+        <div class="col-md-6">
+            <p></p>
+        </div>
+        <div class="col-md-6">
+            <ul class="bottom_ul">
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 col-sm-6 footerleft ">
+
+
+              
+                        <div class="logofooter"> About the Documentation</div>
+                <p class="footer-description">This is the onofficial Yocto for Edison Arduino documentation. You will find instructions how to setup a current Yocto, build recent U-Boot and Linux kernel and install tools on the rootfs.
+</p>
+
+            </div>
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+                <h6 class="heading7">Column 1</h6>
+                <ul class="footer-ul">
+                  
+                    <li><a class="noExtIcon" href="http://someurl1.com"> Column 1 Link 1</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl2.com"> Column 1 Link 2</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl3.com"> Column 1 Link 3</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl4.com"> Column 1 Link 4</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl5.com"> Column 1 Link 5</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl6.com"> Column 1 Link 6</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl7.com"> Column 1 Link 7</a></li>
+                    
+                    <li><a class="noExtIcon" href="http://someurl8.com"> Column 1 Link 8</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="col-md-2 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">Column 2</h6>
+              <ul class="footer-ul">
+                
+                  <li><a class="noExtIcon" href="http://someurl1.com"> Column 2 Link 1</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl2.com"> Column 2 Link 2</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl3.com"> Column 2 Link 3</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl4.com"> Column 2 Link 4</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl5.com"> Column 2 Link 5</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl6.com"> Column 2 Link 6</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl7.com"> Column 2 Link 7</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl8.com"> Column 2 Link 8</a></li>
+                  
+              </ul>
+            </div>
+
+            <div class="col-md-3 col-sm-6 paddingtop-bottom">
+              <h6 class="heading7">Column 3</h6>
+              <ul class="footer-ul">
+                
+                  <li><a class="noExtIcon" href="http://someurl1.com"> Column 3 Link 1</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl2.com"> Column 3 Link 2</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl3.com"> Column 3 Link 3</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl4.com"> Column 3 Link 4</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl5.com"> Column 3 Link 5</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl6.com"> Column 3 Link 6</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl7.com"> Column 3 Link 7</a></li>
+                  
+                  <li><a class="noExtIcon" href="http://someurl8.com"> Column 3 Link 8</a></li>
+                  
+              </ul>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+</footer>
+<!--subfooter start from here -->
+
+<div class="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            <p>© 2018 Ferry Toth</p>
+        </div>
+    </div>
+</div>
+
+
+    <!-- the google_analytics_id gets auto inserted from the config file -->
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+---
+layout: null
+---
+{% assign sidebar = site.data[site.sidebar].folders %}
+
+{% for folder in sidebar %}
+{% unless folder.type == "frontmatter" %}
+{{ folder.jurl | prepend: site.folder_path }}
+{% endunless %}
+{% for folderitem in folder.folderitems %}
+{% if folderitem.title %}
+{{ folderitem.jurl | prepend: site.folder_path }}
+{% endif %}
+{% for subfolder in folderitem.subfolders %}
+{{ subfolder.jurl | prepend: site.folder_path }}
+{% for subfolderitem in subfolder.subfolderitems %}
+{% if subfolderitem.title %}
+{{ subfolderitem.jurl | prepend: site.folder_path }}
+{% endif %}
+{% for subsubfolder in subfolderitem.subsubfolders %}
+{{ subsubfolder.jurl | prepend: site.folder_path }}
+{% for subsubfolderitem in subsubfolder.subsubfolderitems %}
+{% if subsubfolderitem.title %}
+{{ subsubfolderitem.jurl | prepend: site.folder_path }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}

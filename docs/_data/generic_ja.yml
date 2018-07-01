@@ -1,0 +1,103 @@
+sidebarTitle: Generic - Japanese
+
+## See the generic.yml file as an example of the allowed yaml format.
+
+folders:
+- title: First Level - Japanese
+  folderitems:
+  - title: Sample Item 1
+    jurl: /sample1.html
+    hurl: http://yourcompanyurl.com/docs/sample1
+    ref: sample1
+
+  - title: Sample Item 2
+    jurl: /sample2.html
+    hurl: http://yourcompanyurl.com/docs/sample2
+    ref: sample2
+
+  - title: Sample Item 3
+    jurl: /sample3.html
+    hurl: http://yourcompanyurl.com/docs/sample3
+    ref: sample3
+
+  - title: Glossary
+    jurl: /glossary.html
+    hurl: http://yourcompanyurl.com/docs/glossary
+    ref: glossary
+    bookmarks: [abstruse, adumbrate, arboreal, Ebullient, macabre, riparian]
+
+- title: Another Folder - Japanese
+  folderitems:
+  - title: Sample Item 4
+    jurl: /sample1.html
+    hurl: http://yourcompanyurl.com/docs/sample4
+    ref: sample4
+
+  - title: Sample Item 5
+    jurl: /sample2.html
+    hurl: http://yourcompanyurl.com/docs/sample5
+    ref: sample5
+
+  - title: Sample Item 6
+    jurl: /sample3.html
+    hurl: http://yourcompanyurl.com/docs/sample6
+    ref: sample6
+    subfolders:
+    - title: Second Level - Japanese
+      subfolderitems:
+
+      - title: Sublevel Item 1
+        jurl: /sublevel1.html
+        hurl: http://yourcompanyurl.com/docs/sublevel1
+        ref: sublevel1
+
+      - title: Sublevel Item 2
+        jurl: /sublevel2.html
+        hurl: http://yourcompanyurl.com/docs/sublevel2
+        ref: sublevel2
+
+      - title: Sublevel Item 3
+        jurl: /sublevel3.html
+        hurl: http://yourcompanyurl.com/docs/sublevel3
+        ref: sublevel3
+
+        subsubfolders:
+        - title: Third Level
+          subsubfolderitems:
+
+          - title: Subsubfolder Item 1
+            jurl: /subsublevel1.html
+            hurl: http://yourcompanyurl.com/docs/subsublevel1
+            ref: subsublevel1
+
+          - title: Subsubfolder Item 2
+            jurl: /subsublevel2.html
+            hurl: http://yourcompanyurl.com/docs/subsublevel2
+            ref: subsublevel2
+
+          - title: Subsubfolder Item 3
+            jurl: /subsublevel3.html
+            hurl: http://yourcompanyurl.com/docs/subsublevel3
+            ref: subsublevel3
+
+###########################
+
+related_resources_title: Other Resources - Japanese
+
+related_resources_list:
+
+- title: Forums
+  hurl: https://yourcompany.com/forums
+
+- title: Other Documentation
+  hurl: https://yourcompany.com/docs/somedocs
+
+- title: Support Portal
+  hurl: https://developer.yourcompany.com
+
+
+###########################
+
+forum:
+  forum_link: http://forums.yourcompany.com
+  forum_name: Company Forum

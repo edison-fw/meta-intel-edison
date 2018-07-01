@@ -1,0 +1,141 @@
+sidebarTitle: Generic
+
+## See the generic.yml file as an example of the allowed yaml format.
+
+folders:
+- title: Frontmatter
+  jurl: /frontmatter.html
+  type: frontmatter
+  pdf: true
+  folderitems:
+
+  - title: Title page
+    jurl: /pdf_title_page.html
+    pdf: true
+
+  - title: Copyright page
+    jurl: /pdf_copyright_page.html
+    pdf: true
+
+  - title: TOC page
+    jurl: /pdf_toc_page.html
+    pdf: true
+
+
+- title: First Level
+  pdf: true
+
+  folderitems:
+  - title: Sample Item 1
+    jurl: /sample1.html
+    hurl: http://yourcompanyurl.com/docs/sample1
+    ref: sample1
+    pdf: true
+
+  - title: Sample Item 2
+    jurl: /sample2.html
+    hurl: http://yourcompanyurl.com/docs/sample2
+    ref: sample2
+    pdf: true
+
+  - title: Sample Item 3
+    jurl: /sample3.html
+    hurl: http://yourcompanyurl.com/docs/sample3
+    ref: sample3
+    pdf: true
+
+  - title: Glossary
+    jurl: /glossary.html
+    hurl: http://yourcompanyurl.com/docs/glossary
+    ref: glossary
+    bookmarks: [abstruse, adumbrate, arboreal, Ebullient, macabre, riparian]
+    pdf: true
+
+- title: Another Folder
+  pdf: true
+  folderitems:
+  - title: Sample Item 4
+    jurl: /sample1.html
+    hurl: http://yourcompanyurl.com/docs/sample4
+    ref: sample4
+    pdf: true
+
+  - title: Sample Item 5
+    jurl: /sample2.html
+    hurl: http://yourcompanyurl.com/docs/sample5
+    ref: sample5
+    pdf: true
+
+  - title: Sample Item 6
+    jurl: /sample3.html
+    hurl: http://yourcompanyurl.com/docs/sample6
+    ref: sample6
+    pdf: true
+
+    subfolders:
+    - title: Second Level
+      pdf: true
+      subfolderitems:
+
+      - title: Sublevel Item 1
+        jurl: /sublevel1.html
+        hurl: http://yourcompanyurl.com/docs/sublevel1
+        ref: sublevel1
+        pdf: true
+
+      - title: Sublevel Item 2
+        jurl: /sublevel2.html
+        hurl: http://yourcompanyurl.com/docs/sublevel2
+        ref: sublevel2
+        pdf: true
+
+      - title: Sublevel Item 3
+        jurl: /sublevel3.html
+        hurl: http://yourcompanyurl.com/docs/sublevel3
+        ref: sublevel3
+        pdf: true
+
+        subsubfolders:
+        - title: Third Level
+          pdf: true
+
+          subsubfolderitems:
+          - title: Subsubfolder Item 1
+            jurl: /subsublevel1.html
+            hurl: http://yourcompanyurl.com/docs/subsublevel1
+            ref: subsublevel1
+            pdf: true
+
+          - title: Subsubfolder Item 2
+            jurl: /subsublevel2.html
+            hurl: http://yourcompanyurl.com/docs/subsublevel2
+            ref: subsublevel2
+            pdf: true
+
+          - title: Subsubfolder Item 3
+            jurl: /subsublevel3.html
+            hurl: http://yourcompanyurl.com/docs/subsublevel3
+            ref: subsublevel3
+            pdf: true
+
+###########################
+
+related_resources_title: Other Resources
+
+related_resources_list:
+
+- title: Forums
+  hurl: https://yourcompany.com/forums
+
+- title: Other Documentation
+  hurl: https://yourcompany.com/docs/somedocs
+
+- title: Support Portal
+  hurl: https://developer.yourcompany.com
+
+
+###########################
+
+forum:
+  forum_link: http://forums.yourcompany.com
+  forum_name: Company Forum
