@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="rocko"
-yocto_tag="rocko"
+yocto_branch="sumo"
+yocto_tag="sumo"
 
 do_local_conf () {
   cat > $yocto_conf_dir/local.conf <<EOF
@@ -310,7 +310,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning Openembedded layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-openembedded-mirror.git meta-openembedded
   cd ${oe_dir}
-  git checkout rocko
+  git checkout sumo
   
   cd $poky_dir
   oe_dir=$poky_dir/meta-nodejs
@@ -324,7 +324,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning meta-intel layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-intel-mirror.git meta-intel
   cd ${oe_dir}
-  git checkout rocko
+  git checkout sumo
 
   cd ${top_repo_dir}
   acpi_dir=${top_repo_dir}/meta-acpi
