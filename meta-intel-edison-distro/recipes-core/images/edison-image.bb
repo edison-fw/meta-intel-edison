@@ -81,7 +81,7 @@ IMAGE_INSTALL_append = " alsa-utils-alsamixer alsa-utils-alsactl alsa-utils-apla
 # removed python-imaging python-pygobject python-dbus 
 IMAGE_INSTALL_append = " python"
 IMAGE_INSTALL_append = " python-argparse"
-IMAGE_INSTALL_append = " python-distutils python-pkgutil python-audio python-image python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc python-importlib"
+IMAGE_INSTALL_append = " python-distutils python-pkgutil python-audio python-image python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc"
 
 # Wifi firmware
 # removed modules, already built into kernel
