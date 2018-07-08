@@ -42,3 +42,6 @@ COMPATIBLE_MACHINE = "edison"
 # https://git.yoctoproject.org/cgit.cgi/poky/commit/meta/classes/kernel.bbclass?id=20e4d309e12bf10e2351e0016b606e85599b80f6
 do_kernel_configme[depends] += "bison-native:do_populate_sysroot flex-native:do_populate_sysroot"
 
+# This one is necessary too - otherwise the compilation itself fails later.
+DEPENDS += "openssl-native"
+
