@@ -78,7 +78,6 @@ BBLAYERS ?= " \\
   $poky_dir/meta-openembedded/meta-oe \\
   $poky_dir/meta-openembedded/meta-python \\
   $poky_dir/meta-openembedded/meta-networking \\
-  $poky_dir/meta-nodejs \\
   $poky_dir/meta-intel \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
@@ -279,7 +278,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   # Updating local git cache
   do_update_cache "poky" "git://git.yoctoproject.org"
   do_update_cache "meta-openembedded" "https://github.com/openembedded"
-  do_update_cache "meta-nodejs" "https://github.com/imyller"
   do_update_cache "meta-intel" "git://git.yoctoproject.org"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
@@ -311,13 +309,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git clone ${my_dl_dir}/meta-openembedded-mirror.git meta-openembedded
   cd ${oe_dir}
   git checkout sumo
-  
-  cd $poky_dir
-  oe_dir=$poky_dir/meta-nodejs
-  echo "Cloning Nodejs layer to ${oe_dir} directory from local cache"
-  git clone ${my_dl_dir}/meta-nodejs-mirror.git meta-nodejs
-  cd ${oe_dir}
-  git checkout master
 
   cd $poky_dir
   oe_dir=$poky_dir/meta-intel
