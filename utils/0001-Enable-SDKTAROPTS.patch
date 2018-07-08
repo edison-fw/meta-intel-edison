@@ -1,46 +1,29 @@
-From 313d19d3675971d0419a1810effaf5b52be86537 Mon Sep 17 00:00:00 2001
-From: Alex Tereschenko <alext.mkrs@gmail.com>
-Date: Wed, 6 Jun 2018 21:59:00 +0200
-Subject: [PATCH] Enable SDKTAROPTS
+From cef0d65180b9f81548b83056b97b8ff3ed75c4a0 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sun, 8 Jul 2018 15:46:04 +0200
+Subject: [PATCH] PATCH] Enable SDKTAROPTS
 
-Ported from original patch by Fabien Rodriguez <fabienx.rodriguez@intel.com>
+Ported by Alex Tereschenko <alext.mkrs@gmail.com>
+from original patch by Fabien Rodriguez <fabienx.rodriguez@intel.com>
 
-Signed-off-by: Alex Tereschenko <alext.mkrs@gmail.com>
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
- conf/machine-sdk/i686-mingw32.conf   | 4 +---
- conf/machine-sdk/x86_64-mingw32.conf | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ conf/machine-sdk/include/mingw32-common.inc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/conf/machine-sdk/i686-mingw32.conf b/conf/machine-sdk/i686-mingw32.conf
-index 458d1f7..baabd99 100644
---- a/conf/machine-sdk/i686-mingw32.conf
-+++ b/conf/machine-sdk/i686-mingw32.conf
-@@ -16,9 +16,7 @@ ALLOW_EMPTY_${PN}_mingw32 = "1"
- 
- # Do what amounts to a NOOP
+diff --git a/conf/machine-sdk/include/mingw32-common.inc b/conf/machine-sdk/include/mingw32-common.inc
+index 07b103a..a3490ad 100644
+--- a/conf/machine-sdk/include/mingw32-common.inc
++++ b/conf/machine-sdk/include/mingw32-common.inc
+@@ -18,7 +18,7 @@ ALLOW_EMPTY_${PN}_mingw32 = "1"
  SDK_PACKAGING_FUNC = "do_compile"
--
--# Causes an endless loop
--#SDKTAROPTS_append = " -h --hard-dereference"
-+SDKTAROPTS_append = " -h --hard-dereference"
  
- SDKUSE_NLS = "no"
- SDKIMAGE_LINGUAS = ""
-diff --git a/conf/machine-sdk/x86_64-mingw32.conf b/conf/machine-sdk/x86_64-mingw32.conf
-index 61e6112..d1704b9 100644
---- a/conf/machine-sdk/x86_64-mingw32.conf
-+++ b/conf/machine-sdk/x86_64-mingw32.conf
-@@ -16,9 +16,7 @@ ALLOW_EMPTY_${PN}_mingw32 = "1"
- 
- # Do what amounts to a NOOP
- SDK_PACKAGING_FUNC = "do_compile"
--
--# Causes an endless loop
+ # Causes an endless loop
 -#SDKTAROPTS_append = " -h --hard-dereference"
 +SDKTAROPTS_append = " -h --hard-dereference"
  
  SDKUSE_NLS = "no"
  SDKIMAGE_LINGUAS = ""
 -- 
-2.7.4
+2.17.1
 
