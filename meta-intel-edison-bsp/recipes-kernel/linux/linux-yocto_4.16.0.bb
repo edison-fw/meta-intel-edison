@@ -34,11 +34,11 @@ LINUX_VERSION ?= "4.16.0"
 
 COMPATIBLE_MACHINE = "edison"
 
-# Fix a bug where "make alldefconfig" run triggered by merge_config.sh doesn't find bison.
+# Fix a bug where "make alldefconfig" run triggered by merge_config.sh doesn't find bison and flex.
 # This is just a band aid and should probably be brought to Yocto mail list for fixing/clarification.
 # They added a patch for this a while ago, setting explicit dependency on bison-native,
 # but (1) here we have it anyway and (2) I don't see how it can help as DEPENDS only sets a link
 # between do_configure and do_populate_sysroot and do_kernel_configme runs before do_configure.
 # https://git.yoctoproject.org/cgit.cgi/poky/commit/meta/classes/kernel.bbclass?id=20e4d309e12bf10e2351e0016b606e85599b80f6
-do_kernel_configme[depends] = "bison-native:do_populate_sysroot"
+do_kernel_configme[depends] += "bison-native:do_populate_sysroot flex-native:do_populate_sysroot"
 
