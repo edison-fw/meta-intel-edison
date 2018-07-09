@@ -31,7 +31,7 @@ sshd_init () {
     systemctl start sshdgenkeys
 }
 
-# Substitute the SSID and passphrase in the file /etc/hostapd/hostapd.conf
+# Substitute the SSID and passphrase in the file /etc/hostapd.conf
 # The SSID is built from the hostname and a serial number to have a
 # unique SSID in case of multiple Edison boards having their WLAN AP active.
 setup_ap_ssid_and_passphrase () {
@@ -43,7 +43,7 @@ setup_ap_ssid_and_passphrase () {
         ssid="EDISON-${wlan0_addr:12:2}-${wlan0_addr:15:2}"
 
         # Substitute the SSID
-        sed -i -e 's/^ssid=.*/ssid='${ssid}'/g' /etc/hostapd/hostapd.conf
+        sed -i -e 's/^ssid=.*/ssid='${ssid}'/g' /etc/hostapd.conf
     fi
 
     if [ -f /factory/serial_number ] ;
@@ -52,7 +52,7 @@ setup_ap_ssid_and_passphrase () {
         passphrase="${factory_serial}"
 
         # Substitute the passphrase
-        sed -i -e 's/^wpa_passphrase=.*/wpa_passphrase='${passphrase}'/g' /etc/hostapd/hostapd.conf
+        sed -i -e 's/^wpa_passphrase=.*/wpa_passphrase='${passphrase}'/g' /etc/hostapd.conf
     fi
 
     sync
