@@ -81,7 +81,6 @@ BBLAYERS ?= " \\
   $poky_dir/meta-intel \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
-  $top_repo_dir/meta-intel-edison/meta-intel-iot-middleware \\
   $top_repo_dir/meta-acpi \\
   $extra_layers
   "
