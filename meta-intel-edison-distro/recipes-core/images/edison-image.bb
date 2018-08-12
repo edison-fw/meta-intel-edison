@@ -19,13 +19,14 @@ ROOTFS = ""
 
 # Specify rootfs image type
 IMAGE_FSTYPES = "ext4 live"
-# There seems to be no dedicated mechanism for picking initramfs
-# kernel for the live image - it tries to use the initrd unconditionally.
-# But this variable allows us to pick the kernel that gets packed,
-# into the image, see live-vm-common.bbclass.
-VM_DEFAULT_KERNEL = "bzImage-initramfs-edison.bin"
 
 inherit core-image
+
+# image-live/live-vm-common do not allow to use initramfs kernel
+# and we really want to have one in the generated hddimg file.
+# Otherwise it doesn't boot due to no mmc/sdhc modules being built-in in our setup).
+# There seems to be no standard mechanism for doing that, but the below works.
+KERNEL_IMAGETYPE_pn-edison-image = "bzImage-initramfs-edison.bin"
 
 IMAGE_ROOTFS_SIZE = "1048576"
 
