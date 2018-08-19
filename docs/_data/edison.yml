@@ -75,6 +75,11 @@ folders:
     ref: 1.3-ACPI-or-not
     pdf: true
 
+  - title: i686 or x86_64
+    jurl: /1.4-i686-or-x86_64.html
+    ref: 1.4-i686-or-x86_64
+    pdf: true
+
 - title: Building
   pdf: true
   jurl: /minitoc_theme_build.html
