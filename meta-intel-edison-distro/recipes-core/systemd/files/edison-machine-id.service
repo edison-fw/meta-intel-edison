@@ -1,0 +1,14 @@
+[Unit]
+Description= Generate unique machine-id
+After=systemd-remount-fs.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/umount /etc/machine-id
+ExecStart=/bin/systemd-machine-id-setup
+ExecStartPost=/bin/systemctl disable edison-machine-id
+StandardOutput=journal+console
+
+[Install]
+WantedBy=basic.target
+
