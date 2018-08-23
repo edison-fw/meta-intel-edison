@@ -1,14 +1,14 @@
-LICENSE = "GPLv2"
-LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
-
 KBRANCH ?= "standard/base"
 
 require recipes-kernel/linux/linux-yocto.inc
 
-PV = "4.16.0"
+LICENSE = "GPLv2"
+LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
+
+PV = "4.18.0"
 
 # this branch now contains both non-acpi kernel and acpi enabled kernel on top
-SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-4.16.0-unified \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-4.18.0-unified \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
@@ -26,10 +26,10 @@ SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
 # usefull kernel debug options here
 #
 
-SRCREV ??= "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '9d932425171e72e9378d07ad4ee964b2a611978f', '156bd82de94d55435fd91eef33e53459392e98ba', d)}"
+SRCREV ??= "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '08110c94be0bff3e353bed37935ff3527a56fa7b', 'eds-4.18.0-no-acpi', d)}"
 LINUX_VERSION_EXTENSION = "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', '-edison-acpi-${LINUX_KERNEL_TYPE}', '-edison-no-acpi-${LINUX_KERNEL_TYPE}', d)}"
 
-LINUX_VERSION ?= "4.16.0"
+LINUX_VERSION ?= "4.18.0"
 
 
 COMPATIBLE_MACHINE = "edison"
@@ -43,5 +43,5 @@ COMPATIBLE_MACHINE = "edison"
 do_kernel_configme[depends] += "bison-native:do_populate_sysroot flex-native:do_populate_sysroot"
 
 # This one is necessary too - otherwise the compilation itself fails later.
-DEPENDS += "openssl-native"
-
+DEPENDS += "openssl-native util-linux-native"
+DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
