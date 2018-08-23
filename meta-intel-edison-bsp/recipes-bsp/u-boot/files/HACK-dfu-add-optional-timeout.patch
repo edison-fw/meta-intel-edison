@@ -1,7 +1,7 @@
-From f02a64013489c13044d3d6f4cfdf182af33004ea Mon Sep 17 00:00:00 2001
+From b6d18759086334738e7ec64cec63c8ca21da275f Mon Sep 17 00:00:00 2001
 From: Brad <bradjc5@gmail.com>
 Date: Thu, 25 May 2017 14:16:31 -0400
-Subject: [PATCH 1/2] HACK: dfu: add optional timeout
+Subject: [PATCH] HACK: dfu: add optional timeout
 
 When the `dfu` command is called from the U-Boot environment, it now
 accepts an optional fourth parameter that specifies a timeout (in
@@ -35,10 +35,10 @@ Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
  7 files changed, 65 insertions(+)
 
 diff --git a/cmd/dfu.c b/cmd/dfu.c
-index 68b1a7f..bdb919a 100644
+index c9ba062197..4adb91c1b0 100644
 --- a/cmd/dfu.c
 +++ b/cmd/dfu.c
-@@ -51,6 +51,10 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+@@ -50,6 +50,10 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
  		dfu_show_entities();
  		goto done;
  	}
@@ -49,7 +49,7 @@ index 68b1a7f..bdb919a 100644
  
  	int controller_index = simple_strtoul(usb_controller, NULL, 0);
  
-@@ -65,11 +69,18 @@ done:
+@@ -64,11 +68,18 @@ done:
  U_BOOT_CMD(dfu, CONFIG_SYS_MAXARGS, 1, do_dfu,
  	"Device Firmware Upgrade",
  #ifdef CONFIG_DFU_OVER_USB
@@ -69,10 +69,10 @@ index 68b1a7f..bdb919a 100644
  #ifdef CONFIG_DFU_OVER_TFTP
  #ifdef CONFIG_DFU_OVER_USB
 diff --git a/common/dfu.c b/common/dfu.c
-index 07dff31..2f6a73b 100644
+index 2620d3238b..a0cbbb56cb 100644
 --- a/common/dfu.c
 +++ b/common/dfu.c
-@@ -35,6 +35,9 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
+@@ -34,6 +34,9 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
  		pr_err("g_dnl_register failed");
  		return CMD_RET_FAILURE;
  	}
@@ -82,7 +82,7 @@ index 07dff31..2f6a73b 100644
  
  	while (1) {
  		if (g_dnl_detach()) {
-@@ -80,6 +83,17 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
+@@ -79,6 +82,17 @@ int run_usb_dnl_gadget(int usbctrl_index, char *usb_dnl_gadget)
  			}
  		}
  
@@ -101,11 +101,11 @@ index 07dff31..2f6a73b 100644
  		usb_gadget_handle_interrupts(usbctrl_index);
  	}
 diff --git a/configs/edison_defconfig b/configs/edison_defconfig
-index 54305fc..c181149 100644
+index f0f3449464..2a622406e4 100644
 --- a/configs/edison_defconfig
 +++ b/configs/edison_defconfig
-@@ -29,6 +29,7 @@ CONFIG_CMD_FS_GENERIC=y
- CONFIG_OF_EMBED=y
+@@ -30,6 +30,7 @@ CONFIG_OF_EMBED=y
+ CONFIG_DEFAULT_DEVICE_TREE="edison"
  CONFIG_ENV_IS_IN_MMC=y
  CONFIG_CPU=y
 +CONFIG_DFU_TIMEOUT=y
@@ -113,7 +113,7 @@ index 54305fc..c181149 100644
  CONFIG_DFU_RAM=y
  CONFIG_DM_PCI_COMPAT=y
 diff --git a/drivers/dfu/Kconfig b/drivers/dfu/Kconfig
-index 51ab484..da5a848 100644
+index 51ab484c2a..da5a848bf8 100644
 --- a/drivers/dfu/Kconfig
 +++ b/drivers/dfu/Kconfig
 @@ -23,6 +23,12 @@ config DFU_TFTP
@@ -130,10 +130,10 @@ index 51ab484..da5a848 100644
  	bool "MMC back end for DFU"
  	help
 diff --git a/drivers/dfu/dfu.c b/drivers/dfu/dfu.c
-index 2c22b62..e4e172c 100644
+index 318949529b..b77bdcbc35 100644
 --- a/drivers/dfu/dfu.c
 +++ b/drivers/dfu/dfu.c
-@@ -17,10 +17,14 @@
+@@ -16,10 +16,14 @@
  #include <linux/list.h>
  #include <linux/compiler.h>
  
@@ -148,7 +148,7 @@ index 2c22b62..e4e172c 100644
  
  /*
   * The purpose of the dfu_usb_get_reset() function is to
-@@ -42,6 +46,28 @@ __weak bool dfu_usb_get_reset(void)
+@@ -41,6 +45,28 @@ __weak bool dfu_usb_get_reset(void)
  #endif
  }
  
@@ -178,18 +178,18 @@ index 2c22b62..e4e172c 100644
  {
  	int i = 0;
 @@ -75,6 +101,7 @@ int dfu_init_env_entities(char *interface, char *devstr)
- 		return ret;
+ 		goto done;
  	}
  
 +	dfu_enum_request = false;
+ done:
  	free(env_bkp);
- 	return 0;
- }
+ 	return ret;
 diff --git a/drivers/usb/gadget/f_dfu.c b/drivers/usb/gadget/f_dfu.c
-index bc4be71..7e259a1 100644
+index 30ece524a8..0eebf5f16f 100644
 --- a/drivers/usb/gadget/f_dfu.c
 +++ b/drivers/usb/gadget/f_dfu.c
-@@ -596,6 +596,8 @@ dfu_handle(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
+@@ -595,6 +595,8 @@ dfu_handle(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
  	debug("req_type: 0x%x ctrl->bRequest: 0x%x f_dfu->dfu_state: 0x%x\n",
  	       req_type, ctrl->bRequest, f_dfu->dfu_state);
  
@@ -199,10 +199,10 @@ index bc4be71..7e259a1 100644
  		if (ctrl->bRequest == USB_REQ_GET_DESCRIPTOR &&
  		    (w_value >> 8) == DFU_DT_FUNC) {
 diff --git a/include/dfu.h b/include/dfu.h
-index 7e322d9..6114c9d 100644
+index fbe978abdc..4c6713326f 100644
 --- a/include/dfu.h
 +++ b/include/dfu.h
-@@ -152,12 +152,16 @@ const char *dfu_get_layout(enum dfu_layout l);
+@@ -151,12 +151,16 @@ const char *dfu_get_layout(enum dfu_layout l);
  struct dfu_entity *dfu_get_entity(int alt);
  char *dfu_extract_token(char** e, int *n);
  void dfu_trigger_reset(void);
@@ -220,5 +220,5 @@ index 7e322d9..6114c9d 100644
  int dfu_read(struct dfu_entity *de, void *buf, int size, int blk_seq_num);
  int dfu_write(struct dfu_entity *de, void *buf, int size, int blk_seq_num);
 -- 
-2.7.4
+2.17.1
 
