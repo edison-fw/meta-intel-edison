@@ -80,20 +80,31 @@ folders:
     ref: 1.4-i686-or-x86_64
     pdf: true
 
-- title: Building
+- title: Building and installing
   pdf: true
   jurl: /minitoc_theme_build.html
 
   folderitems:
-  - title: Building and installing the rootfs
-    jurl: /3-Building-and-installing-the-rootfs.html
-    ref: 3-Building-and-installing-the-rootfs
+  - title: Building and installing the image
+    jurl: /2.0-Building-and-installing-the-image.html
+    ref: 2.0-Building-and-installing-the-image
+    pdf: true
+
+  - title: Building and installing the rootfs to SDHC or USB
+    jurl: /2.1-Building-and-installing-the-rootfs.html
+    ref: 2.1-Building-and-installing-the-rootfs
     pdf: true
 
   - title: Building and installing the kernel
-    jurl: /4-Building-and-installing-the-kernel.html
-    ref: 4-Building-and-installing-the-kernel
+    jurl: /2.2-Building-and-installing-the-kernel.html
+    ref: 2.2-Building-and-installing-the-kernel
     pdf: true
+    
+  - title: Building and flashing U-Boot
+    jurl: /2.3-Building-and-flashing-U-boot.html
+    ref: 2.3-Building-and-flashing-U-boot
+    pdf: true
+
 
 - title: SDK
   pdf: true
