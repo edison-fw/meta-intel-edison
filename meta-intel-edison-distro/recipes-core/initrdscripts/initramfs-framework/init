@@ -9,6 +9,7 @@ UMOUNT="/bin/umount"
 ISOLINUX=""
 
 ROOT_DISK=""
+skip_load_tables="no"
 
 # Copied from initramfs-framework. The core of this script probably should be
 # turned into initramfs-framework modules to reduce duplication.
@@ -45,7 +46,9 @@ early_setup() {
 }
 
 acpi_load() {
-	if [ -d /sys/firmware/acpi ]; then
+	if [ "$skip_load_tables" = "yes" ]; then 
+		echo "Loading acpi tables deferred"
+	elif [ -d /sys/firmware/acpi ]; then
 		echo "Kernel with acpi enabled detected"
 		if [ -f /usr/bin/acpi-tables-load ]; then
 			echo "Loading acpi tables"
@@ -81,6 +84,8 @@ read_args() {
                 else
                     console_params="$console_params $arg"
                 fi ;;
+	    skiptables*)
+	        skip_load_tables="yes" ;;
             debugshell*)
                 if [ -z "$optarg" ]; then
                         shelltimeout=30
@@ -127,11 +132,11 @@ fatal() {
 
 early_setup
 
-acpi_load
-
 [ -z "$CONSOLE" ] && CONSOLE="/dev/console"
 
 read_args
+
+acpi_load
 
 echo "Waiting for root device $ROOT_DEVICE"
 C=0
