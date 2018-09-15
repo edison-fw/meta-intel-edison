@@ -70,7 +70,7 @@ folders:
     ref: 1.2-Setting-up
     pdf: true
 
-  - title: ACPI or no-ACPI
+  - title: ACPI
     jurl: /1.3-ACPI-or-not.html
     ref: 1.3-ACPI-or-not
     pdf: true
