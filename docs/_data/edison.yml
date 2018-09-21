@@ -105,6 +105,11 @@ folders:
     ref: 2.3-Building-and-flashing-U-boot
     pdf: true
 
+  - title: Disaster recovery
+    jurl: /2.4-Recovery.html
+    ref: 2.4-Recovery
+    pdf: true
+
 
 - title: SDK
   pdf: true
