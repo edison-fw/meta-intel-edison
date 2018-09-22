@@ -110,6 +110,10 @@ folders:
     ref: 2.4-Recovery
     pdf: true
 
+  - title: What's in the rootfs and the initramfs images
+    jurl: /2.5-Whats-in-the-rootfs-and-the-initramfs.html
+    ref: 2.5-Whats-in-the-rootfs-and-the-initramfs
+    pdf: true
 
 - title: SDK
   pdf: true
