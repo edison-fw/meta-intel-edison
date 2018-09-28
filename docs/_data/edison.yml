@@ -125,6 +125,32 @@ folders:
     ref: 3-Building-the-SDK
     pdf: true
 
+- title: Current state
+  pdf: true
+  jurl: /minitoc_theme_build.html
+
+  folderitems:
+  - title: Miscellaneous functions
+    jurl: /4.1-misc.html
+    ref: 4.1-misc
+    pdf: true
+  - title: Networking functions
+    jurl: /4.2-networking.html
+    ref: 4.2-networking
+    pdf: true
+  - title: Bluetooth functions
+    jurl: /4.3-bluetooth.html
+    ref: 4.3-bluetooth
+    pdf: true
+  - title: I2C SPI HSU GPIO USB
+    jurl: /4.4-hsu-i2c-spi.html
+    ref: 4.4-hsu-i2c-spi
+    pdf: true
+  - title: MRAA UPM
+    jurl: /4.5-mraa-upm.html
+    ref: 4.5-mraa-upm
+    pdf: true
+
 ###########################
 
 related_resources_title: Other Resources
