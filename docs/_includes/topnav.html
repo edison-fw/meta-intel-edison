@@ -111,7 +111,29 @@
             </div>
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-left">
+                {% if site.search_in_topnav == true %}
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+
+                     <div id="search-topnav-container">
+                        <form action="search.html" method="get">
+                          <div class="input-group search">
+                            <input type="text" id="search-box" name="query" class="form-control" placeholder="{{site.uistring.search_placeholder_text}}">
+                            <div class="input-group-btn">
+                              <button class="btn btn-default" type="submit" value="search">
+                                <i class="glyphicon glyphicon-search"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                        </div>
+
+
+                    </li>
+                </ul>
+                {% endif %}
+		<ul class="nav navbar-nav navbar-right">
 
                     <!-- single item nav items appear here -->
 
@@ -158,28 +180,7 @@
 
 
                 </ul>
-                {% if site.search_in_topnav == true %}
 
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-
-                     <div id="search-topnav-container">
-                        <form action="search.html" method="get">
-                          <div class="input-group search">
-                            <input type="text" id="search-box" name="query" class="form-control" placeholder="{{site.uistring.search_placeholder_text}}">
-                            <div class="input-group-btn">
-                              <button class="btn btn-default" type="submit" value="search">
-                                <i class="glyphicon glyphicon-search"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </form>
-                        </div>
-
-
-                    </li>
-                </ul>
-                {% endif %}
             </div>
 
         </div>
