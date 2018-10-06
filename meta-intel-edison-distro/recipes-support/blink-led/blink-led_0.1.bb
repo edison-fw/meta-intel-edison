@@ -8,6 +8,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 inherit systemd
 SYSTEMD_SERVICE_${PN} = "blink-led.service"
 
+RDEPENDS_${PN} = "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', 'libgpiod-python', 'python3', d)}"
+
 SRC_URI = "file://blink-led"
 SRC_URI += "file://blink-led.service"
 
