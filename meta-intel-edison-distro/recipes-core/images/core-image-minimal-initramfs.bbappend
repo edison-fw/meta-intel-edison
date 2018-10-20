@@ -19,6 +19,7 @@ ROOTFS_POSTPROCESS_COMMAND += "clobber_unused; "
 clobber_unused () {
         rm ${IMAGE_ROOTFS}/boot/*
         # libgpiod2 pulls in python3-core which we don't need
-        rm -r ${IMAGE_ROOTFS}/usr/lib/python3.5/*
-        rm ${IMAGE_ROOTFS}/usr/lib/libpython3.5m.so.1.0
+        rm -rf ${IMAGE_ROOTFS}/usr/lib/python3.5/*
+        rm -f ${IMAGE_ROOTFS}/usr/lib/libpython3.5m.so.1.0
+
 }
