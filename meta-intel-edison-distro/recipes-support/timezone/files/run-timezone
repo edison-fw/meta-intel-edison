@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Copyright 2018 Exalon Delft
+#
+# Author: Ferry Toth <ftoth@exalondelft.nl>
+#
+
+# The following script will try to reach a geolocation service
+# and on success set the time zone based on the result
+
+# the order of this list is important, do not change!
+
+# check if the service is reachable
+ping -c 1 -w 2 -q ipapi.co
+
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  exit $RESULT
+fi
+
+timedatectl set-timezone `curl -s https://ipapi.co/timezone`
+exit $?

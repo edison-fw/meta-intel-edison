@@ -32,6 +32,9 @@ IMAGE_INSTALL_append = " sst-fw-bin"
 #IMAGE_INSTALL_append = " alsa-lib"
 IMAGE_INSTALL_append = " alsa-utils-alsamixer alsa-utils-alsactl alsa-utils-aplay alsa-utils-amixer"
 
+# OOBE
+IMAGE_INSTALL_append = " run-timezone"
+
 # Python and some basic modules
 # removed python-imaging python-pygobject python-dbus 
 IMAGE_INSTALL_append = " python"

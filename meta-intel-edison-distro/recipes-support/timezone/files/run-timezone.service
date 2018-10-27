@@ -1,0 +1,14 @@
+[Unit]
+Description=Set timezone by geolocation service
+DefaultDependencies=no
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=#SBINDIR#/run-timezone
+ExecStartPost=#BASE_BINDIR#/systemctl --no-reload disable run-timezone.service
+RemainAfterExit=No
+TimeoutSec=0
+
+[Install]
+WantedBy=default.target
