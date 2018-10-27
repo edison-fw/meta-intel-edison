@@ -254,8 +254,12 @@ div#toc2 ul li ul li {
 pre {
     overflow: auto;
     margin: 20px 0px;
-    background-color: grey;
+    background-color: #74aae3;
     color: whitesmoke;
+}
+
+code.highlighter-rouge {
+    color: #0270e3;
 }
 
 .legend img {
