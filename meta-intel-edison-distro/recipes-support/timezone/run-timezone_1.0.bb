@@ -17,7 +17,7 @@ INITSCRIPT_PARAMS = "start 99 S ."
 
 SYSTEMD_SERVICE_${PN} = "run-timezone.service"
 
-RDEPENDS_${PN} = "curl tzdata"
+RDEPENDS_${PN} = "curl packagegroup-tzdata"
 
 do_configure() {
 	:
