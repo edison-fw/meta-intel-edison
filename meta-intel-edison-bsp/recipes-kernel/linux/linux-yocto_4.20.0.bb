@@ -13,7 +13,7 @@ SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-4
         file://bt_more.cfg \
         file://i2c_chardev.cfg \
         file://configfs.cfg \
-        file://usb_dwc3.cfg \
+        file://bridge.cfg \
         "
 
 # kernel patches
