@@ -16,12 +16,12 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
 PE = "1"
 
-SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2018.09;protocol=https"
+SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2019.01;protocol=https"
 		
-SRCREV = "6ff5e789f28cb1ba743cea1fe7f8ce73295e9d94"
+SRCREV = "7f95fe2247af663b2928fa0c4ed16d6ad746731f"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
 
-PV = "2018.09"
+PV = "2019.01"
 S = "${WORKDIR}/git"
