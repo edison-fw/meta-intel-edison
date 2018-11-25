@@ -9,7 +9,6 @@ wait_connman()
 		echo $hint
 		exit 1
 	fi
-	sleep 1
 }
 
 ap_start()
@@ -17,27 +16,7 @@ ap_start()
 	wait_connman
 
 	echo "Starting SoftAP!"
-	# reload the driver for softap mode
-	modprobe -r bcm4334x
-	sleep 1
-	modprobe bcm4334x op_mode=2
-
-	# These small sleeps are unfortunate but bcm4334x driver is not able
-	# to work properly without them.
-	sleep 2
 	connmanctl tether wifi on
-	sleep 1
-
-	# Sometimes the wlan driver is very slow to take the wlan UP,
-	# so do it here (brctl will fail otherwise)
-	ifconfig wlan0 up
-	sleep 1
-	# FIXME: ConnMan will try to add wlan0 to tether bridge but in Edison
-	# that currently fails with EBUSY. This is either wlan driver and/or
-	# wpa_supplicant issue. Because of this add the wlan0 to bridge
-	# manually. This is a dirty hack that will be removed when the bridging
-	# works ok. JRi 8 Dec 2014
-	brctl addif tether wlan0
 }
 
 ap_stop()
@@ -46,9 +25,6 @@ ap_stop()
 
 	echo "Stopping SoftAP!"
 	connmanctl tether wifi off
-	# reload the driver for sta/p2p mode
-	modprobe -r bcm4334x
-	modprobe bcm4334x
 }
 
 check_status()
@@ -69,6 +45,9 @@ stop)
 	ap_stop
 	;;
 
+status)
+        echo "AP mode = `check_status`"
+        ;;
 toggle)
 	case `check_status` in
 		False)
@@ -86,10 +65,8 @@ toggle)
 	echo "Usage: $0 start|stop|toggle"
 	echo "  start  - Start AP mode"
 	echo "  stop   - AP mode is stopped and we return to station mode"
+        echo "  status - Show current AP mode status"
 	echo "  toggle - Start or stop AP mode depending on previous mode."
 	echo ""
-	echo "This script is only usable in Edison where the Broadcom"
-	echo "wifi driver firmware needs to be told which mode to operate."
 	;;
-
 esac
