@@ -342,6 +342,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
   cd $poky_dir
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-replace-obsolete-oldnoconfig-by-olddefconfig.patch
 
   if [[ $my_sdk_host == win* ]]
   then
