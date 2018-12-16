@@ -63,6 +63,9 @@ IMAGE_INSTALL_append = " python-argparse"
 # removed modules, already built into kernel
 IMAGE_INSTALL_append = " bcm43340-fw"
 
+# Gadget setup
+IMAGE_INSTALL_append = " gadget"
+
 # Adds various other tools
 IMAGE_INSTALL_append = " lsof"
 IMAGE_INSTALL_append = " less"
