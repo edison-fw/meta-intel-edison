@@ -54,6 +54,11 @@ folders:
     jurl: /0.5-Road-map.html
     ref: 0.5-Road-map
     pdf: true
+    
+  - title: News
+    jurl: /0.6-News.html
+    ref: 0.6-News
+    pdf: true
 
 - title: Setting up
   pdf: true
