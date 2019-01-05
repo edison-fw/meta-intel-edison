@@ -16,23 +16,9 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
 PE = "1"
 
-# When acpi has been set in DISTRO_FEATURES in the poky-edison.conf file we use Andy Shevchenko's repo
-# otherwise we use upstream with the following patches
-
-EDISON-PATCHES = "\
-	file://HACK-dfu-add-optional-timeout.patch \
-	file://HACK-mmc-sdhci-SDHCI-controllers-also-need-power.patch \
-"
-
-SRC_URI = "${@bb.utils.contains('DISTRO_FEATURES', \
-	'acpi', 'git://github.com/edison-fw/u-boot.git;branch=acpi-v2018.09;protocol=https', \
-		'git://github.com/u-boot/u-boot.git;branch=master;protocol=https', d)}"
+SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2018.09;protocol=https"
 		
-SRCREV = "${@bb.utils.contains('DISTRO_FEATURES', \
-	'acpi', '6ff5e789f28cb1ba743cea1fe7f8ce73295e9d94', \
-		'v2018.09', d)}"
-		
-SRC_URI += "${@bb.utils.contains('DISTRO_FEATURES', 'acpi', ' ', '${EDISON-PATCHES}', d)}"
+SRCREV = "6ff5e789f28cb1ba743cea1fe7f8ce73295e9d94"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
