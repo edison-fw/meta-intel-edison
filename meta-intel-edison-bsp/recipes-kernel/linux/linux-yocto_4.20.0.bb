@@ -5,10 +5,9 @@ require recipes-kernel/linux/linux-yocto.inc
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-PV = "4.18.0"
+PV = "4.20.0"
 
-# this branch now contains both non-acpi kernel and acpi enabled kernel on top
-SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-4.18.0-unified \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-4.20.0 \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
@@ -24,10 +23,10 @@ SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
 # usefull kernel debug options here
 #
 
-SRCREV ??= "08110c94be0bff3e353bed37935ff3527a56fa7b"
+SRCREV ??= "f610818dfb680feb79ac57926ca2d8036b744de4"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
-LINUX_VERSION ?= "4.18.0"
+LINUX_VERSION ?= "4.20.0"
 
 
 COMPATIBLE_MACHINE = "edison"
