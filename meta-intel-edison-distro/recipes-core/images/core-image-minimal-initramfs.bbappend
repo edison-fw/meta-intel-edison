@@ -8,6 +8,8 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384
 PACKAGE_INSTALL += " kernel-module-mmc-block"
 PACKAGE_INSTALL += " kernel-module-sdhci-acpi"
 PACKAGE_INSTALL += " kernel-module-sdhci-pci"
+PACKAGE_INSTALL += " kernel-module-intel-soc-pmic-mrfld"
+PACKAGE_INSTALL += " kernel-module-extcon-intel-mrfld"
 PACKAGE_INSTALL += " acpi-tables"
 PACKAGE_INSTALL_remove = " initramfs-live-install initramfs-module-install"
 PACKAGE_INSTALL_remove = " initramfs-live-install-efi initramfs-module-install-efi"
