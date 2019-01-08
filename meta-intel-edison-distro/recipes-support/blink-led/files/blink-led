@@ -35,18 +35,13 @@ import os
 import gpiod
 
 initial_led_state = "high"
-acpi = False
 
 def write_led(value):
-    if acpi:
-        if value == "high":
-            level = 1
-        else:
-            level = 0
-        led.set_value(level)
+    if value == "high":
+        level = 1
     else:
-        with open("/sys/class/gpio/gpio40/direction","w") as lf:
-            lf.write(value)
+        level = 0
+    led.set_value(level)
 
 def blink_once():
     write_led("low")
@@ -59,16 +54,8 @@ def deinit_led_gpio():
     write_led(initial_led_state)
 
     # Deinit LED GPIO
-    if acpi:
-        led.release()
-    else:
-        subprocess.call("""
-        echo 40 >/sys/class/gpio/unexport
-        echo 214 >/sys/class/gpio/unexport
-        echo 243 >/sys/class/gpio/unexport
-        echo 261 >/sys/class/gpio/unexport
-        """, shell=True)
-
+    led.release()
+ 
 def signal_term_handler(signal, frame):
     print("Signal intercepted: de-initing LED GPIOs")
     deinit_led_gpio()
@@ -91,43 +78,16 @@ args = parser.parse_args()
 signal.signal(signal.SIGTERM, signal_term_handler)
 signal.signal(signal.SIGINT, signal_term_handler)
 
-# Detect ACPI or SFI
-acpi =  os.path.isdir("/sys/firmware/acpi")
-
-if acpi:
-    set_line("TRI_STATE_ALL", 0)
-    set_line("SPI_CLK_SEL", 0)
-    set_line("MUX18_DIR", 1)
-    set_line("TRI_STATE_ALL", 0)
-    led = gpiod.Chip("gpiochip0").get_line(40)
-    led.request(consumer=led.owner().name(), type=gpiod.LINE_REQ_DIR_OUT)
-    if led.get_value() == 0:
-        initial_led_state = "low"
-    else:
-        initial_led_state = "high"
+set_line("TRI_STATE_ALL", 0)
+set_line("SPI_CLK_SEL", 0)
+set_line("MUX18_DIR", 1)
+set_line("TRI_STATE_ALL", 0)
+led = gpiod.Chip("gpiochip0").get_line(40)
+led.request(consumer=led.owner().name(), type=gpiod.LINE_REQ_DIR_OUT)
+if led.get_value() == 0:
+    initial_led_state = "low"
 else:
-    # Init GPIO mux for LED control
-    subprocess.call("""
-    echo 40 >/sys/class/gpio/export
-    echo 214 >/sys/class/gpio/export
-    echo 243 >/sys/class/gpio/export
-    echo 261 >/sys/class/gpio/export
-    echo high >/sys/class/gpio/gpio214/direction
-    echo low >/sys/class/gpio/gpio243/direction
-    echo high >/sys/class/gpio/gpio261/direction
-    echo low >/sys/class/gpio/gpio214/direction""", shell=True)
-
-    # Save current LED value for reverting to proper state at exit
-    try:
-        lf = open("/sys/class/gpio/gpio40/value","r")
-        v = lf.read()
-        lf.close()
-        if v[0] == "0":
-            initial_led_state = "low"
-        else:
-            initial_led_state = "high"
-    except:
-        print("Can't get current LED state")
+    initial_led_state = "high"
 
 # Blink LED
 if args.duration >= 0:
