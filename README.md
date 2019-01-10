@@ -18,13 +18,14 @@ Currently we have Intel's original (factory) firmware: orignal and created four 
 * **morty** experimental branch based on Yocto Morty, vanilla kernel 4.13.
 * **morty-64** experimental branch based on Yocto Morty, vanilla kernel 4.13 (64 bit).
 * **pyro64** experimental branch based on Yocto Pyro, vanilla kernel 4.13 (64 bit). This version actually builds u-boot with `bitbake -R conf/u-boot.conf lib32-u-boot` (wiki to be updated).
-* **rocko32** and **rocko64-acpi** with based on Yocto Rocko with kernel 4.16. 
-* **sumo32** and **sumo64-acpi** with based on Yocto Sumo with kernel 4.18
+* **rocko32** and **rocko64-acpi** based on Yocto Rocko with kernel 4.16. 
+* **sumo32** and **sumo64-acpi** based on Yocto Sumo with kernel 4.18
+* * **thud** based on Yocto Thud with kernel 4.20.
 
 # What to choose
 
 Yocto Morty and later will build on Ubuntu Artful (17.10) up to at least Cosmic (18.10).
 
-Generally **sumo32** will give best results if you rely on MRAA and UPM. If you want highly configurable hardware and don't need MRAA, the **sumo64-acpi** enabled version is best. Also, all development on **master** will be focusing on the acpi enabled U-Boot and kernel.
+Generally **sumo32** will give best results if you rely on MRAA and UPM. If you want highly configurable hardware and don't need MRAA, the **thud** enabled version is best.
 
-The 64 bit kernel exists because we can, but may be actually slower than the 32bit kernel.
+Thud has a 64 bit kernel because we can, but may be actually slower than the 32bit kernel. Master will normally have the same as Thud, but 32 bits.
