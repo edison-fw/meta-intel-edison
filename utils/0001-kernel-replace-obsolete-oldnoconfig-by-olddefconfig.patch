@@ -1,7 +1,7 @@
-From bd464c83f4f45ee7dc9d6353fc75b0ac2b606393 Mon Sep 17 00:00:00 2001
+From 5bd096e5e536f8350eb6620a410cd59072c1f648 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
-Date: Sun, 2 Dec 2018 17:06:42 +0100
-Subject: [PATCH] kernel: replace obsolete oldnoconfig by olddefconfig
+Date: Mon, 14 Jan 2019 09:51:03 +0100
+Subject: [PATCH] [PATCH] kernel: replace obsolete oldnoconfig by olddefconfig
 
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
@@ -9,15 +9,15 @@ Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/meta/classes/kernel.bbclass b/meta/classes/kernel.bbclass
-index 78d6c30b07..46e80e0777 100644
+index e04d2fe004..d50f4a9ee8 100644
 --- a/meta/classes/kernel.bbclass
 +++ b/meta/classes/kernel.bbclass
-@@ -489,7 +489,7 @@ sysroot_stage_all () {
+@@ -492,7 +492,7 @@ sysroot_stage_all () {
  	:
  }
  
--KERNEL_CONFIG_COMMAND ?= "oe_runmake_call -C ${S} O=${B} oldnoconfig"
-+KERNEL_CONFIG_COMMAND ?= "oe_runmake_call -C ${S} O=${B} olddefconfig"
+-KERNEL_CONFIG_COMMAND ?= "oe_runmake_call -C ${S} CC="${KERNEL_CC}" O=${B} oldnoconfig"
++KERNEL_CONFIG_COMMAND ?= "oe_runmake_call -C ${S} CC="${KERNEL_CC}" O=${B} olddefconfig"
  
  python check_oldest_kernel() {
      oldest_kernel = d.getVar('OLDEST_KERNEL')

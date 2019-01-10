@@ -107,7 +107,7 @@ IMAGE_INSTALL_append = " sketch-check"
 #IMAGE_INSTALL_append = " aptitude"
 
 # Provides strace and gdb
-IMAGE_FEATURES += "tools-debug"
+# IMAGE_FEATURES += "tools-debug" fail with thud
 
 # SWIG
 IMAGE_INSTALL_append = " swig"

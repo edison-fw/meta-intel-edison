@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="sumo"
-yocto_tag="sumo"
+yocto_branch="thud"
+yocto_tag="thud"
 
 do_local_conf () {
   cat > $yocto_conf_dir/local.conf <<EOF
@@ -307,14 +307,14 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning Openembedded layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-openembedded-mirror.git meta-openembedded
   cd ${oe_dir}
-  git checkout sumo
+  git checkout ${yocto_tag}
 
   cd $poky_dir
   oe_dir=$poky_dir/meta-intel
   echo "Cloning meta-intel layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-intel-mirror.git meta-intel
   cd ${oe_dir}
-  git checkout sumo
+  git checkout ${yocto_tag}
 
   cd ${top_repo_dir}
   acpi_dir=${top_repo_dir}/meta-acpi
@@ -341,8 +341,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Applying patch on poky"
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
-  cd $poky_dir
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-kernel-replace-obsolete-oldnoconfig-by-olddefconfig.patch
 
   if [[ $my_sdk_host == win* ]]
   then
@@ -362,7 +360,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 
   if [ ! -e "$yocto_conf_dir/local.conf" ]; then
     echo "Initializing yocto build environment"
-    source oe-init-build-env $my_build_dir/build > /dev/null
+    source $poky_dir/oe-init-build-env $my_build_dir/build > /dev/null
 
     echo "Setting up yocto configuration file (in build/conf/local.conf)"
     do_local_conf

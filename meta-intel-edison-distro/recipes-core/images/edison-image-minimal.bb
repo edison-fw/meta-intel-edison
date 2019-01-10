@@ -34,7 +34,6 @@ IMAGE_FEATURES += "package-management ssh-server-openssh"
 # Allow passwordless root login and postinst logging
 IMAGE_FEATURES += "debug-tweaks"
 
-IMAGE_INSTALL_append = " wireless-tools"
 IMAGE_INSTALL_append = " wpa-supplicant"
 IMAGE_INSTALL_append = " hostapd"
 IMAGE_INSTALL_append = " bridge-utils"
