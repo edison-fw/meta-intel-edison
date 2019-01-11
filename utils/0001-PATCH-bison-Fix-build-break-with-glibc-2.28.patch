@@ -1,0 +1,58 @@
+From e2b7828a4bc6a73369ef33356545267fb6dbf438 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 11 Jan 2019 13:03:27 +0100
+Subject: [PATCH] [PATCH] bison: Fix build break with glibc 2.28
+
+(From OE-Core rev: 741415c58b3565764000028c26efd081212eb989)
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ .../recipes-devtools/bison/bison/gnulib.patch | 21 +++++++++++++++++++
+ meta/recipes-devtools/bison/bison_3.0.4.bb    |  1 +
+ 2 files changed, 22 insertions(+)
+ create mode 100644 meta/recipes-devtools/bison/bison/gnulib.patch
+
+diff --git a/meta/recipes-devtools/bison/bison/gnulib.patch b/meta/recipes-devtools/bison/bison/gnulib.patch
+new file mode 100644
+index 0000000000..7eaf0ce0fa
+--- /dev/null
++++ b/meta/recipes-devtools/bison/bison/gnulib.patch
+@@ -0,0 +1,21 @@
++Fix gnulib issues found with glibc 2.28 libio.h removal
++
++see
++https://lists.gnu.org/r/bug-gnulib/2018-03/msg00000.html
++
++Upstream-Status: Pending
++Signed-off-by: Khem Raj <raj.khem@gmail.com>
++
++Index: bison-3.0.4/lib/fseterr.c
++===================================================================
++--- bison-3.0.4.orig/lib/fseterr.c
+++++ bison-3.0.4/lib/fseterr.c
++@@ -29,7 +29,7 @@ fseterr (FILE *fp)
++   /* Most systems provide FILE as a struct and the necessary bitmask in
++      <stdio.h>, because they need it for implementing getc() and putc() as
++      fast macros.  */
++-#if defined _IO_ftrylockfile || __GNU_LIBRARY__ == 1 /* GNU libc, BeOS, Haiku, Linux libc5 */
+++#if defined _IO_EOF_SEEN || __GNU_LIBRARY__ == 1 /* GNU libc, BeOS, Haiku, Linux libc5 */
++   fp->_flags |= _IO_ERR_SEEN;
++ #elif defined __sferror || defined __DragonFly__ /* FreeBSD, NetBSD, OpenBSD, DragonFly, Mac OS X, Cygwin */
++   fp_->_flags |= __SERR;
+diff --git a/meta/recipes-devtools/bison/bison_3.0.4.bb b/meta/recipes-devtools/bison/bison_3.0.4.bb
+index 58728f5021..cc155f0fbe 100644
+--- a/meta/recipes-devtools/bison/bison_3.0.4.bb
++++ b/meta/recipes-devtools/bison/bison_3.0.4.bb
+@@ -14,6 +14,7 @@ SRC_URI = "${GNU_MIRROR}/bison/bison-${PV}.tar.xz \
+            file://dont-depend-on-help2man.patch.patch \
+            file://0001-src-local.mk-fix-parallel-issue.patch \
+            file://add-with-bisonlocaledir.patch \
++           file://gnulib.patch \
+ "
+ 
+ # No point in hardcoding path to m4, just use PATH
+-- 
+2.19.1
+

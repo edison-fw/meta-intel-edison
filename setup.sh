@@ -342,6 +342,9 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
   cd $poky_dir
+  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0001-PATCH-bison-Fix-build-break-with-glibc-2.28.patch
+  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0001-PATCH-coreutils-Fix-build-break-with-glibc-2.28.patch
+  git apply --whitespace=nowarn $top_repo_dir/meta-intel-edison/utils/0001-PATCH-cross-localedef.patch
 
   if [[ $my_sdk_host == win* ]]
   then
