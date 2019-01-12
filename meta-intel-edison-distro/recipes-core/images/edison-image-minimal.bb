@@ -35,6 +35,7 @@ IMAGE_FEATURES += "package-management ssh-server-openssh"
 IMAGE_FEATURES += "debug-tweaks"
 
 IMAGE_INSTALL_append = " wpa-supplicant"
+IMAGE_INSTALL_append = " iw"
 IMAGE_INSTALL_append = " bridge-utils"
 IMAGE_INSTALL_append = " bluez5"
 IMAGE_INSTALL_append = " kernel-modules"
