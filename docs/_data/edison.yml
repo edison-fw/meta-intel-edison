@@ -156,6 +156,16 @@ folders:
     ref: 4.5-mraa-upm
     pdf: true
 
+- title: Hacking
+  pdf: true
+  jurl: /minitoc_theme_build.html
+
+  folderitems:
+  - title: Creating a deb repository 
+    jurl: /5.0-Creating-a-deb-repository.html
+    ref: 5.0-Creating-a-deb-repository
+    pdf: true
+
 ###########################
 
 
