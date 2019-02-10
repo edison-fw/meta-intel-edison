@@ -31,19 +31,39 @@ sshd_init () {
     systemctl start sshdgenkeys
 }
 
+# Substitute the SSID and passphrase in the file /etc/hostapd.conf
+# The SSID is built from the hostname and a serial number to have a
+# unique SSID in case of multiple Edison boards having their WLAN AP active.
+setup_ap_ssid_and_passphrase () {
+    # factory_serial is 16 bytes long
+    if [ -f /sys/class/net/wlan0/address ];
+    then
+        wlan0_addr=$(cat /sys/class/net/wlan0/address | tr '[:lower:]' '[:upper:]')
+        ssid="EDISON-${wlan0_addr:12:2}-${wlan0_addr:15:2}"
+    fi
 
-# script main part
+    if [ -f /factory/serial_number ] ;
+    then
+        factory_serial=$(head -n1 /factory/serial_number | tr '[:lower:]' '[:upper:]')
+        passphrase="${factory_serial}"
 
-# print to journal the current retry count
-fi_echo "Starting Post Install"
-fi_echo "This should only run at first boot"
-fi_echo "The location of this file is meta-intel-edison-distro/recipes-core/post-install/files/post-install.sh"
+        # Substitute the passphrase
+        connmanctl enable wifi
+        connmanctl tether wifi on ${ssid} ${passphrase}
+    fi
+
+    sync
+}
 
 systemctl start blink-led
 
 # ssh
 sshd_init
 fi_echo $? "Generating sshd keys"
+
+# Setup Access Point SSID and passphrase
+setup_ap_ssid_and_passphrase
+fi_echo $? "Generating Wifi Access Point SSID and passphrase"
 
 fi_echo "Post install success"
 
