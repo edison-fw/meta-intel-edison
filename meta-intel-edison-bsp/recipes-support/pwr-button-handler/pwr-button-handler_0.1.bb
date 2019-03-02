@@ -3,8 +3,6 @@ SECTION = "base"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
-
 inherit systemd
 
 SYSTEMD_SERVICE_${PN} = "pwr-button-handler.service"
@@ -13,6 +11,8 @@ SRC_URI = "file://pwr-button-handler.c"
 SRC_URI += "file://pwr-button-handler.service"
 
 S = "${WORKDIR}"
+
+TARGET_CC_ARCH += "${LDFLAGS}"
 
 do_compile() {
         ${CC} $CFLAGS -DNDEBUG -o pwr_button_handler pwr-button-handler.c
@@ -29,4 +29,3 @@ do_install() {
 
 FILES_${PN} = "${base_libdir}/systemd/system/pwr-button-handler.service"
 FILES_${PN} += "${bindir}/pwr_button_handler"
-INSANE_SKIP_${PN} = "ldflags"

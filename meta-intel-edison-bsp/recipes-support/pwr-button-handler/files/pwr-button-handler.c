@@ -85,9 +85,9 @@ int main(int argc, char **argv)
     time_t shutdown_start_press_time = 0;
     int shutdown_press_count = 0;
 
-    fd = open("/dev/input/event1", O_RDONLY);
+    fd = open("/dev/input/event0", O_RDONLY);
     if (fd < 0) {
-        perror("Can't open /dev/input/event1 device");
+        perror("Can't open /dev/input/event0 device");
         return fd;
     }
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
         /* Refresh every 20 ms if the user already started pressing the button */
         n = poll(&p, 1, time_at_last_press==0 ? -1 : 20);
         if (n < 0) {
-            perror("Failed to poll /dev/input/event1 device");
+            perror("Failed to poll /dev/input/event0 device");
             break;
         }
         if (n==0) {
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 
         len = read(fd, &event, sizeof(event));
         if (len < 0) {
-            perror("Reading of /dev/input/event1 events failed");
+            perror("Reading of /dev/input/event0 events failed");
             break;
         }
 
