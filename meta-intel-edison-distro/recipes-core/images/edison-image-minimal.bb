@@ -62,6 +62,7 @@ IMAGE_INSTALL_append = " python-argparse"
 # Wifi firmware
 # removed modules, already built into kernel
 IMAGE_INSTALL_append = " bcm43340-fw"
+IMAGE_INSTALL_append = " bcm43340-addr"
 
 # Gadget setup
 IMAGE_INSTALL_append = " gadget"

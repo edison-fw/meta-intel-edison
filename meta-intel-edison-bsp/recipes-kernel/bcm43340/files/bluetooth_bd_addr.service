@@ -1,0 +1,13 @@
+[Unit]
+Description=Set the bluetooth hardware address
+Wants=factory.mount
+After=bluetooth.service
+Requires=bluetooth.service
+
+[Service]
+ExecStart=/usr/bin/bluetooth_bd_addr.sh
+Restart=on-failure
+StandardOutput=journal+console
+
+[Install]
+WantedBy=bluetooth.target

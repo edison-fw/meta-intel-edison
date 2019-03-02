@@ -11,9 +11,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 SRC_URI = "git://github.com/01org/edison-firmware.git;branch=master;protocol=git;rev=8585a10b3527666b2d35b3dcacffede3ec00cb53;destsuffix=edison-firmware \
            git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git;branch=master;protocol=git;rev=1baa34868b2c0a004dc595b20678145e3fff83e7;destsuffix=linux-firmware \
            git://git.osdn.net/gitroot/android-x86/device-generic-firmware.git;branch=nougat-x86;protocol=git;rev=afd71f20e36112edd8b1ad88f8055051069fd921;destsuffix=android-firmware \
-           file://bluetooth_attach.service \
           " 
-          
+
 S = "${WORKDIR}/"
 
 LICENSE = "Proprietary"
@@ -22,7 +21,7 @@ LIC_FILES_CHKSUM = "file://edison-firmware/broadcom_cws/wlan/firmware/LICENCE.br
 PV = "6.20.190"
 PR = "r2"
 
-FILES_${PN} += "/lib/firmware/brcm/* ${base_libdir}/systemd/system/bluetooth_attach.service"
+FILES_${PN} += "/lib/firmware/brcm/*"
 
 inherit allarch update-alternatives
 
@@ -33,6 +32,4 @@ do_install() {
         install -m 0755 linux-firmware/brcm/brcmfmac43340-sdio.bin ${D}/lib/firmware/brcm/brcmfmac43340-sdio.bin
         install -m 0755 edison-firmware/broadcom_cws/wlan/firmware/LICENCE.broadcom_bcm43xx ${D}/lib/firmware/brcm/
         install -m 0755 android-firmware/brcm/BCM43341B0.hcd ${D}/lib/firmware/brcm/BCM43341B0.hcd
-        install -d ${D}/${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/bluetooth_attach.service ${D}/${systemd_unitdir}/system
 }
