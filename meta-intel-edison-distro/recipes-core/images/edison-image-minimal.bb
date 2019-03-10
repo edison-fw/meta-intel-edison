@@ -78,6 +78,9 @@ IMAGE_INSTALL_append = " e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2f
 # Time related
 IMAGE_INSTALL_append = " tzdata"
 
+# linux 5.0.0 requires a source of entropy, use TRNG
+IMAGE_INSTALL_append = " rng-tools"
+
 IMAGE_INSTALL_append = " libgpiod"
 
 # Add monitoring tools
