@@ -323,11 +323,11 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     echo "Cloning meta-acpi layer to ${top_repo_dir} directory from local cache"
     git clone ${my_dl_dir}/meta-acpi-mirror.git meta-acpi
     cd ${acpi_dir}
-    git checkout eds-4.20
+    git checkout eds-5.0.0
   else
     echo "meta-acpi already exists, rebasing from local cache"
     cd ${acpi_dir}
-    git pull --rebase origin eds-4.20
+    git pull --rebase origin eds-5.0.0
   fi
 
   cd ${top_repo_dir}
