@@ -5,9 +5,9 @@ require recipes-kernel/linux/linux-yocto.inc
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-PV = "4.20.0"
+PV = "5.0.0"
 
-SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-4.20.0 \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5.0.0 \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
@@ -23,10 +23,10 @@ SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
 # usefull kernel debug options here
 #
 
-SRCREV ??= "f610818dfb680feb79ac57926ca2d8036b744de4"
+SRCREV ??= "ea4db1ef366e5a7cf12a71da6d542a444abb269c"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
-LINUX_VERSION ?= "4.20.0"
+LINUX_VERSION ?= "5.0.0"
 
 
 COMPATIBLE_MACHINE = "edison"
