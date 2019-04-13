@@ -19,6 +19,8 @@ navbar_dropdowns:
           url: https://edison.internet-share.com/wiki/Main_Page
         - title: Intel Edison Forum
           url: https://communities.intel.com/community/tech/makers/content?filterID=contentstatus%5Bpublished%5D~category%5Bedison%5D
+        - title: Stack Overflow
+          url: https://stackoverflow.com/questions/tagged/intel-edison
     - title: Documentation resources
       folderitems:
         - title: Content and Formatting
