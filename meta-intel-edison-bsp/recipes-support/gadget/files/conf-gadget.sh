@@ -65,3 +65,5 @@ echo 120 > configs/c.1/MaxPower
 
 # Activate gadgets
 echo dwc3.0.auto > UDC
+sleep 1
+ip link set dev usb0 up

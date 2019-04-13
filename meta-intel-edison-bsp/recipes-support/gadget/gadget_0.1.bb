@@ -1,4 +1,4 @@
-DESCRIPTION = "Daemon listening to Edison PWR long button press, and starting OOBE service when it happens"
+DESCRIPTION = "Install udev rule to configure gadget"
 SECTION = "base"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
