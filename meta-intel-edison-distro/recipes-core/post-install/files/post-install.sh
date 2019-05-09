@@ -55,11 +55,32 @@ setup_ap_ssid_and_passphrase () {
     sync
 }
 
+ # There should be an existing ext4 factory partition mounted on /factory
+ # In case there is none create it and fill with dummy serial and 
+ # bd_addr. 
+factory_partition () {
+    if [ ! -d "/factory" ]; then
+        echo "No /factory directory, creating .." | systemd-cat -p warning
+        mkdir /factory
+    fi
+    if [ ! -f "/factory/bluetooth_address" ]; then
+        echo "Creating bluetooth_address in /factory" | systemd-cat -p warning
+        echo "00:11:22:33:55:66" > /factory/bluetooth_address
+    fi
+        if [ ! -f "/factory/serial_number" ]; then
+        echo "Creating serial_number in /factory" | systemd-cat -p warning
+        echo "VSPPYWWDXXXXXNNN" > /factory/serial_number
+    fi
+}
+
 systemctl start blink-led
 
 # ssh
 sshd_init
 fi_echo $? "Generating sshd keys"
+
+# handle factory partition
+factory_partition
 
 # Setup Access Point SSID and passphrase
 setup_ap_ssid_and_passphrase
