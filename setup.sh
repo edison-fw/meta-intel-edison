@@ -29,9 +29,14 @@ yocto_branch="thud"
 yocto_tag="thud"
 
 do_local_conf () {
-  cat > $yocto_conf_dir/local.conf <<EOF
+  rm $yocto_conf_dir/local.conf
+  (($my_bb_number_thread != 0 )) && cat >> $yocto_conf_dir/local.conf <<EOF
 BB_NUMBER_THREADS = "$my_bb_number_thread"
+EOF
+  (($my_parallel_make != 0)) && cat >> $yocto_conf_dir/local.conf <<EOF
 PARALLEL_MAKE = "-j$my_parallel_make"
+EOF
+  cat >> $yocto_conf_dir/local.conf <<EOF
 MACHINE = "edison"
 DISTRO = "poky-edison"
 USER_CLASSES ?= "buildstats image-mklibs image-prelink"
@@ -171,8 +176,8 @@ main() {
   top_repo_dir=$(dirname $(dirname $(readlink -f $0)))
   my_dl_dir="$top_repo_dir/bbcache/downloads"
   my_sstate_dir="$top_repo_dir/bbcache/sstate-cache"
-  my_bb_number_thread=4
-  my_parallel_make=8
+  my_bb_number_thread=0
+  my_parallel_make=0
   my_build_name="Custom Edison build by $USER@$HOSTNAME "$(date +"%F %H:%M:%S %Z")
   all_sdk_hosts="linux32 linux64 win32 win64 macosx"
   extra_package_type="package_deb"
