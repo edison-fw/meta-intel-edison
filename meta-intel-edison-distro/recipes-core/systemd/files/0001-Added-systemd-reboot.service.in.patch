@@ -1,0 +1,43 @@
+From 5982d99235ad2490da00316e5438e9d3db8893cb Mon Sep 17 00:00:00 2001
+From: nishantpoorswani <nishantpoorswani@gmail.com>
+Date: Sun, 25 Aug 2019 20:41:05 +0200
+Subject: [PATCH] Added systemd-reboot.service.in
+
+Signed-off-by: nishantpoorswani <nishantpoorswani@gmail.com>
+---
+ units/systemd-reboot.service.in | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 units/systemd-reboot.service.in
+
+diff --git a/units/systemd-reboot.service.in b/units/systemd-reboot.service.in
+new file mode 100644
+index 0000000..f9ee2e5
+--- /dev/null
++++ b/units/systemd-reboot.service.in
+@@ -0,0 +1,22 @@
++#  SPDX-License-Identifier: LGPL-2.1+
++#
++#  This file is part of systemd.
++#
++#  systemd is free software; you can redistribute it and/or modify it
++#  under the terms of the GNU Lesser General Public License as published by
++#  the Free Software Foundation; either version 2.1 of the License, or
++#  (at your option) any later version.
++
++[Unit]
++Description=Reboot
++Documentation=man:systemd-halt.service(8)
++DefaultDependencies=no
++Requires=shutdown.target umount.target final.target
++After=shutdown.target umount.target final.target
++
++[Service]
++Type=oneshot
++ExecStart=@SYSTEMCTL@ --force reboot
++ExecStartPre=/bin/sh -c " if test -e /run/systemd/reboot-param ; then read REBOOTPARAM < /run/systemd/reboot-param ; fw_setenv bootargs_mode $REBOOTPARAM ; fi "
++ExecStartPre=/bin/systemctl stop systemd-journald.socket
++ExecStartPre=/bin/systemctl stop systemd-journald
+\ No newline at end of file
+-- 
+2.7.4
+

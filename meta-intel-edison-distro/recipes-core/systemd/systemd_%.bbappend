@@ -1,5 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-SRC_URI += "file://edison-machine-id.service "
+SRC_URI += "file://0001-Added-systemd-reboot.service.in.patch \
+	file://edison-machine-id.service "
 
 do_install_append() {
     # enable a custom service to provide a persistant machine-id value to Edison
