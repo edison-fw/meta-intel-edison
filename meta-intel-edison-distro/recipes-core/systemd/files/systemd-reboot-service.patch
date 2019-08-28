@@ -1,9 +1,34 @@
-diff --git a/units/systemd-reboot.service.in b/units/systemd-reboot.service.in
-index d99bd3e..4517cfe 100644
---- a/units/systemd-reboot.service.in
-+++ b/units/systemd-reboot.service.in
-@@ -15,3 +15,4 @@ After=shutdown.target umount.target final.target
- [Service]
- Type=oneshot
- ExecStart=@SYSTEMCTL@ --force reboot
+From 7f75234bb89c48d8fa15586210d12549f8991d4b Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sun, 22 Sep 2019 17:53:17 +0200
+Subject: [PATCH] systemd-reboot.service: fix <args> reset and set env
+
+Reboot <args> is stored in /run/systemd/reboot-param. Copy to
+fw_setenv bootargs_mode for pickup by u-boot.
+
+Since v240 gets reset by SuccessAction=reboot-force.
+https://github.com/systemd/systemd/issues/11828
+Fix that by reverting.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ units/systemd-reboot.service | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/units/systemd-reboot.service b/units/systemd-reboot.service
+index 505f60aabf..8ca8457b93 100644
+--- a/units/systemd-reboot.service
++++ b/units/systemd-reboot.service
+@@ -13,4 +13,8 @@ Documentation=man:systemd-halt.service(8)
+ DefaultDependencies=no
+ Requires=shutdown.target umount.target final.target
+ After=shutdown.target umount.target final.target
+-SuccessAction=reboot-force
++
++[Service]
++Type=oneshot
++ExecStart=/sbin/reboot --force --reboot
 +ExecStartPre=/bin/sh -c " if test -e /run/systemd/reboot-param ; then read REBOOTPARAM < /run/systemd/reboot-param ; fw_setenv bootargs_mode $REBOOTPARAM ; fi "
+-- 
+2.20.1
+
