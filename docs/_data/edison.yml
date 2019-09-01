@@ -155,6 +155,10 @@ folders:
     jurl: /4.5-mraa-upm.html
     ref: 4.5-mraa-upm
     pdf: true
+  - title: Making contact the first time
+    jurl: /4.6-contact.html
+    ref: 4.6-contact
+    pdf: true
 
 - title: Hacking
   pdf: true
