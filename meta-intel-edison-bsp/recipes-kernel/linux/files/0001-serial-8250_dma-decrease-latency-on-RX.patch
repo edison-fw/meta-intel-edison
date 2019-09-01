@@ -1,0 +1,68 @@
+From 65bf3547e39edb28c725cadbf0d5770458f07da4 Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Tue, 2 Jul 2019 18:37:04 +0300
+Subject: [PATCH] serial: 8250_dma: decrease latency on RX
+
+When the port is receiving huge data flow it would be nice to reduce latency
+for RX DMA. Do this by calling serial8250_rx_dma() directly from completion
+callback.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/tty/serial/8250/8250_dma.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
+index bfa1a857f3ff..929c5aaf0e46 100644
+--- a/drivers/tty/serial/8250/8250_dma.c
++++ b/drivers/tty/serial/8250/8250_dma.c
+@@ -42,10 +42,8 @@ static void __dma_tx_complete(void *param)
+ 	spin_unlock_irqrestore(&p->port.lock, flags);
+ }
+ 
+-static void __dma_rx_complete(void *param)
++static void __dma_rx_complete(struct uart_8250_port *p, struct uart_8250_dma *dma)
+ {
+-	struct uart_8250_port	*p = param;
+-	struct uart_8250_dma	*dma = p->dma;
+ 	struct tty_port		*tty_port = &p->port.state->port;
+ 	struct dma_tx_state	state;
+ 	int			count;
+@@ -111,6 +109,15 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ 	return ret;
+ }
+ 
++static void __dma_rx_rerun(void *param)
++{
++	struct uart_8250_port   *p = param;
++	struct uart_8250_dma	*dma = p->dma;
++
++	__dma_rx_complete(p, dma);
++	serial8250_rx_dma(p);
++}
++
+ int serial8250_rx_dma(struct uart_8250_port *p)
+ {
+ 	struct uart_8250_dma		*dma = p->dma;
+@@ -126,7 +133,7 @@ int serial8250_rx_dma(struct uart_8250_port *p)
+ 		return -EBUSY;
+ 
+ 	dma->rx_running = 1;
+-	desc->callback = __dma_rx_complete;
++	desc->callback = __dma_rx_rerun;
+ 	desc->callback_param = p;
+ 
+ 	dma->rx_cookie = dmaengine_submit(desc);
+@@ -142,7 +149,7 @@ void serial8250_rx_dma_flush(struct uart_8250_port *p)
+ 
+ 	if (dma->rx_running) {
+ 		dmaengine_pause(dma->rxchan);
+-		__dma_rx_complete(p);
++		__dma_rx_complete(p, dma);
+ 		dmaengine_terminate_async(dma->rxchan);
+ 	}
+ }
+-- 
+2.20.1
+
