@@ -22,7 +22,6 @@ SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
-SRC_URI_append = " file://0001-Bluetooth-btbcm-Add-default-address-for-BCM43341B.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 
 # usefull kernel debug options here
