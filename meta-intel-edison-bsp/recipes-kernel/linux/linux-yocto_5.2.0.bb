@@ -5,9 +5,9 @@ require recipes-kernel/linux/linux-yocto.inc
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-PV = "5.1.0"
+PV = "5.2.0"
 
-SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5.1.0 \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5.2.0 \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
@@ -28,10 +28,10 @@ SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 # usefull kernel debug options here
 #
 
-SRCREV ??= "4144713ee5fd75fd5c02143c04a0eea7d04afd67"
+SRCREV ??= "bfb6fb47d6aa03ff3ea331af2860aeeb6d661758"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
-LINUX_VERSION ?= "5.1.0"
+LINUX_VERSION ?= "5.2.0"
 
 
 COMPATIBLE_MACHINE = "edison"
