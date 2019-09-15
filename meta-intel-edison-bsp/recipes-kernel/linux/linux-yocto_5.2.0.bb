@@ -32,6 +32,8 @@ LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
 LINUX_VERSION ?= "5.2.0"
 
+# this because QA Issue: [installed-vs-shipped] and fixed in warrior
+FILES_${KERNEL_PACKAGE_NAME}-base += " ${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo"
 
 COMPATIBLE_MACHINE = "edison"
 
