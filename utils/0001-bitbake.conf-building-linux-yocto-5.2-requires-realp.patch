@@ -1,0 +1,26 @@
+From 7b5b12e1685c180fb2483d60a8173806239aa46b Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sun, 15 Sep 2019 17:28:01 +0200
+Subject: [PATCH] bitbake.conf: building linux-yocto 5.2 requires realpath
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ meta/conf/bitbake.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meta/conf/bitbake.conf b/meta/conf/bitbake.conf
+index dcf2007883..fc473d11f1 100644
+--- a/meta/conf/bitbake.conf
++++ b/meta/conf/bitbake.conf
+@@ -483,7 +483,7 @@ HOSTTOOLS += " \
+     fgrep file find flock g++ gawk gcc getconf getopt git grep gunzip gzip \
+     head hostname id install ld ldd ln ls make makeinfo md5sum mkdir mknod \
+     mktemp mv nm objcopy objdump od patch perl pod2man pr printf pwd python2 \
+-    python2.7 python3 ranlib readelf readlink rm rmdir rpcgen sed sh sha256sum \
++    python2.7 python3 ranlib readelf readlink realpath rm rmdir rpcgen sed sh sha256sum \
+     sleep sort split stat strings strip tail tar tee test touch tr true uname \
+     uniq wc wget which xargs \
+ "
+-- 
+2.20.1
+
