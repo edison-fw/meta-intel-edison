@@ -169,6 +169,15 @@ folders:
     jurl: /5.0-Creating-a-deb-repository.html
     ref: 5.0-Creating-a-deb-repository
     pdf: true
+  - title: Bitbake tricks 
+    jurl: /5.1-Bitbake-tricks
+    ref: 5.1-Bitbake-tricks
+    pdf: true
+  - title: Creating documentation 
+    jurl: /5.2-Documentation.html
+    ref: 5.2-Documentation
+    pdf: true
+
 
 ###########################
 
