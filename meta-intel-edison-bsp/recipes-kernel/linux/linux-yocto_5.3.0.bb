@@ -5,9 +5,9 @@ require recipes-kernel/linux/linux-yocto.inc
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
 
-PV = "5.2.0"
+PV = "5.3.0"
 
-SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5.2.0 \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-5.3.0 \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
@@ -27,10 +27,10 @@ SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 # usefull kernel debug options here
 #
 
-SRCREV ??= "bfb6fb47d6aa03ff3ea331af2860aeeb6d661758"
+SRCREV ??= "50c0451bdf7a88e95ebc2a98858d1273a1a03380"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
-LINUX_VERSION ?= "5.2.0"
+LINUX_VERSION ?= "5.3.0"
 
 # this because QA Issue: [installed-vs-shipped] and fixed in warrior
 FILES_${KERNEL_PACKAGE_NAME}-base += " ${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo"
