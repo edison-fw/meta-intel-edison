@@ -1,0 +1,29 @@
+From 88dd02c9bcfea6885fe6c8c94607d19ac238ec60 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 25 Oct 2019 18:43:47 +0200
+Subject: [PATCH] sudo: Fix fetching sources
+To: openembedded-core@lists.openembedded.org
+
+It looks like https://www.sudo.ws/download.html changed certificate
+and directory structure. This breaks fetching sources.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ meta/recipes-extended/sudo/sudo_1.8.23.bb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meta/recipes-extended/sudo/sudo_1.8.23.bb b/meta/recipes-extended/sudo/sudo_1.8.23.bb
+index ce32bd187e..da184be058 100644
+--- a/meta/recipes-extended/sudo/sudo_1.8.23.bb
++++ b/meta/recipes-extended/sudo/sudo_1.8.23.bb
+@@ -1,6 +1,6 @@
+ require sudo.inc
+ 
+-SRC_URI = "http://ftp.sudo.ws/sudo/dist/sudo-${PV}.tar.gz \
++SRC_URI = "https://www.sudo.ws/dist/sudo-${PV}.tar.gz \
+            ${@bb.utils.contains('DISTRO_FEATURES', 'pam', '${PAM_SRC_URI}', '', d)} \
+            file://0001-Include-sys-types.h-for-id_t-definition.patch \
+            "
+-- 
+2.20.1
+
