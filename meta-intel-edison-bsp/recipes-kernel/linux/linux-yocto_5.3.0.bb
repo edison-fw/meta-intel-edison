@@ -23,6 +23,7 @@ SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurs
 SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
+SRC_URI_append = " file://0001-watchdog-intel-mid_wdt-Add-WATCHDOG_NOWAYOUT-support.patch"
 
 # usefull kernel debug options here
 #
