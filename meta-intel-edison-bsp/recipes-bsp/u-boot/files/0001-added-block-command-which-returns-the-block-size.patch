@@ -1,0 +1,65 @@
+From f10a2fabde406a47c68ba22b47d64bf8133f88b0 Mon Sep 17 00:00:00 2001
+From: Razvan Becheriu <razvan@isc.org>
+Date: Sat, 26 Oct 2019 20:59:28 +0300
+Subject: [PATCH] added block command which returns the block size
+
+---
+ cmd/part.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/cmd/part.c b/cmd/part.c
+index 5e4e45ca6d..d78d914e7a 100644
+--- a/cmd/part.c
++++ b/cmd/part.c
+@@ -25,6 +25,7 @@
+ enum cmd_part_info {
+ 	CMD_PART_INFO_START = 0,
+ 	CMD_PART_INFO_SIZE,
++	CMD_PART_INFO_BLOCK,
+ 	CMD_PART_INFO_NUMBER
+ };
+ 
+@@ -151,6 +152,9 @@ static int do_part_info(int argc, char * const argv[], enum cmd_part_info param)
+ 	case CMD_PART_INFO_SIZE:
+ 		snprintf(buf, sizeof(buf), LBAF, info.size);
+ 		break;
++	case CMD_PART_INFO_BLOCK:
++		snprintf(buf, sizeof(buf), LBAF, info.blksz);
++		break;
+ 	case CMD_PART_INFO_NUMBER:
+ 		snprintf(buf, sizeof(buf), "0x%x", part);
+ 		break;
+@@ -177,6 +181,11 @@ static int do_part_size(int argc, char * const argv[])
+ 	return do_part_info(argc, argv, CMD_PART_INFO_SIZE);
+ }
+ 
++static int do_part_block(int argc, char * const argv[])
++{
++	return do_part_info(argc, argv, CMD_PART_INFO_BLOCK);
++}
++
+ static int do_part_number(int argc, char * const argv[])
+ {
+ 	return do_part_info(argc, argv, CMD_PART_INFO_NUMBER);
+@@ -195,6 +204,8 @@ static int do_part(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+ 		return do_part_start(argc - 2, argv + 2);
+ 	else if (!strcmp(argv[1], "size"))
+ 		return do_part_size(argc - 2, argv + 2);
++	else if (!strcmp(argv[1], "block"))
++		return do_part_block(argc - 2, argv + 2);
+ 	else if (!strcmp(argv[1], "number"))
+ 		return do_part_number(argc - 2, argv + 2);
+ 
+@@ -219,6 +230,9 @@ U_BOOT_CMD(
+ 	"part size <interface> <dev> <part> <varname>\n"
+ 	"    - set environment variable to the size of the partition (in blocks)\n"
+ 	"      part can be either partition number or partition name\n"
++	"part block <interface> <dev> <part> <varname>\n"
++	"    - set environment variable to the size of the partition block\n"
++	"      part can be either partition number or partition name\n"
+ 	"part number <interface> <dev> <part> <varname>\n"
+ 	"    - set environment variable to the partition number using the partition name\n"
+ 	"      part must be specified as partition name"
+-- 
+2.20.1
+

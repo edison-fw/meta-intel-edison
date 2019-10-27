@@ -22,6 +22,7 @@ SRCREV = "3dc6840fb8b2fa4d9b358c5d7998dc33ba458c45"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
+SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 
 PV = "2019.10"
 S = "${WORKDIR}/git"
