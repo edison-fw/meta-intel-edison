@@ -120,6 +120,11 @@ folders:
     ref: 2.5-Whats-in-the-rootfs-and-the-initramfs
     pdf: true
 
+  - title: Building a Debian image
+    jurl: /2.6-Building-Debian.html
+    ref: 2.6-Building-Debian
+    pdf: true
+
 - title: SDK
   pdf: true
   jurl: /minitoc_theme_build.html

@@ -21,7 +21,7 @@ Currently we have Intel's original (factory) firmware: orignal and created four 
 * **rocko32** and **rocko64-acpi** based on Yocto Rocko with kernel 4.16. 
 * **sumo32** and **sumo64-acpi** based on Yocto Sumo with kernel 4.18
 * **thud** (64 bit) based on Yocto Thud with kernel 5.2.
-* **warrior** (64 bit) based on Yocto Warrior with kernel 5.3.
+* **warrior** (64 bit) based on Yocto Warrior with kernel 5.3. This image now allows building Debian Stretch as well.
 
 # What to choose
 

@@ -68,15 +68,12 @@ toolchain: meta-toolchain
 flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
 
-debian_image:
-	$(MAKE) setup SETUP_ARGS="$(SETUP_ARGS) --deb_packages"
-	$(MAKE) image
-	@echo '*******************************'
-	@echo '*******************************'
-	@echo 'Now run the following command to create the debian rootfs:'
-	@echo 'sudo $(CURDIR)/meta-intel-edison/utils/create-debian-image.sh --build_dir=$(CURDIR)/out/current/build'
-	@echo 'and run a regular make flash'
-	@echo '*******************************'
+debian: edison-image
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_1_create.sh stretch
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_2_mkimage.sh stretch
+
+clean_debian:
+	@sudo rm -rf out/linux64/build/stretch
 
 help:
 	@echo 'Main targets:'
