@@ -4,6 +4,8 @@ LICENSE = "LGPLv2.1"
 
 S = "${WORKDIR}/git"
 
+TARGET_CC_ARCH += "${LDFLAGS}"
+
 SRC_URI = "git://github.com/01org/clloader.git;protocol=https;branch=edison \
             file://clloader.service \
             file://sketch_reset.service"

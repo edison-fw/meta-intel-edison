@@ -58,7 +58,7 @@ IMAGE_INSTALL_append = " swig"
 
 
 # Edison Arduino stuff
-#IMAGE_INSTALL_append = " clloader"
+IMAGE_INSTALL_append = " clloader"
 
 # Edison Middleware stuff
 IMAGE_INSTALL_append = " packagegroup-core-buildessential"
