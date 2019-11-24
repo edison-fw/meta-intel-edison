@@ -28,7 +28,7 @@ inherit allarch update-alternatives
 do_install() {
         install -v -d  ${D}/lib/firmware/brcm/
         install -m 0755 edison-firmware/broadcom_cws/wlan/firmware/bcmdhd_aob.cal_4334x_b0 ${D}/lib/firmware/brcm/brcmfmac43340-sdio-fr.txt
-        install -m 0755 edison-firmware/broadcom_cws/wlan/firmware/bcmdhd.cal_4334x_b0 ${D}/lib/firmware/brcm/brcmfmac43340-sdio.txt
+        install -m 0755 edison-firmware/broadcom_cws/wlan/firmware/bcmdhd.cal_4334x_b0 '${D}/lib/firmware/brcm/brcmfmac43340-sdio.Intel Corporation-Merrifield.txt'
         install -m 0755 linux-firmware/brcm/brcmfmac43340-sdio.bin ${D}/lib/firmware/brcm/brcmfmac43340-sdio.bin
         install -m 0755 edison-firmware/broadcom_cws/wlan/firmware/LICENCE.broadcom_bcm43xx ${D}/lib/firmware/brcm/
         install -m 0755 android-firmware/brcm/BCM43341B0.hcd ${D}/lib/firmware/brcm/BCM43341B0.hcd
