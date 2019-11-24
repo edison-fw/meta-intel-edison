@@ -15,8 +15,8 @@ navbar_dropdowns:
   folders:
     - title: Edison resources
       folderitems:
-        - title: Wiki
-          url: https://edison.internet-share.com/wiki/Main_Page
+        - title: Edison Wiki
+          url: https://edison-fw.github.io/edison-wiki/
         - title: Intel Edison Forum
           url: https://communities.intel.com/community/tech/makers/content?filterID=contentstatus%5Bpublished%5D~category%5Bedison%5D
         - title: Stack Overflow
