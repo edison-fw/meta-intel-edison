@@ -13,4 +13,4 @@
 # %% the '%' char itself
 #
 ACTION=="add", KERNEL=="dwc3.0.auto", SUBSYSTEMS=="udc", ATTRS{state}=="not attached", RUN+="/usr/bin/conf-gadget.sh"
-ACTION=="add", KERNEL=="usb0", SUBSYSTEM=="net", ATTR{operstate}=="down", RUN+="ip link set usb0 up"
+ACTION=="add", KERNEL=="usb0", SUBSYSTEM=="net", ATTR{operstate}=="down", RUN+="/sbin/ip link set usb0 up"
