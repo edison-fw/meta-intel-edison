@@ -86,6 +86,8 @@ BBLAYERS ?= " \\
   $poky_dir/meta-intel \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
+  $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
+  $top_repo_dir/meta-intel-edison/meta-arduino \\
   $top_repo_dir/meta-acpi \\
   $extra_layers
   "
@@ -94,9 +96,6 @@ BBLAYERS_NON_REMOVABLE ?= " \\
   $poky_dir/meta-poky \\
   "
 EOF
-# we might want to add these back later
-#  $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
-#  $top_repo_dir/meta-arduino \\
 }
 
 function check_path()
@@ -334,13 +333,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     cd ${acpi_dir}
     git pull --rebase origin eds-5.0.0
   fi
-
-  cd ${top_repo_dir}
-  echo "Cloning meta-arduino layer to ${top_repo_dir} directory from GitHub.com/01org/meta-arduino"
-  rm -rf meta-arduino || true
-  git clone -b 1.6.x https://github.com/01org/meta-arduino.git
-  cd meta-arduino
-  git checkout 1.6.x
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
