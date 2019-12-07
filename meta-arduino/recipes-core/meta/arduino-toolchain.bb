@@ -19,7 +19,7 @@ SRC_URI += "file://install_script.sh"
 SDK_PACKAGING_FUNC = "do_compile"
 
 prepare_work_area() {
-	source_tarball=${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}.tar.bz2
+	source_tarball=${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}.tar.xz
 
 	#check if tarball exists - if not, drop an error
 	[ -f $source_tarball ] || (echo "source_tarball: $source_tarball does not exist!"; return 1)
