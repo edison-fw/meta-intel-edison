@@ -69,11 +69,11 @@ flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
 
 debian: edison-image
-	@sudo $(CURDIR)/meta-intel-edison/utils/debian_1_create.sh stretch
-	@sudo $(CURDIR)/meta-intel-edison/utils/debian_2_mkimage.sh stretch
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_1_create.sh buster
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_2_mkimage.sh buster
 
 clean_debian:
-	@sudo rm -rf out/linux64/build/stretch
+	@sudo rm -rf out/linux64/build/buster
 
 help:
 	@echo 'Main targets:'
