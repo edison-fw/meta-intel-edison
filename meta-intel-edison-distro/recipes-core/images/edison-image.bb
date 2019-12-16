@@ -53,9 +53,6 @@ IMAGE_INSTALL_append = " pulseaudio-server libpulsecore libpulsecommon libpulse 
 #Add Gstreamer
 IMAGE_INSTALL_append = " gstreamer1.0 gstreamer1.0-meta-base gstreamer1.0-meta-audio"
 
-# SWIG
-IMAGE_INSTALL_append = " swig"
-
 
 # Edison Arduino stuff
 IMAGE_INSTALL_append = " clloader"
