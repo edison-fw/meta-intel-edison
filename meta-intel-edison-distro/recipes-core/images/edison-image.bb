@@ -59,6 +59,7 @@ IMAGE_INSTALL_append = " swig"
 
 # Edison Arduino stuff
 IMAGE_INSTALL_append = " clloader"
+IMAGE_INSTALL_append = " sketch-check"
 
 # Edison Middleware stuff
 IMAGE_INSTALL_append = " packagegroup-core-buildessential"
@@ -99,8 +100,6 @@ IMAGE_INSTALL_append = " battery-voltage"
 
 # Add linux performance monitoring tool
 IMAGE_INSTALL_append = " perf"
-
-IMAGE_INSTALL_append = " sketch-check"
 
 # package management - where to find this?
 #IMAGE_INSTALL_append = " aptitude"
