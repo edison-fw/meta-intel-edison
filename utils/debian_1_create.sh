@@ -6,6 +6,11 @@ echo ================================
 
 #ROOTDIR=buster
 ROOTDIR=$1
+if [ -z "$ROOTDIR" ]
+then
+echo "Select a distribution" ||
+exit 1
+fi
 
 cd out/linux64/build
 
@@ -29,6 +34,9 @@ sudo rm -rf $ROOTDIR/tmp/*
 
 sudo rm -f $ROOTDIR/etc/hostname
 sudo echo edison > $ROOTDIR/etc/hostname
+
+sudo rm -f $ROOTDIR/etc/resolv.conf
+sudo ln -s /run/connman/resolv.conf /$ROOTDIR/etc/resolv.conf
 
 sudo chroot $ROOTDIR /bin/bash -c "echo '/dev/disk/by-partlabel/home     /home       auto    noauto,x-systemd.automount,nosuid,nodev,noatime,discard,barrier=1,data=ordered,noauto_da_alloc     1   1' | tee -a /etc/fstab"
 
