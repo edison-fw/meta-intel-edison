@@ -1,0 +1,33 @@
+From 899539d94608574de1e12b8ba57c741e01468fe2 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 3 Jan 2020 19:38:54 +0100
+Subject: [PATCH] clloader: silence when ttyGS0 not found
+
+When /dev/ttyGS0 not found do not spam syslog. With Yocto Warrior the device is
+only created with the USB in gadged mode.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ scripts/launcher.sh | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/launcher.sh b/scripts/launcher.sh
+index af4f785..73d0bf0 100644
+--- a/scripts/launcher.sh
++++ b/scripts/launcher.sh
+@@ -14,8 +14,10 @@ trap 'mytrap' USR1
+ keepgoing=true
+ while $keepgoing
+ do
+-  $CLLOADER $CLLOADER_OPTS < /dev/ttyGS0 > /dev/ttyGS0 & clPID=$!
+-  wait $clPID
++  if [ -f /dev/ttyGS0 ]; then
++    $CLLOADER $CLLOADER_OPTS < /dev/ttyGS0 > /dev/ttyGS0 & clPID=$!
++    wait $clPID
++  fi
+   usleep 200000
+ done
+ 
+-- 
+2.20.1
+
