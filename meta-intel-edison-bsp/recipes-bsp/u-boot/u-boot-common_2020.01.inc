@@ -16,13 +16,13 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
 PE = "1"
 
-SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2019.10;protocol=https"
+SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2020.01;protocol=https"
 		
-SRCREV = "3dc6840fb8b2fa4d9b358c5d7998dc33ba458c45"
+SRCREV = "b4daeb7f02ec191d92b6ee41229f6aa3bbad972f"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
 SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 
-PV = "2019.10"
+PV = "2020.01"
 S = "${WORKDIR}/git"
