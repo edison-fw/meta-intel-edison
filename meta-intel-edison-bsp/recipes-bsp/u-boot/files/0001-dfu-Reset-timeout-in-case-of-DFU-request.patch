@@ -1,0 +1,34 @@
+From 11551bfaa2cc7f645ee1c727fde4f463aa63be1b Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Mon, 27 Jan 2020 16:36:13 +0200
+Subject: [PATCH] dfu: Reset timeout in case of DFU request
+
+In case dfu command is being executed with timeout option,
+the timer may expire in the middle of DFU operation. If there
+is DFU request coming, we may simple reset timeout value
+to prevent aborting of ongoing DFU operation.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/usb/gadget/f_dfu.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/usb/gadget/f_dfu.c b/drivers/usb/gadget/f_dfu.c
+index 6756155133..a4a57ba5f5 100644
+--- a/drivers/usb/gadget/f_dfu.c
++++ b/drivers/usb/gadget/f_dfu.c
+@@ -596,6 +596,11 @@ dfu_handle(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
+ 	debug("req_type: 0x%x ctrl->bRequest: 0x%x f_dfu->dfu_state: 0x%x\n",
+ 	       req_type, ctrl->bRequest, f_dfu->dfu_state);
+ 
++#ifdef CONFIG_DFU_TIMEOUT
++	/* Forbid aborting by timeout. Next dfu command may update this */
++	dfu_set_timeout(0);
++#endif
++
+ 	if (req_type == USB_TYPE_STANDARD) {
+ 		if (ctrl->bRequest == USB_REQ_GET_DESCRIPTOR &&
+ 		    (w_value >> 8) == DFU_DT_FUNC) {
+-- 
+2.20.1
+
