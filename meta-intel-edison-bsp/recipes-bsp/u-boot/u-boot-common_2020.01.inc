@@ -24,6 +24,7 @@ SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
 SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI += "file://0001-dfu-Reset-timeout-in-case-of-DFU-request.patch"
+SRC_URI += "file://btrfs.cfg"
 
 PV = "2020.01"
 S = "${WORKDIR}/git"
