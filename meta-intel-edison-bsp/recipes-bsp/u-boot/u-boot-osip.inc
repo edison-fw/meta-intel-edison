@@ -193,6 +193,6 @@ do_deploy_append() {
     ln -sf ${UBOOT_OSIP_IMAGE} ${UBOOT_OSIP_BINARY}
 }
 
-addtask do_uboot_truncate before do_environment_mkimage before do_deploy after do_compile
+addtask do_uboot_truncate before do_environment_mkimage after do_compile
 addtask uboot_uboot_env_mkimage  before do_osip_mkimage after do_environment_mkimage
-addtask osip_mkimage  before do_deploy after do_uboot_uboot_env_mkimage
+addtask osip_mkimage before do_deploy after do_uboot_uboot_env_mkimage
