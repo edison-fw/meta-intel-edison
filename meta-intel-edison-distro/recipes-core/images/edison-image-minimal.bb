@@ -74,6 +74,7 @@ IMAGE_INSTALL_append = " less"
 # Those are necessary to manually create partitions and file systems on the eMMC
 IMAGE_INSTALL_append = " parted"
 IMAGE_INSTALL_append = " e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks libcomerr libss libe2p libext2fs dosfstools"
+IMAGE_INSTALL_append = " btrfs-tools"
 
 # Time related
 IMAGE_INSTALL_append = " tzdata"
