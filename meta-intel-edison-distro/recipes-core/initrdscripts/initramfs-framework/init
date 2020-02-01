@@ -130,6 +130,9 @@ fatal() {
     exec sh
 }
 
+modprobe btrfs
+btrfs device scan
+
 early_setup
 
 [ -z "$CONSOLE" ] && CONSOLE="/dev/console"
