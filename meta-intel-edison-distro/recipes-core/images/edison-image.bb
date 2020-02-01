@@ -1,7 +1,7 @@
 require edison-image-minimal.bb
 
 DESCRIPTION = "A fully functional image to run EDISON"
-KERNEL_IMAGETYPE_pn-edison-image = "bzImage-initramfs-edison.bin"
+#KERNEL_IMAGETYPE_pn-edison-image = "bzImage-initramfs-edison.bin"
 
 
 IMAGE_INSTALL_append = " connman"

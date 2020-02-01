@@ -7,7 +7,7 @@ IMAGE_INSTALL_append = " openssh-sftp-server"
 IMAGE_LINGUAS = " "
 
 # We don't want to include initrd - we have initramfs instead
-INITRD_LIVE = ""
+#INITRD_LIVE = ""
 
 # Do not use legacy nor EFI BIOS
 PCBIOS = "0"
@@ -26,7 +26,7 @@ inherit core-image
 # and we really want to have one in the generated hddimg file.
 # Otherwise it doesn't boot due to no mmc/sdhc modules being built-in in our setup).
 # There seems to be no standard mechanism for doing that, but the below works.
-KERNEL_IMAGETYPE_pn-edison-image-minimal = "bzImage-initramfs-edison.bin"
+#KERNEL_IMAGETYPE_pn-edison-image-minimal = "bzImage-initramfs-edison.bin"
 
 IMAGE_ROOTFS_SIZE = "1048576"
 
