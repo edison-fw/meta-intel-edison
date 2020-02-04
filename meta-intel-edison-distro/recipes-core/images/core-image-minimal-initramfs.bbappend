@@ -21,4 +21,6 @@ ROOTFS_POSTPROCESS_COMMAND += "clobber_unused; "
 
 clobber_unused () {
         rm ${IMAGE_ROOTFS}/boot/*
+        rm ${IMAGE_ROOTFS}/usr/lib/libpython*
+        rm -rf ${IMAGE_ROOTFS}/usr/lib/python3.7
 }
