@@ -102,7 +102,7 @@ IMAGE_INSTALL_append = " perf"
 #IMAGE_INSTALL_append = " aptitude"
 
 # Provides strace and gdb
-# IMAGE_FEATURES += "tools-debug" fail with thud
+IMAGE_FEATURES += " tools-debug"
 
 # Add the nano text editor
 IMAGE_INSTALL_append = " nano"
