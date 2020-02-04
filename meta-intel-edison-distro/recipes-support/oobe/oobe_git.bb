@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=ea398a763463b76b18da15f013c0c531"
 
 S = "${WORKDIR}/git"
 
-RDEPENDS_${PN} = "python"
+RDEPENDS_${PN} = "python3-core python3-bottle"
 
 do_install() {
    install -d ${D}${libdir}/edison_config_tools
