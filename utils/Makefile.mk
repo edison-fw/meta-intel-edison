@@ -65,6 +65,9 @@ kernel: virtual/kernel
 
 toolchain: meta-toolchain
 
+postbuild:
+	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
+
 flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
 
