@@ -14,7 +14,7 @@ fi
 
 cd out/linux64/build
 
-sudo debootstrap --arch amd64 --no-check-gpg $ROOTDIR $ROOTDIR http://http.debian.net/debian/
+sudo debootstrap --arch amd64 --no-check-gpg $ROOTDIR $ROOTDIR https://deb.debian.org/debian
 
 sudo mkdir -p $ROOTDIR/home/root
 
