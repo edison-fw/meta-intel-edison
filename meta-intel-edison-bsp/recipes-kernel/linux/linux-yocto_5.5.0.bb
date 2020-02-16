@@ -21,12 +21,11 @@ SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurs
 SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
-SRC_URI_append = " file://0001-watchdog-intel-mid_wdt-Add-WATCHDOG_NOWAYOUT-support.patch"
 
 # usefull kernel debug options here
 #
 
-SRCREV ??= "751d686932889d9326d33ea0b93cd8b6a393f296"
+SRCREV ??= "78e4ad75e238e5d0b0dfe3609258ba5bbabeaf6a"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
 LINUX_VERSION ?= "${PV}"
