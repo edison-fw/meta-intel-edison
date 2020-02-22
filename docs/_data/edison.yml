@@ -183,6 +183,32 @@ folders:
     ref: 5.2-Documentation
     pdf: true
 
+- title: Moving to btrfs
+  pdf: true
+  jurl: /minitoc_theme_build.html
+
+  folderitems:
+  - title: Why btrfs is great
+    jurl: /6.0-Why-btrfs-is-great.html
+    ref: 6.0-Why-btrfs-is-great
+    pdf: true
+  - title: How to switch to btrfs
+    jurl: /6.1-How-to-switch-to-btrfs.html
+    ref: 6.1-How-to-switch-to-btrfs
+    pdf: true
+  - title: Transferring a new btrfs image
+    jurl: /6.2-Transferring-a-new-btrfs-image.html
+    ref: 6.2-Transferring-a-new-btrfs-image
+    pdf: true
+  - title: Installing an alternate kernel
+    jurl: /6.3-Installing-an-alternate-kernel.html
+    ref: 6.3-Installing-an-alternate-kernel
+    pdf: true
+  - title: Installing an updated U-Boot
+    jurl: /6.4-Installing-an-updated-U-Boot.html
+    ref: 6.4-Installing-an-updated-U-Boot
+    pdf: true
+
 
 ###########################
 
