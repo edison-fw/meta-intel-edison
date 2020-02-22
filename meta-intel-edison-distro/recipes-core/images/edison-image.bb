@@ -92,8 +92,8 @@ IMAGE_INSTALL_append = " mcu-fw-bin"
 # Add oFono
 IMAGE_INSTALL_append = " ofono"
 
-# Add battery level detection
-IMAGE_INSTALL_append = " battery-voltage"
+# Add battery level detection (disabled since 'pmic_ccsm' not available anymore)
+#IMAGE_INSTALL_append = " battery-voltage"
 
 # Add linux performance monitoring tool
 IMAGE_INSTALL_append = " perf"
