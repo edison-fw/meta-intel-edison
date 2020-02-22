@@ -24,62 +24,30 @@
 #define BATTERY_LEVEL_DEAD_PERCENT	1
 
 
-char path[] = "/sys/devices/platform/pmic_ccsm/battery_level";
-
-uchar asc2hex(char asccode)
-{
-	uchar ret;
-
-	if ('0'<=asccode && asccode<='9')
-		ret=asccode-'0';
-	else if ('a'<=asccode && asccode<='f')
-		ret=asccode-'a'+10;
-	else if ('A'<=asccode && asccode<='F')
-		ret=asccode-'A'+10;
-	else
-		ret=0;
-	return ret;
-}
-
-void ascs2hex(uchar *hex,uchar *ascs,int srclen)
-{
-	uchar l4,h4;
-	int i,lenstr;
-
-	lenstr = srclen;
-	if ((lenstr == 0) || (lenstr%2)) {
-		return;
-	}
-
-	for (i = 0; i < lenstr; i+=2) {
-		h4 = asc2hex(ascs[i]);
-		l4 = asc2hex(ascs[i+1]);
-		hex[i/2] = (h4<<4)+l4;
-	}
-}
+char path[] = "/sys/bus/platform/drivers/mrfld_bcove_adc/mrfld_bcove_adc/iio:device0/in_voltage0_raw";
 
 void check_battery_level(int level)
 {
-	long buf1, buf2;
+	int buf1, buf2;
 
 	if (level > BATTERY_LEVEL_FULL)	{
-		printf("Battery level = 100%\n");
+		printf("Battery level = 100%%\n");
 	} else if (level > BATTERY_LEVEL_NORMAL) {
 		buf1 = level - BATTERY_LEVEL_NORMAL;
 		buf1 *= BATTERY_LEVEL_NORMAL_PERCENT;
 		buf2 = BATTERY_LEVEL_FULL - BATTERY_LEVEL_NORMAL;
 		buf1 /= buf2;
 		buf1 += BATTERY_LEVEL_LOW_PERCENT;
-		printf("Battery level = %d%\n", buf1);
+		printf("Battery level = %d%%\n", buf1);
 	} else if (level > BATTERY_LEVEL_LOW) {
 		buf1 = level - BATTERY_LEVEL_LOW;
 		buf1 *= BATTERY_LEVEL_LOW_PERCENT;
 		buf2 = BATTERY_LEVEL_NORMAL - BATTERY_LEVEL_LOW;
 		buf1 /= buf2;
 		buf1 += BATTERY_LEVEL_DEAD_PERCENT;
-		printf("Battery level = %d%\n", buf1);
+		printf("Battery level = %d%%\n", buf1);
 	} else {
-		printf("Battery level = %d%\n", BATTERY_LEVEL_DEAD_PERCENT);
+		printf("Battery level = %d%%\n", BATTERY_LEVEL_DEAD_PERCENT);
 	}
 }
 
@@ -87,32 +55,30 @@ int main(void)
 {
 	int fd;
 	int err;
-	int buff1;
 	int battery_level;
 	uchar read_voltage[6] = {0};
-	uchar voltage_buf[4] = {0};
 
 	fd = open(path, O_RDONLY);
 	if (fd == -1) {
-		printf("failed to open file");
+		fprintf(stderr, "battery-voltage: failed to open file %s\n", path);
 		exit(-1);
 	}
 
-	err = read(fd, read_voltage, 5);
+	err = read(fd, read_voltage, 4);
 	if (err == 0)
 	{
-		printf("read null\n");
+		fprintf(stderr, "battery-voltage: read NULL\n");
+                close(fd);
+                return (-2);
 	}
 
-	ascs2hex(voltage_buf, &read_voltage[2], 4);
+	battery_level = atoi(read_voltage);
 
-	battery_level = voltage_buf[0];
-	battery_level *= 0x10;
-	buff1 = voltage_buf[1] >> 4;
-	battery_level += buff1;
+	battery_level = battery_level * 1125;
+	battery_level >>= 8;
 
-	printf("Battery Voltage = %d mV\n", battery_level*10);
-	check_battery_level(battery_level);
+	printf("Battery Voltage = %d mV\n", battery_level);
+	check_battery_level(battery_level / 10);
 
 	close(fd);
 	return 0;
