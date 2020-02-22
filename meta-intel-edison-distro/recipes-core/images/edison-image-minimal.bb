@@ -19,7 +19,7 @@ NOHDD = "0"
 ROOTFS = ""
 
 # Specify rootfs image type
-IMAGE_FSTYPES += "ext4 live"
+IMAGE_FSTYPES += "btrfs ext4 live"
 
 IMAGE_CLASSES += "qemuboot"
 
