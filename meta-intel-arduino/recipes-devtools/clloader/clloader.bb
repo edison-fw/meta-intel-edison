@@ -4,12 +4,15 @@ LICENSE = "LGPLv2.1"
 
 S = "${WORKDIR}/git"
 
+DEPENDS = "libgpiod"
+
 TARGET_CC_ARCH += "${LDFLAGS}"
 
 SRC_URI = "git://github.com/01org/clloader.git;protocol=https;branch=edison \
             file://clloader.service \
             file://sketch_reset.service \
-            file://0001-clloader-silence-when-ttyGS0-not-found.patch"
+            file://0001-clloader-silence-when-ttyGS0-not-found.patch \
+            file://0001-sketch_reset-port-to-gpiod.patch"
 
 SRCREV = "ef2fe0ae9f7fba836df696441fd9053ed07b770e"
 

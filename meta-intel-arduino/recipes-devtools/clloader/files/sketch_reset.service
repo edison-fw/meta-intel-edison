@@ -4,7 +4,7 @@ After=clloader.service
 Requires=clloader.service
 
 [Service]
-ExecStart=/opt/edison/sketch_reset -i 207 -o 215 -s /opt/edison/sketch_reset.sh
+ExecStart=/opt/edison/sketch_reset -i SHLD_RESET0 -o SHLD_RESET1 -s /opt/edison/sketch_reset.sh
 
 [Install]
 WantedBy=multi-user.target
