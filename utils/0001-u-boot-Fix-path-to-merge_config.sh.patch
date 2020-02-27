@@ -1,4 +1,4 @@
-From e4dae226fe09e41a787aebf8acccd72d819cd690 Mon Sep 17 00:00:00 2001
+From ad3ff197f880a2201a358b982938fb5d71ccbe2f Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
 Date: Thu, 19 Sep 2019 22:19:32 +0200
 Subject: [PATCH] u-boot: Fix path to merge_config.sh
@@ -13,7 +13,7 @@ Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/meta/recipes-bsp/u-boot/u-boot.inc b/meta/recipes-bsp/u-boot/u-boot.inc
-index 96c1f94011..390b92850d 100644
+index d241347bf7..1ecfc6a098 100644
 --- a/meta/recipes-bsp/u-boot/u-boot.inc
 +++ b/meta/recipes-bsp/u-boot/u-boot.inc
 @@ -85,7 +85,7 @@ do_configure () {
@@ -23,8 +23,8 @@ index 96c1f94011..390b92850d 100644
 -        merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
 +        ${S}/scripts/kconfig/merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
          cml1_do_configure
-     fi
- }
+     else
+         DEVTOOL_DISABLE_MENUCONFIG=true
 -- 
 2.20.1
 
