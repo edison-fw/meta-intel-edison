@@ -61,15 +61,15 @@ int main(void)
 	fd = open(path, O_RDONLY);
 	if (fd == -1) {
 		fprintf(stderr, "battery-voltage: failed to open file %s\n", path);
-		exit(-1);
+		return (-1);
 	}
 
 	err = read(fd, read_voltage, 4);
 	if (err == 0)
 	{
 		fprintf(stderr, "battery-voltage: read NULL\n");
-                close(fd);
-                return (-2);
+		close(fd);
+		return (-2);
 	}
 
 	battery_level = atoi(read_voltage);
@@ -83,4 +83,3 @@ int main(void)
 	close(fd);
 	return 0;
 }
-
