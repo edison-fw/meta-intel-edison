@@ -83,6 +83,9 @@ set_line("SPI_CLK_SEL", 0)
 set_line("MUX18_DIR", 1)
 set_line("TRI_STATE_ALL", 0)
 led = gpiod.Chip("gpiochip0").get_line(40)
+if led.is_used():
+    deinit_led_gpio()
+    sys.exit(0)
 led.request(consumer=led.owner().name(), type=gpiod.LINE_REQ_DIR_OUT)
 if led.get_value() == 0:
     initial_led_state = "low"
