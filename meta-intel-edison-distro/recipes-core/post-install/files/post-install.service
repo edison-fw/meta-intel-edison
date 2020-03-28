@@ -3,7 +3,7 @@ Description=Post install service
 OnFailure=reboot.target
 Requires=sysinit.target dev-disk-by\x2dpartlabel-home.device dev-disk-by\x2dpartlabel-update.device
 After=sysinit.target dev-disk-by\x2dpartlabel-home.device dev-disk-by\x2dpartlabel-update.device
-Before=shutdown.target resize-rootfs.service serial-getty@ttyMFD2.service
+Before=shutdown.target resize-rootfs.service serial-getty@ttyS2.service
 Conflicts=shutdown.target systemd-readahead-collect.service systemd-readahead-replay.service
 
 [Service]
