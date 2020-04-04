@@ -121,6 +121,21 @@ boot_root() {
         return 1
     fi
 
+    # copy fstab
+    if [[ -h /realroot/etc/fstab || -f /realroot/etc/fstab ]]; then
+        cp /realroot/etc/fstab /etc
+        # if /boot in fstab mount it now
+        mount -n /boot || true
+        mount -n --move /boot /realroot/boot || true
+        # if /lib/modules in fstab mount it now
+        mount -n /lib/modules || true
+        mount -n --move /lib/modules /realroot/lib/modules || true
+    else
+        echo "Error: /etc/fstab not found"
+        return 1
+    fi
+
+
     # Move system mounts over to
     # the corresponding directories under the real root filesystem.
     mount -n --move /proc /realroot/proc
