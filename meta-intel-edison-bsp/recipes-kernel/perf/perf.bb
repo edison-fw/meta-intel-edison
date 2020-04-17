@@ -113,6 +113,7 @@ PERF_SRC ?= "Makefile \
              tools/Makefile \
              tools/perf \
              tools/scripts \
+             scripts \
 "
 
 PERF_EXTRA_LDFLAGS = ""
