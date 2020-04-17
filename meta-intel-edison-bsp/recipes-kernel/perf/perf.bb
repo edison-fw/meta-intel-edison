@@ -77,7 +77,7 @@ EXTRA_OEMAKE = '\
     EXTRA_CFLAGS="-ldw" \
     EXTRA_LDFLAGS="${PERF_EXTRA_LDFLAGS}" \
     perfexecdir=${libexecdir} \
-    NO_GTK2=1 \
+    NO_GTK2=1 NO_DEMANGLE=1 \
     ${PACKAGECONFIG_CONFARGS} \
     TMPDIR="${B}" \
     LIBUNWIND_DIR=${STAGING_EXECPREFIXDIR} \
@@ -157,7 +157,7 @@ python copy_perf_source_from_kernel() {
 do_configure_prepend () {
     # If building a multlib based perf, the incorrect library path will be
     # detected by perf, since it triggers via: ifeq ($(ARCH),x86_64). In a 32 bit
-    # build, with a 64 bit multilib, the arch won't match and the detection of a 
+    # build, with a 64 bit multilib, the arch won't match and the detection of a
     # 64 bit build (and library) are not exected. To ensure that libraries are
     # installed to the correct location, we can use the weak assignment in the
     # config/Makefile.
@@ -233,8 +233,10 @@ do_configure_prepend () {
     fi
 
     # use /usr/bin/env instead of version specific python
-    for s in `find ${S}/tools/perf/ -name '*.py'` `find ${S}/scripts/ -name 'bpf_helpers_doc.py'`; do
-        sed -i -e "s,#!.*python.*,#!${USRBINPATH}/env python3," ${s}
+    for s in `find ${S}/tools/perf/ -name '*.py'`; do
+        sed -i 's,/usr/bin/python,/usr/bin/env python3,' "${s}"
+        sed -i 's,/usr/bin/python2,/usr/bin/env python3,' "${s}"
+        sed -i 's,/usr/bin/env python2,/usr/bin/env python3,' "${s}"
     done
 
     # unistd.h can be out of sync between libc-headers and the captured version in the perf source
