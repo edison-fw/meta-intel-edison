@@ -16,15 +16,14 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
 PE = "1"
 
-SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2020.01;protocol=https"
+SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2020.04;protocol=https"
 		
-SRCREV = "b4daeb7f02ec191d92b6ee41229f6aa3bbad972f"
+SRCREV = "946af68794f04a9999a46fdb31d5a66bb1afb03e"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
 SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
-SRC_URI += "file://0001-dfu-Reset-timeout-in-case-of-DFU-request.patch"
 SRC_URI += "file://btrfs.cfg"
 
-PV = "2020.01"
+PV = "2020.04"
 S = "${WORKDIR}/git"
