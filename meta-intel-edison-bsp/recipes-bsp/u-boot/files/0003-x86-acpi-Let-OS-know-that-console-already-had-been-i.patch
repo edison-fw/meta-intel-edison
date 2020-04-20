@@ -1,0 +1,43 @@
+From a2d51d2f6c6bad481aad43286c309c40f33fe53f Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Thu, 27 Feb 2020 16:51:45 +0200
+Subject: [PATCH 3/7] x86: acpi: Let OS know that console already had been
+ initialized
+
+SPCR has no clue if the UART base clock speed is different to
+the default one. However, the SPCR 1.04 defines baud rate 0 as
+a preconfigured state of UART and OS is supposed not to touch
+the configuration of the serial device.
+
+Linux kernel supports that starting from v5.0, see commit
+b413b1abeb21 ("ACPI: SPCR: Consider baud rate 0 as preconfigured state")
+for the details.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/lib/acpi_table.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/x86/lib/acpi_table.c b/arch/x86/lib/acpi_table.c
+index 66e32f21bd..074987e294 100644
+--- a/arch/x86/lib/acpi_table.c
++++ b/arch/x86/lib/acpi_table.c
+@@ -471,6 +471,15 @@ static void acpi_create_spcr(struct acpi_spcr *spcr)
+ 	spcr->pci_device_id = 0xffff;
+ 	spcr->pci_vendor_id = 0xffff;
+ 
++	/*
++	 * SPCR has no clue if the UART base clock speed is different
++	 * to the default one. However, the SPCR 1.04 defines baud rate
++	 * 0 as a preconfigured state of UART and OS is supposed not
++	 * to touch the configuration of the serial device.
++	 */
++	if (serial_info.clock != SERIAL_DEFAULT_CLOCK)
++		spcr->baud_rate = 0;
++
+ 	/* Fix checksum */
+ 	header->checksum = table_compute_checksum((void *)spcr, header->length);
+ }
+-- 
+2.20.1
+

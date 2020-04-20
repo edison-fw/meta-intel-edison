@@ -16,12 +16,15 @@ LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
 PE = "1"
 
-SRC_URI = "git://github.com/edison-fw/u-boot.git;branch=acpi-v2020.04;protocol=https"
+SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 		
-SRCREV = "946af68794f04a9999a46fdb31d5a66bb1afb03e"
+SRCREV = "36fec02b1f90b92cf51ec531564f9284eae27ab4"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
+SRC_URI += "file://0001-dm-serial-Add-clock-member-to-struct-serial_device_i.patch"
+SRC_URI += "file://0002-serial-ns16550-Provide-UART-base-clock-speed-in-geti.patch"
+SRC_URI += "file://0003-x86-acpi-Let-OS-know-that-console-already-had-been-i.patch"
 SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI += "file://btrfs.cfg"
 
