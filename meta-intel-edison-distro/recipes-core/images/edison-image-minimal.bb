@@ -19,7 +19,7 @@ NOHDD = "0"
 ROOTFS = ""
 
 # Specify rootfs image type
-IMAGE_FSTYPES = "ext4 live"
+IMAGE_FSTYPES += "ext4 live"
 
 inherit core-image
 
@@ -89,3 +89,12 @@ IMAGE_INSTALL_append = " libgpiod"
 IMAGE_INSTALL_append = " htop"
 
 DEPENDS += "u-boot"
+
+ROOTFS_POSTPROCESS_COMMAND += "install_initrd; "
+
+install_initrd() {
+    bbnote "Adding initrd to image ${IMAGE_ROOTFS}"
+    install -d {IMAGE_ROOTFS}/boot
+    bbnote "from ${DEPLOY_DIR_IMAGE}/core-image-minimal-initramfs-edison.cpio.gz"
+    install -m 0755 ${DEPLOY_DIR_IMAGE}/core-image-minimal-initramfs-edison.cpio.gz ${IMAGE_ROOTFS}/boot/initrd
+}
