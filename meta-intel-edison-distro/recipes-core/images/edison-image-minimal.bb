@@ -8,6 +8,7 @@ IMAGE_LINGUAS = " "
 
 # We don't want to include initrd - we have initramfs instead
 #INITRD_LIVE = ""
+DEPENDS += " core-image-minimal-initramfs"
 
 # Do not use legacy nor EFI BIOS
 PCBIOS = "0"
