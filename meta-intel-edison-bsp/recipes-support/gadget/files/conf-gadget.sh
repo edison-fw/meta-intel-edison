@@ -6,13 +6,17 @@ set -euf -o pipefail
 readonly GADGET_BASE_DIR="/sys/kernel/config/usb_gadget/g1"
 readonly DEV_ETH_ADDR="aa:bb:cc:dd:ee:f1"
 readonly HOST_ETH_ADDR="aa:bb:cc:dd:ee:f2"
-readonly USBDISK="/dev/mmcblk0p9"
+readonly UPDATE_PART="/dev/mmcblk0p9"
+readonly BOOT_PART="/dev/mmcblk0p7"
 
 # Check if already run before
 if [ -d "${GADGET_BASE_DIR}" ]; then
     echo "Already registered gadgets"
     exit 0
 fi
+
+# Check if there is an update partition
+[ -h "/dev/disk/by-partlabel/update" ] && USBDISK=${UPDATE_PART} || USBDISK=${BOOT_PART}
 
 modprobe libcomposite
 
