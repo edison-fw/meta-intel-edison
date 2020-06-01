@@ -45,6 +45,7 @@ IMAGE_INSTALL_append = " crashlog"
 IMAGE_INSTALL_append = " tcpdump"
 IMAGE_INSTALL_append = " net-tools"
 IMAGE_INSTALL_append = " iperf3"
+IMAGE_INSTALL_append = " vim"
 
 # Add pulseaudio
 IMAGE_INSTALL_append = " pulseaudio-server libpulsecore libpulsecommon libpulse libpulse-simple pulseaudio-misc"
