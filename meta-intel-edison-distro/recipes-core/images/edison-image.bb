@@ -1,7 +1,7 @@
 require edison-image-minimal.bb
 
 DESCRIPTION = "A fully functional image to run EDISON"
-KERNEL_IMAGETYPE_pn-edison-image = "bzImage-initramfs-edison.bin"
+#KERNEL_IMAGETYPE_pn-edison-image = "bzImage-initramfs-edison.bin"
 
 
 IMAGE_INSTALL_append = " connman"
@@ -13,7 +13,6 @@ IMAGE_INSTALL_append = " ethtool"
 IMAGE_INSTALL_append = " pwr-button-handler"
 IMAGE_INSTALL_append = " blink-led"
 IMAGE_INSTALL_append = " post-install"
-IMAGE_INSTALL_append = " resize-rootfs"
 IMAGE_INSTALL_append = " bluez5-dev"
 IMAGE_INSTALL_append = " bluez5-noinst-tools"
 IMAGE_INSTALL_append = " bluez5-testtools"

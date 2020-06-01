@@ -7,7 +7,8 @@ IMAGE_INSTALL_append = " openssh-sftp-server"
 IMAGE_LINGUAS = " "
 
 # We don't want to include initrd - we have initramfs instead
-INITRD_LIVE = ""
+#INITRD_LIVE = ""
+DEPENDS += " core-image-minimal-initramfs"
 
 # Do not use legacy nor EFI BIOS
 PCBIOS = "0"
@@ -18,7 +19,7 @@ NOHDD = "0"
 ROOTFS = ""
 
 # Specify rootfs image type
-IMAGE_FSTYPES = "ext4 live"
+IMAGE_FSTYPES += "ext4 live"
 
 inherit core-image
 
@@ -26,7 +27,7 @@ inherit core-image
 # and we really want to have one in the generated hddimg file.
 # Otherwise it doesn't boot due to no mmc/sdhc modules being built-in in our setup).
 # There seems to be no standard mechanism for doing that, but the below works.
-KERNEL_IMAGETYPE_pn-edison-image-minimal = "bzImage-initramfs-edison.bin"
+#KERNEL_IMAGETYPE_pn-edison-image-minimal = "bzImage-initramfs-edison.bin"
 
 IMAGE_ROOTFS_SIZE = "1048576"
 
@@ -74,6 +75,7 @@ IMAGE_INSTALL_append = " less"
 # Those are necessary to manually create partitions and file systems on the eMMC
 IMAGE_INSTALL_append = " parted"
 IMAGE_INSTALL_append = " e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks libcomerr libss libe2p libext2fs dosfstools"
+IMAGE_INSTALL_append = " btrfs-tools"
 
 # Time related
 IMAGE_INSTALL_append = " tzdata"
@@ -87,3 +89,12 @@ IMAGE_INSTALL_append = " libgpiod"
 IMAGE_INSTALL_append = " htop"
 
 DEPENDS += "u-boot"
+
+ROOTFS_POSTPROCESS_COMMAND += "install_initrd; "
+
+install_initrd() {
+    bbnote "Adding initrd to image ${IMAGE_ROOTFS}"
+    install -d {IMAGE_ROOTFS}/boot
+    bbnote "from ${DEPLOY_DIR_IMAGE}/core-image-minimal-initramfs-edison.cpio.gz"
+    install -m 0755 ${DEPLOY_DIR_IMAGE}/core-image-minimal-initramfs-edison.cpio.gz ${IMAGE_ROOTFS}/boot/initrd
+}

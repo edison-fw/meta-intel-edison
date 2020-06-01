@@ -72,6 +72,8 @@ read_args() {
                 ROOT_IMAGE=$optarg ;;
             rootfstype=*)
                 modprobe $optarg 2> /dev/null ;;
+            rootflags=*)
+                ROOTFLAGS="-o ${optarg}" ;;
             LABEL=*)
                 label=$optarg ;;
             video=*)
@@ -103,14 +105,37 @@ boot_root() {
     # device node creation events were handled, to avoid unexpected behavior
     killall -9 "${_UDEV_DAEMON##*/}" 2>/dev/null
 
-    # Allow for identification of the real root even after boot
-    mkdir -p  /realroot
-    mount -n --move ${ROOT_DISK} /realroot
-
     # Unmount the remaining filesystems mounted on /run/media
     for dir in `awk '/\/run\/media\/.* /{print $2}' /proc/mounts`; do
         umount ${dir}
     done
+
+    # Allow for identification of the real root even after boot
+    mkdir -p  /realroot
+    mount -n ${ROOTFLAGS} ${ROOT_DEVICE} /realroot
+
+    # check if init found
+    if [[ -h /realroot/sbin/init || -f /realroot/sbin/init ]]; then
+        echo "Init found, booting..."
+    else
+        return 1
+    fi
+
+    # copy fstab
+    if [[ -h /realroot/etc/fstab || -f /realroot/etc/fstab ]]; then
+        cp /realroot/etc/fstab /etc
+        # if /boot in fstab mount it now
+        mount -n /boot || true
+        mount -n --move /boot /realroot/boot || true
+        # if /lib/modules in fstab mount it now
+        mount -n /lib/modules || true
+        mount -n --move /lib/modules /realroot/lib/modules || true
+    else
+        echo "Error: /etc/fstab not found"
+        return 1
+    fi
+
+
     # Move system mounts over to
     # the corresponding directories under the real root filesystem.
     mount -n --move /proc /realroot/proc
@@ -130,6 +155,9 @@ fatal() {
     exec sh
 }
 
+modprobe btrfs
+btrfs device scan
+
 early_setup
 
 [ -z "$CONSOLE" ] && CONSOLE="/dev/console"
@@ -145,11 +173,9 @@ while true
 do
     for i in `df | grep "$ROOT_DEVICE" | awk '{print $6}' 2>/dev/null`; do
         echo "Found device '$i'"
-        if [ -h $i/sbin/init ] || [ -f $i/sbin/init ]; then
-            found="yes"
-            ROOT_DISK="$i"
-            break
-        fi
+        found="yes"
+        ROOT_DISK="$i"
+        break
     done
 # don't wait for more than $shelltimeout seconds, if it's set        
     if [ -n "$shelltimeout" ]; then

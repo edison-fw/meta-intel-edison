@@ -95,7 +95,7 @@ folders:
     ref: 2.0-Building-and-installing-the-image
     pdf: true
 
-  - title: Building and installing the rootfs to SDHC or USB
+  - title: Building and installing the rootfs to SDHC
     jurl: /2.1-Building-and-installing-the-rootfs.html
     ref: 2.1-Building-and-installing-the-rootfs
     pdf: true

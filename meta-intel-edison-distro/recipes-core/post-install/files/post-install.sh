@@ -75,6 +75,9 @@ factory_partition () {
 
 systemctl start blink-led
 
+# resize roots
+/lib/systemd/systemd-growfs /
+
 # ssh
 sshd_init
 fi_echo $? "Generating sshd keys"
