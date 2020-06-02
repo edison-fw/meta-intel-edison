@@ -15,6 +15,7 @@ SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-$
         file://leds.cfg \
         file://bpf.cfg \
         file://btrfs.cfg \
+        file://sof_nocodec.cfg \
         "
 
 # kernel patches
