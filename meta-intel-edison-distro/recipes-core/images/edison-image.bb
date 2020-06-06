@@ -24,7 +24,6 @@ IMAGE_INSTALL_append = " libpam"
 IMAGE_INSTALL_append = " libgomp"
 
 # Add audio firmware
-IMAGE_INSTALL_append = " sst-fw-bin"
 IMAGE_INSTALL_append = " sof-fw"
 
 # ALSA lib and utilities
