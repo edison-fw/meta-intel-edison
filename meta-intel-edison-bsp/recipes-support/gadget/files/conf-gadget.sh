@@ -56,6 +56,11 @@ echo "${USBDISK}" > functions/mass_storage.usb0/lun.0/file
 ln -s functions/mass_storage.usb0 configs/c.1/
 ###
 
+# UAC2 device
+###
+mkdir functions/uac2.usb0
+ln -s functions/uac2.usb0 configs/c.1
+
 # Composite Gadget Setup
 echo 0x1d6b > idVendor # Linux Foundation
 echo 0x0104 > idProduct # Multifunction Composite Gadget
