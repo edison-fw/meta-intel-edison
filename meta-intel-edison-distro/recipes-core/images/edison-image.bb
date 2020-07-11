@@ -29,6 +29,7 @@ IMAGE_INSTALL_append = " sof-fw"
 # ALSA lib and utilities
 #IMAGE_INSTALL_append = " alsa-lib"
 IMAGE_INSTALL_append = " alsa-utils-alsamixer alsa-utils-alsactl alsa-utils-aplay alsa-utils-amixer"
+IMAGE_INSTALL_append = " alsa-utils-speakertest"
 
 # OOBE
 IMAGE_INSTALL_append = " run-timezone"
