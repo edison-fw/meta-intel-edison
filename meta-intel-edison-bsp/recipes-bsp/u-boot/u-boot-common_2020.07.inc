@@ -18,15 +18,12 @@ PE = "1"
 
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 		
-SRCREV = "36fec02b1f90b92cf51ec531564f9284eae27ab4"
+SRCREV = "2f5fbb5b39f7b67044dda5c35e4a4b31685a3109"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
-SRC_URI += "file://0001-dm-serial-Add-clock-member-to-struct-serial_device_i.patch"
-SRC_URI += "file://0002-serial-ns16550-Provide-UART-base-clock-speed-in-geti.patch"
-SRC_URI += "file://0003-x86-acpi-Let-OS-know-that-console-already-had-been-i.patch"
 SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI += "file://btrfs.cfg"
 
-PV = "2020.04"
+PV = "2020.07"
 S = "${WORKDIR}/git"
