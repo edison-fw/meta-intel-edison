@@ -1,6 +1,6 @@
 DESCRIPTION = "Build XFSTK Downloader for recovery"
 LICENSE = "LGPL-2.1"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/LGPL-2.1;md5=0835ade698e0bcf8506ecda2f7b4f302"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/LGPL-2.1;md5=1a6d268fd218675ffea8be556788b780"
 
 inherit cmake
 
