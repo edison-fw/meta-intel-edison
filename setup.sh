@@ -88,7 +88,9 @@ BBLAYERS ?= " \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
   $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
   $top_repo_dir/meta-intel-edison/meta-arduino \\
+  $top_repo_dir/meta-intel-edison/meta-xfstk \\
   $top_repo_dir/meta-acpi \\
+  $top_repo_dir/meta-qt5 \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
@@ -285,6 +287,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-darwin" "git://git.yoctoproject.org"
   do_update_cache "meta-acpi" "https://github.com/edison-fw"
+  do_update_cache "meta-qt5" "https://github.com/meta-qt5"
 
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
@@ -332,6 +335,20 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     echo "meta-acpi already exists, rebasing from local cache"
     cd ${acpi_dir}
     git pull --rebase origin eds-5.0.0
+  fi
+
+  cd ${top_repo_dir}
+  qt5_dir=${top_repo_dir}/meta-qt5
+  if [ ! -d "${qt5_dir}" ]; then
+    # directory does not exist, create it
+    echo "Cloning meta-qt5 layer to ${top_repo_dir} directory from local cache"
+    git clone ${my_dl_dir}/meta-qt5-mirror.git meta-qt5
+    cd ${qt5_dir}
+    git checkout jansa/zeus
+  else
+    echo "meta-qt5 already exists, rebasing from local cache"
+    cd ${qt5_dir}
+    git pull --rebase origin jansa/zeus
   fi
 
   # Apply patch on top of it allowing to perform build in external source directory
