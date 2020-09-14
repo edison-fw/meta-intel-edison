@@ -10,12 +10,17 @@ DEPENDS = "g++ qtbase5 qtcreator build-essential devscripts libxml2-dev alien do
 
 SRC_URI = "git://github.com/Exoyds/xfstk.git;tag=1.8.3;protocol=https"
 
-S = "${WORKDIR}/xfstk"
+S = "${WORKDIR}/git"
 
 TARGET_CC_ARCH += "${LDFLAGS}"
 
+EXTRA_OECMAKE = "-DWARNING_AS_ERROR=OFF"
+
+BUILD_VERSION = "0.0.0"
+DISTRIBUTION_NAME = "ubuntu20.04"
+export BUILD_VERSION
+export DISTRIBUTION_NAME
+
 do_compile() {
-	export DISTRIBUTION_NAME=ubuntu20.04
-	export BUILD_VERSION=0.0.0
         make
 }
