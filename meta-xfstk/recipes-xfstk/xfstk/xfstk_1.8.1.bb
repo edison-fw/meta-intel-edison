@@ -6,17 +6,16 @@ inherit cmake
 
 BBCLASSEXTEND = "native"
 
-DEPENDS_${PN} = "g++ qtbase5 qtcreator build-essential devscripts libxml2-dev alien doxygen graphviz libusb-dev libboost-all-dev"
+DEPENDS = "g++ qtbase5 qtcreator build-essential devscripts libxml2-dev alien doxygen graphviz libusb-dev libboost-all-dev"
 
-SRC_URI = "https://github.com/Exoyds/xfstk/archive/1.8.2.zip"
-#SRC_URI += "file://xfstk.sh"
+SRC_URI = "git://github.com/Exoyds/xfstk.git;tag=1.8.3;protocol=https"
 
 S = "${WORKDIR}/xfstk"
 
 TARGET_CC_ARCH += "${LDFLAGS}"
 
 do_compile() {
-	export DISTRIBUTION_NAME=ubuntu12.04
+	export DISTRIBUTION_NAME=ubuntu20.04
 	export BUILD_VERSION=0.0.0
         make
 }
