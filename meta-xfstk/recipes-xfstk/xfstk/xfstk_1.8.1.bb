@@ -6,7 +6,7 @@ inherit cmake
 
 BBCLASSEXTEND = "native"
 
-DEPENDS = "g++ qtbase5 qtcreator build-essential devscripts libxml2-dev alien doxygen graphviz libusb-dev libboost-all-dev"
+DEPENDS = "qtbase libxml2 libusb boost"
 
 SRC_URI = "git://github.com/Exoyds/xfstk.git;tag=1.8.3;protocol=https"
 
