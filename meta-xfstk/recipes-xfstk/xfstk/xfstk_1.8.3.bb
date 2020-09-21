@@ -22,7 +22,3 @@ BUILD_VERSION = "${PV}"
 DISTRIBUTION_NAME = "ubuntu20.04"
 export BUILD_VERSION
 export DISTRIBUTION_NAME
-
-do_compile() {
-        make
-}
