@@ -51,13 +51,13 @@ clean:
 
 u-boot linux-externalsrc edison-image virtual/kernel: cleansstate
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake $@"
-	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 	./meta-intel-edison/utils/flash/btrfsSnapshot.py $(CURDIR)/out/current/build
+	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 
 meta-toolchain arduino-toolchain: _check_setup_was_done
 	/bin/bash -c "source out/current/poky/oe-init-build-env $(CURDIR)/out/current/build ; bitbake -c cleansstate $@ ; bitbake $@"
-	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 	./meta-intel-edison/utils/flash/btrfsSnapshot.py $(CURDIR)/out/current/build
+	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 
 bootloader: u-boot
 
@@ -68,8 +68,9 @@ kernel: virtual/kernel
 toolchain: meta-toolchain
 
 postbuild:
-	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
 	./meta-intel-edison/utils/flash/btrfsSnapshot.py $(CURDIR)/out/current/build
+	./meta-intel-edison/utils/flash/postBuild.sh $(CURDIR)/out/current/build
+
 
 flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
