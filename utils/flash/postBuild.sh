@@ -20,7 +20,7 @@ env_dir=$top_repo_dir/meta-intel-edison/meta-intel-edison-bsp/recipes-bsp/u-boot
 # Get Edison rootfs image settings
 if [ -f $env_dir/edison.env ]
 then
-       EDISON_ROOTFS_MB=`grep -rnw "name=rootfs" $env_dir/edison.env | sed 's/.\+;name=rootfs,size=\([0-9]\+\)MiB.\+/\1/g'`
+       EDISON_ROOTFS_MB=`grep -rnw "name=rootfs" $env_dir/target_env/blankcdc.env | sed 's/.\+;name=rootfs,size=\([0-9]\+\)MiB.\+/\1/g'`
 else
        echo -e "\033[31mError: file $env_dir/edison.env does not exist!\033[0m"
        exit 1;
@@ -63,6 +63,7 @@ done
 
 # Copy rootfs
 cp $build_dir/tmp/deploy/images/edison/edison-image-edison.ext4 $build_dir/toFlash/
+cp $build_dir/tmp/deploy/images/edison/edison-image-edison.btrfs $build_dir/toFlash/
 
 # Copy flashing script
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
