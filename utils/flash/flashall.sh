@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+DO_BTRFS=0
 BACKUP_IFS=$IFS
 IFS=$(echo -en "\n\b")
 
@@ -38,12 +38,13 @@ OUTPUT_LOG_CMD="2>&1 | tee -a ${LOG_FILENAME} | ( sed -n '19 q'; head -n 1; cat 
 
 function print-usage {
 	cat << EOF
-Usage: ${0##*/} [-h][--help][--recovery]
+Usage: ${0##*/} [-h][--help][--recovery][--btrfs]
 Update all software and restore board to its initial state.
  -h,--help     display this help and exit.
  -v            verbose output
  --recovery    recover the board to DFU mode using a dedicated tool,
                available only on linux and window hosts.
+ --btrfs       flash the btrfs image, this will destoy your current home partition.
 EOF
 	exit -5
 }
@@ -124,7 +125,7 @@ function dfu-wait {
 }
 
 # Execute old getopt to have long options support
-ARGS=$($GETOPTS -o hv -l "recovery,help" -n "${0##*/}" -- "$@");
+ARGS=$($GETOPTS -o hvrb -l "recovery,help,btrfs" -n "${0##*/}" -- "$@");
 #Bad arguments
 if [ $? -ne 0 ]; then print-usage ; fi;
 eval set -- "$ARGS";
@@ -133,7 +134,8 @@ while true; do
 	case "$1" in
 		-h|--help) shift; print-usage;;
 		-v) shift; OUTPUT_LOG_CMD=" 2>&1 | tee -a ${LOG_FILENAME}";;
-		--recovery) shift; DO_RECOVERY=1;;
+		-r|--recovery) shift; DO_RECOVERY=1;;
+		-b|--btrfs) shift; DO_BTRFS=1;;
 		--) shift; break;;
 	esac
 done
@@ -156,6 +158,10 @@ then
 	echo "You can now try a regular flash"
 
 else
+        if [ ${DO_BTRFS} -eq 1 ]; then
+                VARIANT_NAME="edison-btrfs"
+        fi
+
 	echo "Using U-Boot target: ${VARIANT_NAME}"
 	VARIANT_FILE="${VAR_DIR}/${VARIANT_NAME}.bin"
 	if [ ! -f "${VARIANT_FILE}" ]; then
@@ -166,46 +172,52 @@ else
 
 	dfu-wait
 
-	echo "Flashing IFWI"
+        echo "Flashing IFWI"
 
-	flash-dfu-ifwi ifwi00 --alt ifwi00 -D "${IFWI_DFU_FILE}-00-dfu.bin"
-	flash-dfu-ifwi ifwib00 --alt ifwib00 -D "${IFWI_DFU_FILE}-00-dfu.bin"
+        flash-dfu-ifwi ifwi00 --alt ifwi00 -D "${IFWI_DFU_FILE}-00-dfu.bin"
+        flash-dfu-ifwi ifwib00 --alt ifwib00 -D "${IFWI_DFU_FILE}-00-dfu.bin"
 
-	flash-dfu-ifwi ifwi01 --alt ifwi01 -D "${IFWI_DFU_FILE}-01-dfu.bin"
-	flash-dfu-ifwi ifwib01 --alt ifwib01 -D "${IFWI_DFU_FILE}-01-dfu.bin"
+        flash-dfu-ifwi ifwi01 --alt ifwi01 -D "${IFWI_DFU_FILE}-01-dfu.bin"
+        flash-dfu-ifwi ifwib01 --alt ifwib01 -D "${IFWI_DFU_FILE}-01-dfu.bin"
 
-	flash-dfu-ifwi ifwi02 --alt ifwi02 -D "${IFWI_DFU_FILE}-02-dfu.bin"
-	flash-dfu-ifwi ifwib02 --alt ifwib02 -D "${IFWI_DFU_FILE}-02-dfu.bin"
+        flash-dfu-ifwi ifwi02 --alt ifwi02 -D "${IFWI_DFU_FILE}-02-dfu.bin"
+        flash-dfu-ifwi ifwib02 --alt ifwib02 -D "${IFWI_DFU_FILE}-02-dfu.bin"
 
-	flash-dfu-ifwi ifwi03 --alt ifwi03 -D "${IFWI_DFU_FILE}-03-dfu.bin"
-	flash-dfu-ifwi ifwib03 --alt ifwib03 -D "${IFWI_DFU_FILE}-03-dfu.bin"
+        flash-dfu-ifwi ifwi03 --alt ifwi03 -D "${IFWI_DFU_FILE}-03-dfu.bin"
+        flash-dfu-ifwi ifwib03 --alt ifwib03 -D "${IFWI_DFU_FILE}-03-dfu.bin"
 
-	flash-dfu-ifwi ifwi04 --alt ifwi04 -D "${IFWI_DFU_FILE}-04-dfu.bin"
-	flash-dfu-ifwi ifwib04 --alt ifwib04 -D "${IFWI_DFU_FILE}-04-dfu.bin"
+        flash-dfu-ifwi ifwi04 --alt ifwi04 -D "${IFWI_DFU_FILE}-04-dfu.bin"
+        flash-dfu-ifwi ifwib04 --alt ifwib04 -D "${IFWI_DFU_FILE}-04-dfu.bin"
 
-	flash-dfu-ifwi ifwi05 --alt ifwi05 -D "${IFWI_DFU_FILE}-05-dfu.bin"
-	flash-dfu-ifwi ifwib05 --alt ifwib05 -D "${IFWI_DFU_FILE}-05-dfu.bin"
+        flash-dfu-ifwi ifwi05 --alt ifwi05 -D "${IFWI_DFU_FILE}-05-dfu.bin"
+        flash-dfu-ifwi ifwib05 --alt ifwib05 -D "${IFWI_DFU_FILE}-05-dfu.bin"
 
-	flash-dfu-ifwi ifwi06 --alt ifwi06 -D "${IFWI_DFU_FILE}-06-dfu.bin"
-	flash-dfu-ifwi ifwib06 --alt ifwib06 -D "${IFWI_DFU_FILE}-06-dfu.bin"
+        flash-dfu-ifwi ifwi06 --alt ifwi06 -D "${IFWI_DFU_FILE}-06-dfu.bin"
+        flash-dfu-ifwi ifwib06 --alt ifwib06 -D "${IFWI_DFU_FILE}-06-dfu.bin"
 
-	echo "Flashing U-Boot"
-	flash-command --alt u-boot0 -D "${ESC_BASE_DIR}/u-boot-edison.bin"
+        echo "Flashing U-Boot"
+        flash-command --alt u-boot0 -D "${ESC_BASE_DIR}/u-boot-edison.bin"
 
-	echo "Flashing U-Boot Environment"
-	flash-command --alt u-boot-env0 -D "${VARIANT_FILE}"
+        echo "Flashing U-Boot Environment"
+        flash-command --alt u-boot-env0 -D "${VARIANT_FILE}"
 
-	echo "Flashing U-Boot Environment Backup"
-	flash-command --alt u-boot-env1 -D "${VARIANT_FILE}" -R
+        echo "Flashing U-Boot Environment Backup"
+        flash-command --alt u-boot-env1 -D "${VARIANT_FILE}" -R
         echo "Rebooting to apply partition changes"
-	dfu-wait no-prompt
 
-	echo "Flashing boot partition (kernel)"
-	flash-command --alt boot -D "${ESC_BASE_DIR}/edison-image-edison.hddimg"
+        dfu-wait no-prompt
 
-	echo "Flashing rootfs, (it can take up to 5 minutes... Please be patient)"
-	flash-command --alt rootfs -D "${ESC_BASE_DIR}/edison-image-edison.ext4" -R
+        echo "Flashing boot partition (kernel)"
+        flash-command --alt boot -D "${ESC_BASE_DIR}/edison-image-edison.hddimg"
 
+        if [ ${DO_BTRFS} -eq 1 ]; then
+                echo "Flashing home, (it can take up to 10 minutes... but you only have to do this once)"
+                echo "After this you can do fast over-the-air updates."
+                flash-command --alt home -D "${ESC_BASE_DIR}/edison-image-edison.btrfs" -R
+        else
+                echo "Flashing rootfs, (it can take up to 5 minutes... Please be patient)"
+                flash-command --alt rootfs -D "${ESC_BASE_DIR}/edison-image-edison.ext4" -R
+        fi
 	echo "Rebooting"
 	echo "U-boot & Kernel System Flash Success..."
 	echo "Your board needs to reboot to complete the flashing procedure, please do not unplug it for 2 minutes."
