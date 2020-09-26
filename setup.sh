@@ -344,11 +344,11 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     echo "Cloning meta-qt5 layer to ${top_repo_dir} directory from local cache"
     git clone ${my_dl_dir}/meta-qt5-mirror.git meta-qt5
     cd ${qt5_dir}
-    git checkout jansa/zeus
+    git checkout zeus
   else
     echo "meta-qt5 already exists, rebasing from local cache"
     cd ${qt5_dir}
-    git pull --rebase origin jansa/zeus
+    git pull --rebase origin zeus
   fi
 
   # Apply patch on top of it allowing to perform build in external source directory
