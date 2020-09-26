@@ -8,7 +8,7 @@ BBCLASSEXTEND = "native"
 
 DEPENDS = "libxml2-native libusb-native boost-native qtbase-native"
 
-SRC_URI = "git://github.com/Exoyds/xfstk.git;tag=1.8.4;protocol=https"
+SRC_URI = "git://github.com/Exoyds/xfstk.git;tag=${PV};protocol=https"
 
 S = "${WORKDIR}/git"
 
