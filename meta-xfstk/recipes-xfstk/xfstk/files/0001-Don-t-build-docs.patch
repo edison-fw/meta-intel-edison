@@ -1,0 +1,44 @@
+From 1c3f1da60b11ef1e5df482ad4d0e7e8c21edfad8 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 26 Sep 2020 23:14:19 +0200
+Subject: [PATCH] Don't build docs
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ CMakeLists.txt                              | 2 +-
+ ancillary/cmake_modules/buildPackages.cmake | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9c438e5..1ce1462 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -98,7 +98,7 @@ ADD_SUBDIRECTORY(${CONFIGDIR}/plugins/downloader/baytrail)
+ # END the actual project configure.
+ 
+ # Generate documentation.
+-INCLUDE(GenerateDocumentation) 
++#INCLUDE(GenerateDocumentation)
+ 
+ # Assemble the SDK
+ INCLUDE(BuildSDK)
+diff --git a/ancillary/cmake_modules/buildPackages.cmake b/ancillary/cmake_modules/buildPackages.cmake
+index 917cb02..24ad1cc 100644
+--- a/ancillary/cmake_modules/buildPackages.cmake
++++ b/ancillary/cmake_modules/buildPackages.cmake
+@@ -75,9 +75,9 @@ INSTALL(FILES "${PROJECT_BINARY_DIR}/xfstk-sdk-x86_64.tar.gz"
+   COMPONENT gui)
+ 	
+ # and make sure the docs are in the package.
+-INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/docs/html"
+-  DESTINATION  "/usr/share/doc/xfstk-downloader"
+-  COMPONENT lib)
++#INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/docs/html"
++#  DESTINATION  "/usr/share/doc/xfstk-downloader"
++#  COMPONENT lib)
+ 
+ SET(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST
+   /lib
+-- 
+2.25.1
+
