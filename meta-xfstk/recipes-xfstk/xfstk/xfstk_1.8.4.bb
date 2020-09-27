@@ -4,9 +4,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/LGPL-2.1;md5=1a6d268fd218675ffe
 
 inherit cmake qmake5_paths
 
-BBCLASSEXTEND = "native"
+BBCLASSEXTEND = "native nativesdk"
 
-DEPENDS = "libxml2-native libusb-native boost-native qtbase-native"
+DEPENDS = "libxml2 libusb boost qtbase"
 
 SRC_URI = "git://github.com/Exoyds/xfstk.git;tag=${PV};protocol=https"
 
