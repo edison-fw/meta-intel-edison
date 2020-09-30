@@ -10,7 +10,7 @@ Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
  2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9c438e5..1ce1462 100644
+index 9c438e5..f2780f9 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -98,7 +98,7 @@ ADD_SUBDIRECTORY(${CONFIGDIR}/plugins/downloader/baytrail)
@@ -18,23 +18,23 @@ index 9c438e5..1ce1462 100644
  
  # Generate documentation.
 -INCLUDE(GenerateDocumentation) 
-+#INCLUDE(GenerateDocumentation)
++#INCLUDE(GenerateDocumentation) 
  
  # Assemble the SDK
  INCLUDE(BuildSDK)
 diff --git a/ancillary/cmake_modules/buildPackages.cmake b/ancillary/cmake_modules/buildPackages.cmake
-index 917cb02..24ad1cc 100644
+index 522ce83..fbcffb8 100644
 --- a/ancillary/cmake_modules/buildPackages.cmake
 +++ b/ancillary/cmake_modules/buildPackages.cmake
-@@ -75,9 +75,9 @@ INSTALL(FILES "${PROJECT_BINARY_DIR}/xfstk-sdk-x86_64.tar.gz"
+@@ -77,9 +77,9 @@ INSTALL(FILES "${PROJECT_BINARY_DIR}/xfstk-sdk-x86_64.tar.gz"
    COMPONENT gui)
  	
  # and make sure the docs are in the package.
 -INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/docs/html"
--  DESTINATION  "/usr/share/doc/xfstk-downloader"
+-	DESTINATION  "${CMAKE_INSTALL_DOCDIR}/xfstk-downloader"
 -  COMPONENT lib)
 +#INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/docs/html"
-+#  DESTINATION  "/usr/share/doc/xfstk-downloader"
++#	DESTINATION  "${CMAKE_INSTALL_DOCDIR}/xfstk-downloader"
 +#  COMPONENT lib)
  
  SET(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST
