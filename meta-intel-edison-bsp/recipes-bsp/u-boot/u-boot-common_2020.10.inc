@@ -12,18 +12,18 @@ as well as hardware data such as the Ethernet MAC address)."
 DESCRIPTION = "U-Boot"
 SECTION = "bootloaders"
 
-LICENSE = "GPLv2+"
-LIC_FILES_CHKSUM = "file://Licenses/README;md5=30503fd321432fc713238f582193b78e"
+LICENSE = "GPL-2.0"
+LIC_FILES_CHKSUM = "file://Licenses/README;md5=5a7450c57ffe5ae63fd732446b988025"
 PE = "1"
 
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 		
-SRCREV = "2f5fbb5b39f7b67044dda5c35e4a4b31685a3109"
+SRCREV = "050acee119b3757fee3bd128f55d720fdd9bb890"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
 SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI += "file://btrfs.cfg"
 
-PV = "2020.07"
+PV = "2020.10"
 S = "${WORKDIR}/git"
