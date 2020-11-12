@@ -18,12 +18,12 @@ PE = "1"
 
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 		
-SRCREV = "050acee119b3757fee3bd128f55d720fdd9bb890"
+SRCREV = "c4fddedc48f336eabc4ce3f74940e6aa372de18c"
 
 SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
-SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
+#SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI += "file://btrfs.cfg"
 
-PV = "2020.10"
+PV = "2021.01"
 S = "${WORKDIR}/git"
