@@ -21,6 +21,8 @@ ROOTFS = ""
 # Specify rootfs image type
 IMAGE_FSTYPES += "ext4 live"
 
+IMAGE_CLASSES += "qemuboot"
+
 inherit core-image
 
 # image-live/live-vm-common do not allow to use initramfs kernel
