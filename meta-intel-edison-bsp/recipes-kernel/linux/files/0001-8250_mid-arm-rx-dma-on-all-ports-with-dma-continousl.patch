@@ -1,0 +1,75 @@
+From c4aabe654ce2389ee7b36a21b167aedc391d4d46 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sun, 18 Mar 2018 17:04:23 +0100
+Subject: [PATCH] 8250_mid: arm rx dma on all ports with dma continously
+
+Instead of initiating rx dma when the first char arrives in the UART, arm rx dma
+continously. Dma transfers automatically empty rx fifo, preventing overruns. As
+before, transfer terminates when the dma buffer is full or when a 4 char
+interchar gap is received (timeout). After timeout we arm immediately the dma again.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/tty/serial/8250/8250_mid.c | 32 ++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/drivers/tty/serial/8250/8250_mid.c b/drivers/tty/serial/8250/8250_mid.c
+index efa0515139f8..b5131c3440d3 100644
+--- a/drivers/tty/serial/8250/8250_mid.c
++++ b/drivers/tty/serial/8250/8250_mid.c
+@@ -88,6 +88,8 @@ static int tng_handle_irq(struct uart_port *p)
+ 	err = hsu_dma_get_status(chip, mid->dma_index * 2 + 1, &status);
+ 	if (err > 0) {
+ 		serial8250_rx_dma_flush(up);
++		/* immediately after flushing arm dma again */
++		if (up->dma) up->dma->rx_dma(up);
+ 		ret |= 1;
+ 	} else if (err == 0)
+ 		ret |= hsu_dma_do_irq(chip, mid->dma_index * 2 + 1, status);
+@@ -232,6 +234,34 @@ static void mid8250_set_termios(struct uart_port *p,
+ 	serial8250_do_set_termios(p, termios, old);
+ }
+ 
++static int mid8250_startup(struct uart_port *port)
++{
++	struct uart_8250_port *up = up_to_u8250p(port);
++	struct mid8250 *mid = port->private_data;
++	int ret;
++
++	ret = serial8250_do_startup(port);
++	
++	/* arm rx dma at do_startup time
++	 * register new do_startup and do_shutdown
++	 * in mid8250_probe
++	 */
++
++	if (up->dma) up->dma->rx_dma(up);
++
++	return ret;
++}
++
++static void mid8250_shutdown(struct uart_port *port)
++{
++	struct uart_8250_port *up = up_to_u8250p(port);
++	struct mid8250 *mid = port->private_data;
++
++	if (up->dma) serial8250_rx_dma_flush(up);
++
++	serial8250_do_shutdown(port);
++}
++
+ static bool mid8250_dma_filter(struct dma_chan *chan, void *param)
+ {
+ 	struct hsu_dma_slave *s = param;
+@@ -306,6 +336,8 @@ static int mid8250_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	uart.port.uartclk = mid->board->base_baud * 16;
+ 	uart.port.flags = UPF_SHARE_IRQ | UPF_FIXED_PORT | UPF_FIXED_TYPE;
+ 	uart.port.set_termios = mid8250_set_termios;
++	uart.port.startup = mid8250_startup;
++	uart.port.shutdown = mid8250_shutdown;
+ 
+ 	uart.port.mapbase = pci_resource_start(pdev, bar);
+ 	uart.port.membase = pcim_iomap(pdev, bar, 0);
+-- 
+2.27.0
+

@@ -21,21 +21,18 @@ SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-$
 
 # kernel patches
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
-SRC_URI_append = " file://0001-perf-python-Fix-clang-detection-to-strip-out-options.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-SRC_URI_append = " file://0001-hsu_dma_pci-disable-interrupt.patch"
+SRC_URI_append = " file://0001-hsu_dma_pci-disable-spurious-interrupt.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
+SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 
 # usefull kernel debug options here
 #
 
-SRCREV ??= "e52613f52f1e2ec61491eee36f82fe19dcb470df"
+SRCREV ??= "32bc518dbdcf6ceeb53511ec91d191552885a126"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
 LINUX_VERSION ?= "${PV}"
-
-# this because QA Issue: [installed-vs-shipped] and fixed in warrior
-FILES_${KERNEL_PACKAGE_NAME}-base += " ${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo"
 
 COMPATIBLE_MACHINE = "edison"
 
