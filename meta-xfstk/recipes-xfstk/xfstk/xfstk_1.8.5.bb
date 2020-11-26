@@ -8,7 +8,7 @@ BBCLASSEXTEND = "native nativesdk"
 
 DEPENDS = "libxml2 libusb boost qtbase"
 
-SRC_URI = "git://github.com/Exoyds/xfstk.git;tag=${PV};protocol=https \
+SRC_URI = "git://github.com/edison-fw/xFSTK.git;branch=main;tag=v${PV};protocol=https \
         file://0001-Don-t-build-docs.patch \
         "
 
