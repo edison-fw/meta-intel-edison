@@ -1,0 +1,11 @@
+[Unit]
+Description=Bootsuccess service
+After=default.target
+
+[Service]
+ExecStart=/usr/sbin/boot_success.sh
+Restart=no
+
+[Install]
+WantedBy=default.target
+
