@@ -46,6 +46,7 @@ IMAGE_INSTALL_append = " tcpdump"
 IMAGE_INSTALL_append = " net-tools"
 IMAGE_INSTALL_append = " iperf3"
 IMAGE_INSTALL_append = " vim"
+IMAGE_INSTALL_append = " btrfs-compsize"
 
 # Add pulseaudio
 IMAGE_INSTALL_append = " pulseaudio-server libpulsecore libpulsecommon libpulse libpulse-simple pulseaudio-misc"
