@@ -1,30 +1,39 @@
-From ad3ff197f880a2201a358b982938fb5d71ccbe2f Mon Sep 17 00:00:00 2001
+From ceaa8c69f953f6c4608f8c702940e2c5423454c2 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
-Date: Thu, 19 Sep 2019 22:19:32 +0200
+Date: Tue, 29 Dec 2020 18:48:56 +0100
 Subject: [PATCH] u-boot: Fix path to merge_config.sh
 
-Current u-boot recipe in warrior fails during do_configure because
+Current u-boot recipe in dunfell fails during do_configure because
 it cannot find the merge_config.sh. Fix the path
 
 Suggested-by: nishantpoorswani <nishantpoorswani@gmail.com>
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
- meta/recipes-bsp/u-boot/u-boot.inc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ meta/recipes-bsp/u-boot/u-boot.inc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/meta/recipes-bsp/u-boot/u-boot.inc b/meta/recipes-bsp/u-boot/u-boot.inc
-index d241347bf7..1ecfc6a098 100644
+index a88a7a1120..a419e486c5 100644
 --- a/meta/recipes-bsp/u-boot/u-boot.inc
 +++ b/meta/recipes-bsp/u-boot/u-boot.inc
-@@ -85,7 +85,7 @@ do_configure () {
+@@ -80,7 +80,7 @@ do_configure () {
+                 if [ $j -eq $i ]; then
+                     oe_runmake -C ${S} O=${B}/${config} ${config}
+                     if [ -n "${@' '.join(find_cfgs(d))}" ]; then
+-                        merge_config.sh -m -O ${B}/${config} ${B}/${config}/.config ${@" ".join(find_cfgs(d))}
++                        ${S}/scripts/kconfig/merge_config.sh -m -O ${B}/${config} ${B}/${config}/.config ${@" ".join(find_cfgs(d))}
+                         oe_runmake -C ${S} O=${B}/${config} oldconfig
+                     fi
+                 fi
+@@ -95,7 +95,7 @@ do_configure () {
          else
              oe_runmake -C ${S} O=${B} oldconfig
          fi
 -        merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
 +        ${S}/scripts/kconfig/merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
          cml1_do_configure
-     else
-         DEVTOOL_DISABLE_MENUCONFIG=true
+     fi
+ }
 -- 
-2.20.1
+2.27.0
 
