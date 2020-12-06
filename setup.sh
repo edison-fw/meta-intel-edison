@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="zeus"
-yocto_tag="zeus"
+yocto_branch="dunfell"
+yocto_tag="dunfell"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
@@ -83,6 +83,7 @@ BBLAYERS ?= " \\
   $poky_dir/meta-openembedded/meta-oe \\
   $poky_dir/meta-openembedded/meta-python \\
   $poky_dir/meta-openembedded/meta-networking \\
+  $poky_dir/meta-qt5 \\
   $poky_dir/meta-intel \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
@@ -90,7 +91,6 @@ BBLAYERS ?= " \\
   $top_repo_dir/meta-intel-edison/meta-arduino \\
   $top_repo_dir/meta-intel-edison/meta-xfstk \\
   $top_repo_dir/meta-acpi \\
-  $top_repo_dir/meta-qt5 \\
   $extra_layers
   "
 BBLAYERS_NON_REMOVABLE ?= " \\
@@ -337,25 +337,17 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     git pull --rebase origin eds-5.0.0
   fi
 
-  cd ${top_repo_dir}
-  qt5_dir=${top_repo_dir}/meta-qt5
-  if [ ! -d "${qt5_dir}" ]; then
-    # directory does not exist, create it
-    echo "Cloning meta-qt5 layer to ${top_repo_dir} directory from local cache"
-    git clone ${my_dl_dir}/meta-qt5-mirror.git meta-qt5
-    cd ${qt5_dir}
-    git checkout zeus
-  else
-    echo "meta-qt5 already exists, rebasing from local cache"
-    cd ${qt5_dir}
-    git pull --rebase origin zeus
-  fi
+  cd $poky_dir
+  oe_dir=$poky_dir/meta-qt5
+  echo "Cloning meta-qt5 layer to ${oe_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-qt5-mirror.git meta-qt5
+  cd ${oe_dir}
+  git checkout ${yocto_tag}
 
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
   cd $poky_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-site-Make-sys_siglist-default-to-no.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
 
