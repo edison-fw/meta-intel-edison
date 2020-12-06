@@ -180,7 +180,7 @@ main() {
   my_bb_number_thread=0
   my_parallel_make=0
   my_build_name="Custom Edison build by $USER@$HOSTNAME "$(date +"%F %H:%M:%S %Z")
-  all_sdk_hosts="linux32 linux64 win32 win64 macosx"
+  all_sdk_hosts="linux32 linux64 win32 win64"
   extra_package_type="package_deb"
 
   #probe my_sdk_host from uname
@@ -265,9 +265,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
     win64)
       extra_conf="SDKMACHINE = \"x86_64-mingw32\""
       ;;
-    macosx)
-      extra_conf="SDKMACHINE = \"i386-darwin\""
-      ;;
     linux32)
       extra_conf="SDKMACHINE = \"i686\""
       ;;
@@ -285,7 +282,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "meta-openembedded" "https://github.com/openembedded"
   do_update_cache "meta-intel" "git://git.yoctoproject.org"
   do_update_cache "meta-mingw" "git://git.yoctoproject.org"
-  do_update_cache "meta-darwin" "git://git.yoctoproject.org"
   do_update_cache "meta-acpi" "https://github.com/edison-fw"
   do_update_cache "meta-qt5" "https://github.com/meta-qt5"
 
@@ -301,13 +297,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   mingw_dir=$poky_dir/meta-mingw
   echo "Cloning Mingw layer to ${mingw_dir} directory from local cache"
   git clone -b ${yocto_branch} ${my_dl_dir}/meta-mingw-mirror.git meta-mingw
-
-  darwin_dir=$poky_dir/meta-darwin
-  echo "Cloning Darwin layer to ${darwin_dir} directory from local cache"
-  git clone ${my_dl_dir}/meta-darwin-mirror.git meta-darwin
-  cd ${darwin_dir}
-  git checkout 29b5ff31cee24e796f2eb2d2fd1269e3e92c831c
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-Update-gcc-patch.patch
 
   cd $poky_dir
   oe_dir=$poky_dir/meta-openembedded
@@ -354,11 +343,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   if [[ $my_sdk_host == win* ]]
   then
     do_append_layer $mingw_dir
-  fi
-
-  if [[ $my_sdk_host == macosx ]]
-  then
-    do_append_layer $darwin_dir
   fi
 
   yocto_conf_dir=$my_build_dir/build/conf
