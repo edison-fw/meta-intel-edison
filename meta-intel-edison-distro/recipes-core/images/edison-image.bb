@@ -34,9 +34,7 @@ IMAGE_INSTALL_append = " alsa-utils-alsamixer alsa-utils-alsactl alsa-utils-apla
 IMAGE_INSTALL_append = " run-timezone"
 
 # Python and some basic modules
-# removed python-imaging python-pygobject python-dbus 
-IMAGE_INSTALL_append = " python"
-IMAGE_INSTALL_append = " python-distutils python-pkgutil python-audio python-image python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc"
+#IMAGE_INSTALL_append = " python-distutils python-pkgutil python-audio python-image python-email python-netserver python-xmlrpc python-ctypes python-html python-json python-compile python-misc python-numbers python-unittest python-pydoc"
 
 IMAGE_INSTALL_append = " crashlog"
 
@@ -63,7 +61,7 @@ IMAGE_INSTALL_append = " sketch-check"
 IMAGE_INSTALL_append = " packagegroup-core-buildessential"
 IMAGE_INSTALL_append = " zeromq-dev"
 IMAGE_INSTALL_append = " cppzmq-dev"
-IMAGE_INSTALL_append = " python-paho-mqtt-dev"
+IMAGE_INSTALL_append = " python3-paho-mqtt-dev"
 IMAGE_INSTALL_append = " libnss-mdns-dev"
 #IMAGE_INSTALL_append = " xdk-daemon"
 IMAGE_INSTALL_append = " oobe"

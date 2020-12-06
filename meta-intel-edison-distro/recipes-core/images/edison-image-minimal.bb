@@ -58,9 +58,7 @@ IMAGE_INSTALL_append = " sudo"
 IMAGE_INSTALL_append = " screen"
 
 # Python and some basic modules
-# removed python-imaging python-pygobject python-dbus 
-IMAGE_INSTALL_append = " python"
-IMAGE_INSTALL_append = " python-argparse"
+IMAGE_INSTALL_append = " python3"
 
 # Wifi firmware
 # removed modules, already built into kernel
