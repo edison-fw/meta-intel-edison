@@ -8,8 +8,11 @@ You will find more (stale) details in the README file in this directory
 
 This is a fork of [http://git.yoctoproject.org/cgit/cgit.cgi/meta-intel-edison/](URL)
 
-You can find our latest sources on [edison-fw/meta-intel-edison](https://github.com/edison-fw/meta-intel-edison). The documentation can be found in the /docs directory or for the latest (master) on [Intel Edison Image Builder](https://edison-fw.github.io/meta-intel-edison/).
+# Sources and Documentation
+You can find our latest sources on [edison-fw/meta-intel-edison](https://github.com/edison-fw/meta-intel-edison). 
+The documentation can be found in the /docs directory or for the latest (master) on [Intel Edison Image Builder](https://edison-fw.github.io/meta-intel-edison/).
 
+# What's in the branches
 Currently we have Intel's original (factory) firmware: orignal and created four additional branches: dizzy-uptodate, dizzy-latest, dizzy-rt and morty.
 
   * **dizzy-uptodate** tracks origin/dizzy with 3.10.98 kernel. This branch pulls [https://github.com/htot/meta-intel-iot-middleware.git](URL) branch dizzy-uptodate with fixes for paho-mqtt relocated and iotkit-comm-js no longer supported. 
@@ -26,8 +29,8 @@ Currently we have Intel's original (factory) firmware: orignal and created four 
 
 # What to choose
 
-Yocto Morty and later will build on Ubuntu Artful (17.10) up to at least Focal (20.04).
+Yocto Morty will build on Ubuntu Artful (17.10) while Zeus builds up to at least Disco (19.04).
 
-Generally **sumo32** will give best results if you rely on MRAA and UPM. If you want highly configurable hardware and don't need MRAA, the **thud** enabled version is best.
+Generally **sumo32** will give best results if you rely on MRAA and UPM. If you want highly configurable hardware and don't need MRAA, then **thud** enabled version is best. In all other cases, use the latest, **zeus**.
 
 **zeus** has a 64 bit kernel because we can, but may be actually slower than the 32bit kernel. **master** has the same as zeus, but 32 bits.
