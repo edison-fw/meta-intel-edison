@@ -355,6 +355,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Applying patch on poky"
   cd $poky_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-site-Make-sys_siglist-default-to-no.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
 
