@@ -1,7 +1,12 @@
 #!/bin/bash
 
-#ROOTDIR=buster
 ROOTDIR=$1
+dirs="bin boot dev etc home lib media mnt opt proc run sbin sketch sys tmp usr var srv root"
+deploy_dir=tmp/deploy/images/edison
+image_name=edison-image-edison
+image_ext=btrfs
+initrd=core-image-minimal-initramfs-edison.cpio.gz
+
 
 cd out/linux64/build
 
@@ -9,20 +14,77 @@ echo ===============================
 echo === Generating debian image ===
 echo ===============================
 
-rm edison-image-edison.ext4
-fsize=$((`stat --printf="%s" -L toFlash/edison-image-edison.ext4` / 524288))
-dd if=/dev/zero of=edison-image-edison.ext4 bs=512K count=$fsize
-mkfs.ext4 -F -L rootfs edison-image-edison.ext4
+rm ${image_name}.${image_ext}
+fsize=$((`stat --printf="%s" -L toFlash/${image_name}.${image_ext}` / 524288))
+dd if=/dev/zero of=${image_name}.${image_ext} bs=512K count=$fsize
+# Make and copy the rootfs content in the btrfs image
+sudo mkfs.btrfs -L rootfs -r $ROOTDIR ${image_name}.${image_ext}
 
-# Copy the rootfs content in the ext4 image
-rm -rf tmpext4
-mkdir tmpext4
-sudo mount -o loop edison-image-edison.ext4 tmpext4
-sudo cp -a $ROOTDIR/* tmpext4/
-sudo umount tmpext4
-rmdir tmpext4
+# mount the btrfs image
+if [[ `findmnt -M "tmpbtrfs"` ]]; then
+    echo Already mounted
+else
+    rm -rf tmpbtrfs
+    mkdir tmpbtrfs
+    sudo mount -o loop ${image_name}.${image_ext} tmpbtrfs
+fi
 
-cp edison-image-edison.ext4 toFlash/
+# take @ snapshot of the partition
+if [ ! -d tmpbtrfs/@ ]; then
+    sudo btrfs su snap tmpbtrfs tmpbtrfs/@
+fi
+
+# create @home
+if [ ! -d tmpbtrfs/@home ]; then
+    sudo btrfs su create tmpbtrfs/@home
+fi
+
+# create @boot and copy initrd into there, leave as mount point
+if [ ! -d tmpbtrfs/@boot ]; then
+    sudo btrfs su create tmpbtrfs/@boot
+    sudo mv tmpbtrfs/boot/* tmpbtrfs/@boot/
+    sudo cp ${deploy_dir}/${initrd} tmpbtrfs/@boot/initrd
+fi
+
+# create @modules move /lib/modules/* into there, leave as mount point
+if [ ! -d tmpbtrfs/@modules ]; then
+    sudo btrfs su create tmpbtrfs/@modules
+    sudo mv tmpbtrfs/lib/modules/* tmpbtrfs/@modules/
+fi
+
+# take @new snapshot of the partition, @new is now with empty /boot and /lib/modules
+# kernel and modules are installed seperately
+if [ ! -d tmpbtrfs/@new ]; then
+    sudo btrfs su snap -r tmpbtrfs/@ tmpbtrfs/@new
+    for dir in ${dirs}
+        do
+        echo rm -rf tmpbtrfs/$dir
+        sudo rm -rf tmpbtrfs/$dir
+    done
+fi
+
+# btrfs send the snapshot
+if [ -d tmpbtrfs/@new ]; then
+    sudo btrfs send tmpbtrfs/@new/ > ${image_name}.snapshot
+    sudo btrfs su del tmpbtrfs/@new
+fi
+
+# btrfs compress the snapshot
+sudo 7za a edison-image-edison.snapshot.7z edison-image-edison.snapshot
+
+# btrfs delete the snapshot
+sudo rm ${image_name}.snapshot
+
+sudo btrfs su sync tmpbtrfs
+
+# unmount the btrfs image
+if [[ `findmnt -M "tmpbtrfs"` ]]; then
+    sudo umount tmpbtrfs
+fi
+
+rmdir tmpbtrfs
+
+#cp edison-image-edison.btrfs toFlash/
 # Make sure that non-root users can read write the flash files
 # This seems to fix a strange flashing issue in some cases
 sudo chmod -R a+rw toFlash
