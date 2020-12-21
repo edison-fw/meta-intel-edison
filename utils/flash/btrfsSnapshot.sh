@@ -15,8 +15,6 @@ set -e
 
 if [ "x$1x" != "xx" ] && [ -d $1 ]; then
     deploy_dir=$1/${deploy_dir}
-else
-    deploy_dir=build/${deploy_dir}
 fi
 
 if [ ! -e ${deploy_dir}/${image_name}.${image_ext} ]; then
