@@ -45,7 +45,7 @@ function remove_kernel() {
     fi
     ssh ${EDISON} "dpkg --get-selections | grep kernel | grep $1 | cut -f1 > selections.txt"
     ssh ${EDISON} "mv /boot/bzImage /boot/bzImage.old"
-    ssh ${EDISON} 'apt-get -y autoremove $(<selections.txt) && apt-get -y autoclean'
+    ssh ${EDISON} 'apt-get -y --allow-unauthenticated --purge autoremove $(<selections.txt) && apt-get -y --allow-unauthenticated autoclean'
     ssh ${EDISON} "mv /boot/bzImage.old /boot/bzImage"
 }
 
