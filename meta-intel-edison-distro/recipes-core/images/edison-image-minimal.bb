@@ -84,7 +84,7 @@ IMAGE_INSTALL_append = " tzdata"
 # linux 5.0.0 requires a source of entropy, use TRNG
 IMAGE_INSTALL_append = " rng-tools"
 
-IMAGE_INSTALL_append = " libgpiod"
+IMAGE_INSTALL_append = " libgpiod-tools"
 
 # Add monitoring tools
 IMAGE_INSTALL_append = " htop"
