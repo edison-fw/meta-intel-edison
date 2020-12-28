@@ -31,9 +31,8 @@ else
     sudo mount -o loop ${deploy_dir}/${image_name}.${image_ext} tmpbtrfs
 fi
 
-# take @ snapshot of the partition
-if [ ! -d tmpbtrfs/@ ]; then
-    sudo btrfs su snap tmpbtrfs tmpbtrfs/@
+if [ -f tmpbtrfs/etc/fstab.btrfs ]; then
+    sudo mv tmpbtrfs/etc/fstab.btrfs tmpbtrfs/etc/fstab
 fi
 
 # create @home
@@ -52,6 +51,11 @@ fi
 if [ ! -d tmpbtrfs/@modules ]; then
     sudo btrfs su create tmpbtrfs/@modules
     sudo mv tmpbtrfs/lib/modules/* tmpbtrfs/@modules/
+fi
+
+# take @ snapshot of the partition
+if [ ! -d tmpbtrfs/@ ]; then
+    sudo btrfs su snap tmpbtrfs tmpbtrfs/@
 fi
 
 # take @new snapshot of the partition, @new is now with empty /boot and /lib/modules
