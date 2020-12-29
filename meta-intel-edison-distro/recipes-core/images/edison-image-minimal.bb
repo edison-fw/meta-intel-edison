@@ -60,6 +60,10 @@ IMAGE_INSTALL_append = " screen"
 # Python and some basic modules
 IMAGE_INSTALL_append = " python3"
 
+# To allow booting alternate kernel
+IMAGE_INSTALL_append = " bootsuccess"
+
+
 # Wifi firmware
 # removed modules, already built into kernel
 IMAGE_INSTALL_append = " bcm43340-fw"
