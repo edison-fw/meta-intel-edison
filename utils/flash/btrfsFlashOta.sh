@@ -57,8 +57,8 @@ function install_kernel {
         echo "$kernels"
         exit 1
     fi
-    ssh ${EDISON} "mv /boot/bzImage /boot/bzImage.old && apt-get -o Dpkg::Options::="--force-overwrite" -y --allow-unauthenticated install kernel kernel-modules && mv /boot/bzImage.old /boot/bzImage"
-    ssh ${EDISON} "mv /boot/bzImage /boot/bzImageNew"
+    ssh ${EDISON} "mv /boot/bzImage /boot/bzImage.old && apt-get -o Dpkg::Options::="--force-overwrite" -y --allow-unauthenticated install kernel* && mv /boot/bzImage.old /boot/bzImage"
+    ssh ${EDISON} "apt-get remove -y kernel-vmlinux && mv /boot/bzImage /boot/bzImageNew"
     scp ${build_dir}/tmp/deploy/images/edison/core-image-minimal-initramfs-edison.cpio.gz ${EDISON}:/boot/initrdNew
 }
 
