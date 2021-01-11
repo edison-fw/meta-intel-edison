@@ -159,6 +159,7 @@ else
     if [[ `ssh ${EDISON} "echo hello" 2> /dev/null` == "hello" ]] ; then
         echo Succes
             CONNECTED=1
+            shift;
     fi;
 fi;
 
