@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 inherit systemd
 
-RDEPENDS_${PN} = "python3 bash"
+RDEPENDS_${PN} = "python3 bash flash-led"
 
 SYSTEMD_SERVICE_${PN} = "pwr-button-handler.service"
 
