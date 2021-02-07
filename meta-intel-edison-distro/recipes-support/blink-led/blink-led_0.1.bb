@@ -24,3 +24,4 @@ do_install() {
         install -m 644 ${WORKDIR}/blink-led.service ${D}/${systemd_unitdir}/system
 }
 
+SYSTEMD_AUTO_ENABLE = "disable"

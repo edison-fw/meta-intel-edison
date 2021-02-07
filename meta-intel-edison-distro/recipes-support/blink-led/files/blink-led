@@ -26,46 +26,16 @@
 
 # This is a very poor implementation as it uses subprocesses for init
 
-import subprocess
-import time
 import argparse
-import signal
 import sys
-import os
 import gpiod
 
-initial_led_state = "high"
-
-def write_led(value):
-    if value == "high":
-        level = 1
-    else:
-        level = 0
-    led.set_value(level)
-
-def blink_once():
-    write_led("low")
-    time.sleep(1./args.frequency*args.duty_cycle)
-    write_led("high")
-    time.sleep(1./args.frequency*(1.-args.duty_cycle))
-
-def deinit_led_gpio():
-    # Revert to default state with LED activated
-    write_led(initial_led_state)
-
-    # Deinit LED GPIO
-    led.release()
- 
-def signal_term_handler(signal, frame):
-    print("Signal intercepted: de-initing LED GPIOs")
-    deinit_led_gpio()
-    sys.exit(0)
 
 def set_line(name, value):
-    line = gpiod.find_line(name)
-    line.request(consumer=line.owner().name(), type=gpiod.LINE_REQ_DIR_OUT)
-    line.set_value(value)
-    line.release()
+	line = gpiod.find_line(name)
+	line.request(consumer=line.owner().name(), type=gpiod.LINE_REQ_DIR_OUT)
+	line.set_value(value)
+	line.release()
 
 parser = argparse.ArgumentParser(description="Blink the Edison Arduino board LED.")
 parser.add_argument("--frequency", type=float, default=4, help="blink frequency in Hz")
@@ -74,31 +44,38 @@ parser.add_argument("--duty_cycle",  type=float, default=0.5, help="duty cycle b
 
 args = parser.parse_args()
 
-# Allows to quit cleanly with CRTL+C or SIGTERM (systemd use SIGTERM to kill a service by default)
-signal.signal(signal.SIGTERM, signal_term_handler)
-signal.signal(signal.SIGINT, signal_term_handler)
+led = gpiod.Chip("gpiochip0").get_line(40)
+if led.consumer() != "heartbeat":
+	led.release()
+	sys.exit(1)
 
 set_line("TRI_STATE_ALL", 0)
 set_line("SPI_CLK_SEL", 0)
 set_line("MUX18_DIR", 1)
 set_line("TRI_STATE_ALL", 0)
-led = gpiod.Chip("gpiochip0").get_line(40)
-if led.is_used():
-    led.release()
-    sys.exit(0)
-led.request(consumer=led.owner().name(), type=gpiod.LINE_REQ_DIR_OUT)
-if led.get_value() == 0:
-    initial_led_state = "low"
-else:
-    initial_led_state = "high"
 
-# Blink LED
-if args.duration >= 0:
-    for i in range(0, int(args.duration*args.frequency)):
-        blink_once()
-else:
-    while True:
-        blink_once()
-
-deinit_led_gpio()
-
+trigger = open("/sys/class/leds/heartbeat/trigger", "r")
+triggers = trigger.read()
+trigger.close()
+if "[heartbeat]" in triggers:
+	if "timer" in triggers:
+		trigger = open("/sys/class/leds/heartbeat/trigger", "w")
+		trigger.write("timer")
+		trigger.close()
+		delay_on = open("/sys/class/leds/heartbeat/delay_on", "w")
+		delay_on.write(str(int(1000 * args.duty_cycle / args.frequency)))
+		delay_on.close()
+		delay_off = open("/sys/class/leds/heartbeat/delay_off", "w")
+		delay_off.write(str(int(1000 * (1 - args.duty_cycle) / args.frequency)))
+		delay_off.close()
+	else:
+	    print("module ledtrig-timer not loaded")
+	    sys.exit(1)
+elif "[timer]" in triggers:
+	if "heartbeat" in triggers:
+		trigger = open("/sys/class/leds/heartbeat/trigger", "w")
+		trigger.write("heartbeat")
+		trigger.close()
+	else:
+		print("module ledtrig-heartbeat not loaded")
+		sys.exit(1)

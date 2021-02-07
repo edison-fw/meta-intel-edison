@@ -3,8 +3,8 @@ Description=Edison Arduino board LED Blinker
 
 [Service]
 ExecStart=/usr/bin/blink-led
-Restart=on-failure
+ExecStop=/usr/bin/blink-led
+RemainAfterExit=Yes
 
 [Install]
 WantedBy=basic.target
-
