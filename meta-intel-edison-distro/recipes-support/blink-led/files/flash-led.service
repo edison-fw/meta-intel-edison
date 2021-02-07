@@ -1,0 +1,11 @@
+[Unit]
+Description=Edison Arduino board fast LED Blinker
+
+[Service]
+ExecStart=/usr/bin/blink-led --frequency 2 --duty_cycle 0.05
+ExecStop=/usr/bin/blink-led
+RemainAfterExit=Yes
+
+[Install]
+WantedBy=basic.target
+
