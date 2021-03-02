@@ -29,7 +29,7 @@ SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-contino
 # usefull kernel debug options here
 #
 
-SRCREV ??= "32bc518dbdcf6ceeb53511ec91d191552885a126"
+SRCREV ??= "b73f308e567c3b1b25529f22c3ff495242760c54"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
 LINUX_VERSION ?= "${PV}"
