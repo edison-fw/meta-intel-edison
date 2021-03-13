@@ -5,7 +5,7 @@ require recipes-kernel/linux/linux-yocto.inc
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-acpi-${PV} \
+SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-${PV} \
         file://ftdi_sio.cfg \
         file://smsc95xx.cfg \
         file://bt_more.cfg \
@@ -23,14 +23,13 @@ SRC_URI = "git://github.com/htot/linux.git;protocol=https;branch=eds-acpi-${PV} 
 # kernel patches
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-SRC_URI_append = " file://0001-hsu_dma_pci-disable-spurious-interrupt.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 
 # usefull kernel debug options here
 #
 
-SRCREV ??= "3ef79b9c26d6b7a6a6e33b38ead66e3e48180178"
+SRCREV ??= "57a5e114bb5a89d0a6d9871a2672f78332411a61"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
 LINUX_VERSION ?= "${PV}"
