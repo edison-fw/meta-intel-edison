@@ -25,12 +25,13 @@ Currently we have Intel's original (factory) firmware: orignal and created four 
 * **sumo32** and **sumo64-acpi** based on Yocto Sumo with kernel 4.18
 * **thud** (64 bit) based on Yocto Thud with kernel 5.2.
 * **warrior** (64 bit) based on Yocto Warrior with kernel 5.4. This image now allows building Debian Buster as well.
-* **zeus** (64 bit) based on Yocto Warrior with kernel 5.6. 
+* **zeus** (64 bit) based on Yocto Warrior with kernel 5.6.
+* * **dunfell** (64 bit) based on Yocto Dunfell with kernel 5.11. 
 
 # What to choose
 
-Yocto Morty will build on Ubuntu Artful (17.10) while Zeus builds up to at least Disco (19.04).
+Yocto Morty will build on Ubuntu Artful (17.10) while Dunfell builds on Ubuntu Groovy (20.10).
 
-Generally **sumo32** will give best results if you rely on MRAA and UPM. If you want highly configurable hardware and don't need MRAA, then **thud** enabled version is best. In all other cases, use the latest, **zeus**.
+Generally **sumo32** will give best results if you rely on MRAA and UPM. In all other cases, use the latest, **dunfell**.
 
-**zeus** has a 64 bit kernel because we can, but may be actually slower than the 32bit kernel. **master** has the same as zeus, but 32 bits.
+**dunfell** has a 64 bit kernel because we can, but may be actually slower than the 32bit kernel. **master** has the same as dunfell, but 32 bits.
