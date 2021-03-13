@@ -26,21 +26,21 @@ Instead you can do the following:
 Now you probably have a work directory where you keep your project sources:
 
         cd <your work dir>
-        ln /opt/poky-edison/2.4.2 ./2.4.2
+        ln /opt/poky-edison/3.1.4 ./3.1.4
 
-Now it will appear as if the SDK is installed into <your work dir>/2.4.2
+Now it will appear as if the SDK is installed into <your work dir>/3.1.4
 
 ### Using the SDK
 
 The SDK is initialized by running the script:
 
-        source <your work dir>/2.4.2/environment-setup-core2-64-poky-linux
+        source <your work dir>/3.1.4/environment-setup-core2-64-poky-linux
 
 (for 64 bit target)
 
 or
 
-        source <your work dir>/2.4.2/environment-setup-core2-32-poky-linux
+        source <your work dir>/3.1.4/environment-setup-core2-32-poky-linux
 
 (for 32 bit target)
 
