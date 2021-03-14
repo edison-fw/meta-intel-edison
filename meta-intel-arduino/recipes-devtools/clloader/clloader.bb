@@ -50,6 +50,7 @@ pkg_prerm_${PN} () {
 inherit systemd
 
 SYSTEMD_SERVICE_${PN} = "clloader.service sketch_reset.service"
+SYSTEMD_AUTO_ENABLE = "disable"
 
 FILES_${PN} += "${systemd_unitdir}/system/clloader.service \
 		${systemd_unitdir}/system/sketch_reset.service \
