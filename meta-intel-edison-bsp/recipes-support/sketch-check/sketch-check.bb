@@ -8,6 +8,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
 inherit systemd
 
 SYSTEMD_SERVICE_${PN} = "sketch-check.service"
+SYSTEMD_AUTO_ENABLE = "disable"
 
 SRC_URI = "file://sketch-check.sh"
 SRC_URI += "file://sketch-check.service"
