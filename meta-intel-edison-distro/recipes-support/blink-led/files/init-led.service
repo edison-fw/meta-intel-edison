@@ -1,0 +1,9 @@
+[Unit]
+Description=Edison Arduino board LED Blinker
+Before=post-install.service
+
+[Service]
+ExecStart=/usr/bin/init-led
+
+[Install]
+WantedBy=basic.target

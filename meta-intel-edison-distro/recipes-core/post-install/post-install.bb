@@ -9,7 +9,7 @@ inherit allarch
                 
 SYSTEMD_SERVICE_${PN} = "post-install.service"
 
-RDEPENDS_${PN} = "systemd bash"
+RDEPENDS_${PN} = "systemd bash blink-led"
 
 do_install() {
 	install -d ${D}/sbin
