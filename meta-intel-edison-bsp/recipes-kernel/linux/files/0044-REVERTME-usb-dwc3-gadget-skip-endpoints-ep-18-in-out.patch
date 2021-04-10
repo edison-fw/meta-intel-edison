@@ -1,0 +1,48 @@
+From e311ad814cf72e8caa811819f791f10dc34d5b08 Mon Sep 17 00:00:00 2001
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+Date: Wed, 8 Mar 2017 15:20:47 +0200
+Subject: [PATCH 44/50] REVERTME: usb: dwc3: gadget: skip endpoints
+ ep[18]{in,out}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Intel Edison's SoC uses these endpoints for tracing and they shouldn't
+be used for normal transfers, we need to skip them.
+
+This hack will be reverted once we have a proper binding for
+describing such endpoints.
+
+• 1 High BW Bulk IN (IN#1) (RTIT)
+• 1 1KB BW Bulk IN (IN#8)+ 1 1KB BW Bulk OUT (Run Control) (OUT#8)
+
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/usb/dwc3/gadget.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index c7ef218e7a8c..9f2e10ccbf35 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2722,6 +2722,16 @@ static int dwc3_gadget_init_endpoints(struct dwc3 *dwc, u8 total)
+ 	for (epnum = 0; epnum < total; epnum++) {
+ 		int			ret;
+ 
++		/*
++		 * REVERTME: This is a temporary hack to get Intel
++		 * Edison's USB working with mainline kernel. This hack
++		 * will be reverted once we come to conclusion about how
++		 * to describe Trace endpoints which should be ignored
++		 * by dwc3.
++		 */
++		if (epnum == 3 || (epnum >> 1) == 8)
++			continue;
++
+ 		ret = dwc3_gadget_init_endpoint(dwc, epnum);
+ 		if (ret)
+ 			return ret;
+-- 
+2.27.0
+

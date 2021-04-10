@@ -1,0 +1,33 @@
+From c564e0e692068d6d699187015d592675bf82da47 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 10 Apr 2021 14:18:58 +0200
+Subject: [PATCH 48/50] usb: dwc3: gadget: increase BESL baseline to 6
+
+DWC3 gadget expiriences speed throttling after plug/replug related to LPM.
+
+This is caused by phy/HW having a higher low power exit latency. By
+default, dwc3 sets the base line BESL value to 1 (or 150us). A value
+of 6 (i.e. 1ms) appears to give good results.
+
+Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/usb/dwc3/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index ba859ea08b25..2f949aba9402 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2486,7 +2486,7 @@ static void dwc3_gadget_config_params(struct usb_gadget *g,
+ 		 * recommended BESL baseline to 1 and clamp the BESL deep to be
+ 		 * within 2 to 15.
+ 		 */
+-		params->besl_baseline = 1;
++		params->besl_baseline = 6;
+ 		if (dwc->is_utmi_l1_suspend)
+ 			params->besl_deep =
+ 				clamp_t(u8, dwc->hird_threshold, 2, 15);
+-- 
+2.27.0
+
