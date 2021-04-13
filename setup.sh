@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="dunfell"
-yocto_tag="dunfell"
+yocto_branch="gatesgarth"
+yocto_tag="gatesgarth"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
@@ -323,7 +323,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   else
     echo "meta-acpi already exists, rebasing from local cache"
     cd ${acpi_dir}
-    git pull --rebase origin eds-5.0.0
+    git pull --rebase origin ${yocto_tag}
   fi
 
   cd $poky_dir
