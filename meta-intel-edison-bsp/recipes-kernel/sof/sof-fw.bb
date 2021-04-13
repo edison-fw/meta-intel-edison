@@ -5,7 +5,7 @@ SECTION = "kernel"
 SRCREV ??= "e6d11bf44f0c7ad6032d201e753aa254bb075ee7"
 SRC_URI = "git://github.com/thesofproject/sof-bin.git;branch=stable-v1.5;protocol=git;destsuffix=edison-firmware"
 
-S = "${WORKDIR}/"
+S = "${WORKDIR}"
 
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://edison-firmware/LICENCE.Intel;md5=54b4f1a2dd35fd85bc7a1d4afa731b78"
