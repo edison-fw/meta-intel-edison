@@ -91,6 +91,9 @@ IMAGE_INSTALL_append = " upm-dev"
 # Add oFono
 IMAGE_INSTALL_append = " ofono"
 
+# Add ppp if supported by DISTRO_FEATURES
+IMAGE_INSTALL_append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " ppp", "", d)}"
+
 # Add battery level detection
 IMAGE_INSTALL_append = " battery-voltage"
 

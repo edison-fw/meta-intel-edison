@@ -58,6 +58,7 @@ SRC_URI_append = " file://bpf.cfg"
 SRC_URI_append = " file://btrfs.cfg"
 SRC_URI_append = " file://sof_nocodec.cfg"
 SRC_URI_append = " file://audio.cfg"
+SRC_URI_append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
 
 # kernel patches
 SRC_URI_append = " file://0042-spi-pxa2xx-introduce-special-type-for-Merrifield-SPI.patch"
