@@ -21,14 +21,15 @@ SRC_URI = "git://github.com/edison-fw/linux.git;protocol=https;branch=eds-acpi-$
 
 # kernel patches
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
-SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
+SRC_URI_append = " file://0001-WIP-serial-8250_dma-use-sgl-on-transmit.patch"
+SRC_URI_append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 
 # usefull kernel debug options here
 #
 
-SRCREV ??= "2d81ed5513fcee90af4bfb7f983ca12134111ed1"
+SRCREV ??= "e87f773147c8a1428219caec1d273ce9984e0f65"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
 LINUX_VERSION ?= "${PV}"
