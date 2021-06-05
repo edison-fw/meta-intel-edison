@@ -1,0 +1,58 @@
+From 55d4ac9a9d4be9f8ad16f86a6a523b60dd262ad7 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sun, 18 Mar 2018 17:04:23 +0100
+Subject: [PATCH] 8250_mid: toggle IO7 on ttyS1 interrupt entry
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/tty/serial/8250/8250_mid.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/tty/serial/8250/8250_mid.c b/drivers/tty/serial/8250/8250_mid.c
+index 2625d8b86f64..bcedd1f91bbc 100644
+--- a/drivers/tty/serial/8250/8250_mid.c
++++ b/drivers/tty/serial/8250/8250_mid.c
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <linux/bitops.h>
++#include <linux/gpio.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/rational.h>
+@@ -84,6 +85,12 @@ static int tng_handle_irq(struct uart_port *p)
+ 
+ 	chip = pci_get_drvdata(mid->dma_dev);
+ 
++        /* Toggle IO7 pin which corresponds to GP48*/
++	if(gpio_is_valid(48)) {
++		gpio_set_value(48, 1);
++		gpio_set_value(48, 0);
++	};
++
+ 	/* Rx DMA */
+ 	err = hsu_dma_get_status(chip, mid->dma_index * 2 + 1, &status);
+ 	if (err > 0) {
+@@ -246,6 +253,10 @@ static int mid8250_startup(struct uart_port *port)
+ 
+ 	if (up->dma) up->dma->rx_dma(up);
+ 
++	/* allocate IO7 pin to toggle */
++	gpio_request(48, "ttyS0-2 INT");
++	gpio_direction_output(48, 0);
++
+ 	return ret;
+ }
+ 
+@@ -256,6 +267,8 @@ static void mid8250_shutdown(struct uart_port *port)
+ 
+ 	if (up->dma) serial8250_rx_dma_flush(up);
+ 
++	gpio_free(48);
++
+ 	serial8250_do_shutdown(port);
+ }
+ 
+-- 
+2.27.0
+
