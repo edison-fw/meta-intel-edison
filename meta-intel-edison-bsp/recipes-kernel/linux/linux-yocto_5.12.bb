@@ -71,12 +71,13 @@ SRC_URI_append = " file://0048-usb-dwc3-gadget-increase-BESL-baseline-to-6.patch
 SRC_URI_append = " file://0049-usb-dwc3-pci-Enable-usb2-gadget-lpm-disable-for-Inte.patch"
 SRC_URI_append = " file://0050-extcon-intel-mrfld-initialize-mrfld_extcon-status.patch"
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
-SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
+SRC_URI_append = " file://0001-WIP-serial-8250_dma-use-sgl-on-transmit.patch"
+SRC_URI_append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 
 # usefull kernel debug options here
-#
+#SRC_URI_append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 
 SRCREV ??= "v${PV}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
