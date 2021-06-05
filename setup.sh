@@ -50,6 +50,9 @@ LICENSE_FLAGS_WHITELIST += "commercial"
 COPY_LIC_MANIFEST = "1"
 COPY_LIC_DIRS = "1"
 FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
+PACKAGE_CLASSES += " package_deb sign_package_feed"
+PACKAGE_FEED_GPG_NAME = "gpg_key"
+PACKAGE_FEED_GPG_PASSPHRASE_FILE="path_to_file/passphrase"
 PACKAGE_CLASSES ?= "$extra_package_type"
 $extra_archiving
 $extra_conf
@@ -337,6 +340,8 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Applying patch on poky"
   cd $poky_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-gpg-sign-Add-parameters-to-gpg-signature-function.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0002-package_manager-sign-DEB-package-feeds.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
 
