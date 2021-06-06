@@ -343,6 +343,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git apply $top_repo_dir/meta-intel-edison/utils/0001-gpg-sign-Add-parameters-to-gpg-signature-function.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0002-package_manager-sign-DEB-package-feeds.patch
   git apply $top_repo_dir/meta-intel-edison/utils/image-live_bbclass-order-do_bootimg-after-do_rootfs.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
 

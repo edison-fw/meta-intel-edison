@@ -1,0 +1,151 @@
+From 8f8e638fca7402569d9c905c8f5120d20cd44868 Mon Sep 17 00:00:00 2001
+From: Trevor Gamblin <trevor.gamblin@windriver.com>
+Date: Mon, 7 Jun 2021 15:03:06 -0400
+Subject: [PATCH] Add shared make jobserver support
+
+This is a rework of Richard Purdie's patch at
+http://git.yoctoproject.org/cgit.cgi/poky-contrib/commit/?h=rpurdie/wipqueue4&id=d66a327fb6189db5de8bc489859235dcba306237
+in order to work with the latest revision of the project.
+
+From the original patch description:
+
+|This is a WIP to add a make job server into bitbake. This means the pool
+|of make tokens is central and shared by all tasks executed instead of the
+|current one job pool per task. Currently we can end up with many more
+|make subprocesses executing that is intended or optimal.
+|
+|Implementation wise, make usually uses a pipe for this functionality. Here
+|we substitute a named pipe (fifo) and intercept the make commands, passing
+|in file descriptors to the central fifo. This assumes knowledge of make's
+|internal API, on the plus side it hasn't changed since 1999.
+|
+|TODO:
+|  * Remove hardcoded /tmp/makefifo and use something in TMPDIR or similar
+|    (alongside the lock file?)
+|  * Remove hardcoded make threads number and set from PARALLEL_MAKE
+|  * If PARALELL_MAKE = "", don't set MAKEARGS (currently parallelism is
+|    set everywhere) (need to check for -j in make commandline)
+
+Signed-off-by: Trevor Gamblin <trevor.gamblin@windriver.com>
+---
+ bitbake/bin/bitbake-worker  |  1 +
+ bitbake/lib/bb/runqueue.py  | 24 ++++++++++++++++++++++++
+ meta/conf/bitbake.conf      |  2 +-
+ scripts/make-intercept/make | 31 +++++++++++++++++++++++++++++++
+ 4 files changed, 57 insertions(+), 1 deletion(-)
+ create mode 100755 scripts/make-intercept/make
+
+diff --git a/bitbake/bin/bitbake-worker b/bitbake/bin/bitbake-worker
+index 9334f11fb8..1e5b5fab9f 100755
+--- a/bitbake/bin/bitbake-worker
++++ b/bitbake/bin/bitbake-worker
+@@ -231,6 +231,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
+                 the_data.setVar("BUILDNAME", workerdata["buildname"])
+                 the_data.setVar("DATE", workerdata["date"])
+                 the_data.setVar("TIME", workerdata["time"])
++                the_data.setVar("BB_MAKEFIFO", workerdata["makefifo"])
+                 for varname, value in extraconfigdata.items():
+                     the_data.setVar(varname, value)
+ 
+diff --git a/bitbake/lib/bb/runqueue.py b/bitbake/lib/bb/runqueue.py
+index aa1d6b2711..b2236a9a0d 100644
+--- a/bitbake/lib/bb/runqueue.py
++++ b/bitbake/lib/bb/runqueue.py
+@@ -1271,6 +1271,7 @@ class RunQueue:
+             "date" : self.cfgData.getVar("DATE"),
+             "time" : self.cfgData.getVar("TIME"),
+             "hashservaddr" : self.cooker.hashservaddr,
++            "makefifo" : self.cfgData.getVar("BB_MAKEFIFO", True),
+         }
+ 
+         worker.stdin.write(b"<cookerconfig>" + pickle.dumps(self.cooker.configuration) + b"</cookerconfig>")
+@@ -1429,6 +1430,27 @@ class RunQueue:
+ 
+         return bb.utils.better_eval(call, locs)
+ 
++    def setup_make_fifo(self):
++        fifoname = "/tmp/makefifo"
++        self.cfgData.setVar("BB_MAKEFIFO", fifoname)
++        m = re.search(r'-j (\d+)', self.cfgData.getVar("PARALLEL_MAKE", True))
++        if m:
++            threads = int(m.group(1))
++        else:
++            threads = 1
++
++        if os.path.exists(fifoname):
++            os.remove(fifoname)
++        os.mkfifo(fifoname)
++ 
++        # Has to be open for read and writing
++        self.makereadfd = os.open(fifoname, os.O_RDONLY|os.O_NONBLOCK)
++        self.makewritefd = os.open(fifoname, os.O_WRONLY)
++        wfd = os.fdopen(self.makewritefd, 'w')
++
++        for x in range(0, threads):
++            wfd.write('+')
++
+     def _execute_runqueue(self):
+         """
+         Run the tasks in a queue prepared by rqdata.prepare()
+@@ -1463,6 +1485,8 @@ class RunQueue:
+             self.rqdata.init_progress_reporter.next_stage()
+             bb.event.fire(bb.event.DepTreeGenerated(depgraph), self.cooker.data)
+ 
++            self.setup_make_fifo()
++
+             if not self.dm_event_handler_registered:
+                  res = bb.event.register(self.dm_event_handler_name,
+                                          lambda x: self.dm.check(self) if self.state in [runQueueRunning, runQueueCleanUp] else False,
+diff --git a/meta/conf/bitbake.conf b/meta/conf/bitbake.conf
+index eb282d1741..2ea9e5e46b 100644
+--- a/meta/conf/bitbake.conf
++++ b/meta/conf/bitbake.conf
+@@ -471,7 +471,7 @@ EXTRA_IMAGEDEPENDS = ""
+ # Toolchain info.
+ ##################################################################
+ 
+-PATH_prepend = "${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
++PATH_prepend = "${COREBASE}/scripts/make-intercept:${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
+ export PATH
+ 
+ ##################################################################
+diff --git a/scripts/make-intercept/make b/scripts/make-intercept/make
+new file mode 100755
+index 0000000000..56b24e468d
+--- /dev/null
++++ b/scripts/make-intercept/make
+@@ -0,0 +1,31 @@
++#!/usr/bin/env python3
++import sys
++import os
++import subprocess
++
++if "BB_MAKEFIFO" in os.environ:
++    fifoname = os.environ["BB_MAKEFIFO"]
++
++    r = os.open(fifoname, os.O_RDONLY|os.O_NONBLOCK)
++    w = os.open(fifoname, os.O_WRONLY)
++    os.close(r)
++    r = os.open(fifoname, os.O_RDONLY)
++
++    seen = False
++    for i in sys.argv:
++        if "-j" in i:
++            seen = True
++    if seen:
++        os.environ["MAKEFLAGS"] = "-j --jobserver-fds=" + str(r) + "," + str(w)
++
++newpath = []
++origpath = os.environ["PATH"].split(":")
++for p in origpath:
++    if "make-intercept" in p:
++         continue
++    newpath.append(p)
++os.environ["PATH"] = ":".join(newpath)
++
++sys.argv[0] = "make"
++
++sys.exit(subprocess.call(sys.argv, shell=False))
+-- 
+2.30.2
+
