@@ -102,6 +102,8 @@ IMAGE_INSTALL_append = " perf"
 
 # package management - where to find this?
 #IMAGE_INSTALL_append = " aptitude"
+IMAGE_INSTALL_append = " gnupg"
+IMAGE_INSTALL_append = " diffutils"
 
 # Provides strace and gdb
 IMAGE_FEATURES += " tools-debug"
