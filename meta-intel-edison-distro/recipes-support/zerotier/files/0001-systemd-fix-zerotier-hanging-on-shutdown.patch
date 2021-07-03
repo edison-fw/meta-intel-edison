@@ -1,0 +1,40 @@
+From 5cce88edaf620f0863383ed4523615113b216d38 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sun, 4 Jul 2021 18:37:00 +0200
+Subject: [PATCH] systemd: fix zerotier hanging on shutdown
+
+On system shutdown, zerotier is stopped after the network and gets
+itself into a connection timeout loop. It hits the TimeoutStopUSec= and
+is forcibly killed by SIGKILL. Order zerotier after network.target so it
+can shutdown gracefully while the network is still up.
+Suggested-by: https://github.com/zerotier/ZeroTierOne/pull/1093/commits/c9f07e855e2abac9c1a29cd412d888500a6a0bbb
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ debian/zerotier-one.service | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/debian/zerotier-one.service b/debian/zerotier-one.service
+index 133d4490..f582cbc1 100644
+--- a/debian/zerotier-one.service
++++ b/debian/zerotier-one.service
+@@ -2,11 +2,16 @@
+ Description=ZeroTier One
+ After=network-online.target
+ Wants=network-online.target
++# Shutdown zerotier before tearing down the network
++# https://github.com/zerotier/ZeroTierOne/pull/1093/commits/c9f07e855e2abac9c1a29cd412d888500a6a0bbb
++After=network.target
+ 
+ [Service]
+ ExecStart=/usr/sbin/zerotier-one
+ Restart=always
+ KillMode=process
++# Override default 90 second timeout in pathological conditions
++TimeoutStopSec=5
+ 
+ [Install]
+ WantedBy=multi-user.target
+-- 
+2.30.2
+
