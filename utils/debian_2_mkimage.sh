@@ -14,7 +14,10 @@ echo ===============================
 echo === Generating debian image ===
 echo ===============================
 
-rm ${image_name}.${image_ext}
+if [ -f ${image_name}.${image_ext} ]; then
+    rm ${image_name}.${image_ext}
+fi
+
 fsize=$((`stat --printf="%s" -L toFlash/${image_name}.${image_ext}` / 524288))
 dd if=/dev/zero of=${image_name}.${image_ext} bs=512K count=$fsize
 # Make and copy the rootfs content in the btrfs image
@@ -69,8 +72,10 @@ if [ -d tmpbtrfs/@new ]; then
     sudo btrfs su del tmpbtrfs/@new
 fi
 
+sudo chmod a+rw ${image_name}.snapshot
+
 # btrfs compress the snapshot
-sudo 7za a edison-image-edison.snapshot.7z edison-image-edison.snapshot
+7za a ${image_name}.snapshot.7z ${image_name}.snapshot
 
 # btrfs delete the snapshot
 sudo rm ${image_name}.snapshot
@@ -84,7 +89,8 @@ fi
 
 rmdir tmpbtrfs
 
-cp edison-image-edison.btrfs toFlash/
+mv ${image_name}.btrfs toFlash/
+mv ${image_name}.snapshot.7z tmp/deploy/images/edison
 # Make sure that non-root users can read write the flash files
 # This seems to fix a strange flashing issue in some cases
 sudo chmod -R a+rw toFlash
@@ -95,4 +101,6 @@ echo Image is ready to flash. Type:
 echo   sudo out/linux64/build/toFlash/flashall.sh
 echo and reset the board.
 echo Login with root account and the password you typed previously
+echo Alternatively to install as an alternative boot image use:
+echo   btrfsFlashOta -i
 

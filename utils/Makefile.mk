@@ -75,11 +75,11 @@ flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
 
 debian: edison-image
-	@sudo $(CURDIR)/meta-intel-edison/utils/debian_1_create.sh buster
-	@sudo $(CURDIR)/meta-intel-edison/utils/debian_2_mkimage.sh buster
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_1_create.sh bullseye
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_2_mkimage.sh bullseye
 
 clean_debian:
-	@sudo rm -rf out/linux64/build/buster
+	@sudo rm -rf out/linux64/build/bullseye
 
 help:
 	@echo 'Main targets:'
