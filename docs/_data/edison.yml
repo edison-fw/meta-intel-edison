@@ -85,6 +85,11 @@ folders:
     ref: 1.4-i686-or-x86_64
     pdf: true
 
+  - title:  How to update linux or U-Boot to a newer version
+    jurl: /1.5-update-kernel-u-boot.html
+    ref: 1.5-update-kernel-u-boot
+    pdf: true
+
 - title: Building and installing
   pdf: true
   jurl: /minitoc_theme_build.html
