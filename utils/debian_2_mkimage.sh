@@ -84,7 +84,7 @@ fi
 
 rmdir tmpbtrfs
 
-#cp edison-image-edison.btrfs toFlash/
+cp edison-image-edison.btrfs toFlash/
 # Make sure that non-root users can read write the flash files
 # This seems to fix a strange flashing issue in some cases
 sudo chmod -R a+rw toFlash
