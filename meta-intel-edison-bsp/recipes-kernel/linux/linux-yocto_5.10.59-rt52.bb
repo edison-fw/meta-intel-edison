@@ -68,7 +68,6 @@ SRC_URI_append = " file://0043-TODO-driver-core-Break-infinite-loop-when-deferre
 SRC_URI_append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI_append = " file://0048-usb-dwc3-gadget-increase-BESL-baseline-to-6.patch"
 SRC_URI_append = " file://0049-usb-dwc3-pci-Enable-usb2-gadget-lpm-disable-for-Inte.patch"
-SRC_URI_append = " file://0050-extcon-intel-mrfld-initialize-mrfld_extcon-status.patch"
 SRC_URI_append = " file://0053-HACK-do-not-enumerated-SFI-devices.patch"
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
