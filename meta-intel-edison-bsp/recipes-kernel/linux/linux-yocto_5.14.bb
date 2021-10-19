@@ -64,6 +64,12 @@ SRC_URI_append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.c
 # kernel patches
 SRC_URI_append = " file://0043b-TODO-driver-core-Break-infinite-loop-when-deferred-p.patch"
 SRC_URI_append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
+SRC_URI_append = " file://0001-mmc-sdhci-pci-Read-card-detect-from-ACPI-for-Intel-M.patch"
+SRC_URI_append = " file://0001-mmc-sdhci-Deduplicate-sdhci_get_cd_nogpio.patch"
+SRC_URI_append = " file://0002-mmc-sdhci-Remove-unused-prototype-declaration-in-the.patch"
+SRC_URI_append = " file://0003-mmc-sdhci-pci-Remove-dead-code-struct-sdhci_pci_data.patch"
+SRC_URI_append = " file://0004-mmc-sdhci-pci-Remove-dead-code-cd_gpio-cd_irq-et-al.patch"
+SRC_URI_append = " file://0005-mmc-sdhci-pci-Remove-dead-code-rst_n_gpio-et-al.patch"
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"

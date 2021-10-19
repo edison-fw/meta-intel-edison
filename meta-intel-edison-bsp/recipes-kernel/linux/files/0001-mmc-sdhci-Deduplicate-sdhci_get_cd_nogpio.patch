@@ -1,0 +1,120 @@
+From a60cf0d099ea93436943fea307bbedd756de397d Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Wed, 13 Oct 2021 23:17:19 +0300
+Subject: [PATCH 1/5] mmc: sdhci: Deduplicate sdhci_get_cd_nogpio()
+
+The analogue of the sdhci_get_cd_nogpio() is used in the sdhci-pci-core
+and sdhci-acpi modules. Deduplicate it by moving to sdhci and exporting.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-acpi.c     | 14 +-------------
+ drivers/mmc/host/sdhci-pci-core.c | 18 ------------------
+ drivers/mmc/host/sdhci.c          | 19 +++++++++++++++++++
+ drivers/mmc/host/sdhci.h          |  1 +
+ 4 files changed, 21 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
+index 8fe65f172a61..f1ef0d28b0dd 100644
+--- a/drivers/mmc/host/sdhci-acpi.c
++++ b/drivers/mmc/host/sdhci-acpi.c
+@@ -362,23 +362,11 @@ static inline bool sdhci_acpi_no_fixup_child_power(struct acpi_device *adev)
+ static int bxt_get_cd(struct mmc_host *mmc)
+ {
+ 	int gpio_cd = mmc_gpio_get_cd(mmc);
+-	struct sdhci_host *host = mmc_priv(mmc);
+-	unsigned long flags;
+-	int ret = 0;
+ 
+ 	if (!gpio_cd)
+ 		return 0;
+ 
+-	spin_lock_irqsave(&host->lock, flags);
+-
+-	if (host->flags & SDHCI_DEVICE_DEAD)
+-		goto out;
+-
+-	ret = !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+-out:
+-	spin_unlock_irqrestore(&host->lock, flags);
+-
+-	return ret;
++	return sdhci_get_cd_nogpio(mmc);
+ }
+ 
+ static int intel_probe_slot(struct platform_device *pdev, struct acpi_device *adev)
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index d0f2edfe296c..19e13dfae593 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -616,24 +616,6 @@ static int intel_select_drive_strength(struct mmc_card *card,
+ 	return intel_host->drv_strength;
+ }
+ 
+-static int sdhci_get_cd_nogpio(struct mmc_host *mmc)
+-{
+-	struct sdhci_host *host = mmc_priv(mmc);
+-	unsigned long flags;
+-	int ret = 0;
+-
+-	spin_lock_irqsave(&host->lock, flags);
+-
+-	if (host->flags & SDHCI_DEVICE_DEAD)
+-		goto out;
+-
+-	ret = !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+-out:
+-	spin_unlock_irqrestore(&host->lock, flags);
+-
+-	return ret;
+-}
+-
+ static int bxt_get_cd(struct mmc_host *mmc)
+ {
+ 	int gpio_cd = mmc_gpio_get_cd(mmc);
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index dbe87995596c..269c86569402 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2425,6 +2425,25 @@ static int sdhci_get_cd(struct mmc_host *mmc)
+ 	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+ }
+ 
++int sdhci_get_cd_nogpio(struct mmc_host *mmc)
++{
++	struct sdhci_host *host = mmc_priv(mmc);
++	unsigned long flags;
++	int ret = 0;
++
++	spin_lock_irqsave(&host->lock, flags);
++
++	if (host->flags & SDHCI_DEVICE_DEAD)
++		goto out;
++
++	ret = !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
++out:
++	spin_unlock_irqrestore(&host->lock, flags);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(sdhci_get_cd_nogpio);
++
+ static int sdhci_check_ro(struct sdhci_host *host)
+ {
+ 	unsigned long flags;
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index e8d04e42a5af..c593af479832 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -775,6 +775,7 @@ void sdhci_set_power_and_bus_voltage(struct sdhci_host *host,
+ 				     unsigned short vdd);
+ void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
+ 			   unsigned short vdd);
++int sdhci_get_cd_nogpio(struct mmc_host *mmc);
+ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
+ int sdhci_request_atomic(struct mmc_host *mmc, struct mmc_request *mrq);
+ void sdhci_set_bus_width(struct sdhci_host *host, int width);
+-- 
+2.30.2
+

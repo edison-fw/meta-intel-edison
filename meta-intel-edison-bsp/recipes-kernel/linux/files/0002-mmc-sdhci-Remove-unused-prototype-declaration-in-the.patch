@@ -1,0 +1,29 @@
+From 26f26a455510d13f339fbd76b1ac577f55862049 Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Wed, 13 Oct 2021 23:17:20 +0300
+Subject: [PATCH 2/5] mmc: sdhci: Remove unused prototype declaration in the
+ header
+
+sdhci_card_detect() is not defined anywhere. Remove it.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index c593af479832..bb883553d3b4 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -750,7 +750,6 @@ static inline void *sdhci_priv(struct sdhci_host *host)
+ 	return host->private;
+ }
+ 
+-void sdhci_card_detect(struct sdhci_host *host);
+ void __sdhci_read_caps(struct sdhci_host *host, const u16 *ver,
+ 		       const u32 *caps, const u32 *caps1);
+ int sdhci_setup_host(struct sdhci_host *host);
+-- 
+2.30.2
+
