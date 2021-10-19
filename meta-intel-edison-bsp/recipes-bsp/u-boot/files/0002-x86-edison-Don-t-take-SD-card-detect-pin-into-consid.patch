@@ -1,0 +1,50 @@
+From c5cfab637085991ebc44b052c2790fa19048ee7d Mon Sep 17 00:00:00 2001
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Fri, 15 Oct 2021 18:48:23 +0300
+Subject: [PATCH 2/2] x86: edison: Don't take SD card detect pin into
+ consideration
+
+There are two PCB designs in the wild which use the opposite
+signaling for SD card detect. This makes U-Boot working in one case
+and failing in the other. Quirk this out by disconnecting SD card
+detect pin from the PCB by switching to mode 3.
+
+BugLink: https://github.com/edison-fw/meta-intel-edison/issues/136
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/dts/edison.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/x86/dts/edison.dts b/arch/x86/dts/edison.dts
+index 2c8cf6c071..04e8a4e457 100644
+--- a/arch/x86/dts/edison.dts
++++ b/arch/x86/dts/edison.dts
+@@ -94,6 +94,7 @@
+ 	sdcard: mmc@ff3fa000 {
+ 		compatible = "intel,sdhci-tangier";
+ 		reg = <0xff3fa000 0x1000>;
++		cd-inverted;
+ 	};
+ 
+ 	pmu: power@ff00b000 {
+@@ -131,6 +132,17 @@
+ 		compatible = "intel,pinctrl-tangier";
+ 		reg = <0xff0c0000 0x8000>;
+ 
++		/*
++		 * Disconnect SD card detect, so it won't affect the reality
++		 * on two different PCB designs where it's using the opposite
++		 * signaling: Edison/Arduino uses Active Low, while SparkFun
++		 * went with Active High.
++		 */
++		sd_cd@0 {
++			pad-offset = <37>;
++			mode-func = <3>;
++		};
++
+ 		/*
+ 		 * Initial configuration came from the firmware.
+ 		 * Which quite likely has been used in the phones, where I2C #8,
+-- 
+2.30.2
+

@@ -25,6 +25,8 @@ SRC_URI += "file://target_env/"
 #SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI += "file://btrfs.cfg"
 SRC_URI += "file://0001-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
+SRC_URI += "file://0001-x86-tangier-Enable-support-for-SD-SDIO-family-in-the.patch"
+SRC_URI += "file://0002-x86-edison-Don-t-take-SD-card-detect-pin-into-consid.patch"
 
 PV = "2021.10"
 S = "${WORKDIR}/git"
