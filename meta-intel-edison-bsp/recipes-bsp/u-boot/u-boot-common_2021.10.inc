@@ -24,6 +24,7 @@ SRC_URI += "file://${MACHINE}.env"
 SRC_URI += "file://target_env/"
 #SRC_URI += "file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI += "file://btrfs.cfg"
+SRC_URI += "file://0001-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 
 PV = "2021.10"
 S = "${WORKDIR}/git"
