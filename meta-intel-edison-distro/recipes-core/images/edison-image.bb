@@ -96,6 +96,9 @@ IMAGE_INSTALL_append = " ofono"
 # Add ppp if supported by DISTRO_FEATURES
 IMAGE_INSTALL_append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " ppp", "", d)}"
 
+# Add cyclictest needed by ppp and for measuring latencies
+IMAGE_INSTALL_append = " rt-tests"
+
 # Add battery level detection
 IMAGE_INSTALL_append = " battery-voltage"
 
