@@ -1,7 +1,7 @@
-From 84e444e1d356c9fa090e39d9dc46c411391ae5ff Mon Sep 17 00:00:00 2001
+From ae9a02918bfa16daaf7fba230cba9f6b1244d1af Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
 Date: Fri, 30 Apr 2021 22:59:24 +0200
-Subject: [PATCH 2/2] package_manager: sign DEB package feeds
+Subject: [PATCH] package_manager: sign DEB package feeds
 
 Implement debian package repository signature.
 For each Release file created in repository subdirectory, a signature
@@ -20,7 +20,7 @@ Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
  1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/meta/lib/oe/package_manager/deb/__init__.py b/meta/lib/oe/package_manager/deb/__init__.py
-index 0f9b27f831..4bd60f6905 100644
+index 2ee68fefb1..5e7648a24b 100644
 --- a/meta/lib/oe/package_manager/deb/__init__.py
 +++ b/meta/lib/oe/package_manager/deb/__init__.py
 @@ -53,6 +53,7 @@ class DpkgIndexer(Indexer):
@@ -61,8 +61,8 @@ index 0f9b27f831..4bd60f6905 100644
 +                                   output_suffix="gpg",
 +                                   use_sha256=True)
  
- class DpkgPkgsList(PkgsList):
+ class PMPkgsList(PkgsList):
  
 -- 
-2.27.0
+2.32.0
 
