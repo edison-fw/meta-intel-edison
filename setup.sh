@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="gatesgarth"
-yocto_tag="gatesgarth"
+yocto_branch="hardknott"
+yocto_tag="hardknott"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
@@ -39,7 +39,7 @@ EOF
   cat >> $yocto_conf_dir/local.conf <<EOF
 MACHINE = "edison"
 DISTRO = "poky-edison"
-USER_CLASSES ?= "buildstats image-mklibs image-prelink"
+USER_CLASSES ?= "buildstats image-prelink"
 PATCHRESOLVE = "noop"
 CONF_VERSION = "1"
 EDISONREPO_TOP_DIR = "$top_repo_dir"
@@ -342,8 +342,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0001-gpg-sign-Add-parameters-to-gpg-signature-function.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0002-package_manager-sign-DEB-package-feeds.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/image-live_bbclass-order-do_bootimg-after-do_rootfs.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
+#  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
 
