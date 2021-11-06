@@ -166,7 +166,7 @@ breadcrumb_display: true
 breadcrumb_home_display: true
 
 # Url for Home path to point to
-breadcrumb_home_url: http://pages.github.com/htot
+breadcrumb_home_url: https://edison-fw.github.io/meta-intel-edison/
 
 ##########  MARKDOWN PROCESS AND FILTER ##########
 # leave these settings as is unless you want to use something other than kramdown Markdown
