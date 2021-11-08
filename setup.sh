@@ -92,7 +92,6 @@ BBLAYERS ?= " \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-distro \\
   $top_repo_dir/meta-intel-edison/meta-intel-arduino \\
   $top_repo_dir/meta-intel-edison/meta-arduino \\
-  $top_repo_dir/meta-intel-edison/meta-xfstk \\
   $top_repo_dir/meta-acpi \\
   $extra_layers
   "
