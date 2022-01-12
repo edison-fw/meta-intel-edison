@@ -74,6 +74,7 @@ SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 SRC_URI_append = " file://0001-WIP-serial-8250_dma-use-sgl-on-transmit.patch"
 SRC_URI_append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
+SRC_URI_append = " file://0001-net-usb-Correct-PHY-handling-of-smsc95xx.patch"
 
 # usefull kernel debug options here
 #SRC_URI_append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
