@@ -129,7 +129,12 @@ folders:
     jurl: /2.6-Building-Debian.html
     ref: 2.6-Building-Debian
     pdf: true
-
+    
+  - title: Installing UbuntuBase on IntelEdison
+    jurl: /Install_UbuntuBase_on_Edison.html
+    ref: Install_UbuntuBase_on_Edison
+    pdf: true
+    
 - title: SDK
   pdf: true
   jurl: /minitoc_theme_build.html
