@@ -5,7 +5,7 @@ require recipes-kernel/linux/linux-yocto.inc
 LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git;protocol=https;branch=v5.10-rt-rebase"
+SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git;protocol=https;branch=v5.15-rt-rebase"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI_append = " file://0001-enable-to-build-a-netboot-image.cfg"
@@ -63,20 +63,18 @@ SRC_URI_append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.c
 SRC_URI_append = " file://preempt.cfg"
 
 # kernel patches
-SRC_URI_append = " file://0042-spi-pxa2xx-introduce-special-type-for-Merrifield-SPI.patch"
-SRC_URI_append = " file://0043-TODO-driver-core-Break-infinite-loop-when-deferred-p.patch"
+SRC_URI_append = " file://0043b-TODO-driver-core-Break-infinite-loop-when-deferred-p.patch"
 SRC_URI_append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
-SRC_URI_append = " file://0048-usb-dwc3-gadget-increase-BESL-baseline-to-6.patch"
-SRC_URI_append = " file://0049-usb-dwc3-pci-Enable-usb2-gadget-lpm-disable-for-Inte.patch"
-SRC_URI_append = " file://0053-HACK-do-not-enumerated-SFI-devices.patch"
-SRC_URI_append = " file://0001-mmc-sdhci-pci-Read-card-detect-from-ACPI-for-Intel-M.patch"
 SRC_URI_append = " file://0001-mmc-sdhci-Deduplicate-sdhci_get_cd_nogpio.patch"
 SRC_URI_append = " file://0002-mmc-sdhci-Remove-unused-prototype-declaration-in-the.patch"
+SRC_URI_append = " file://0003-mmc-sdhci-pci-Remove-dead-code-struct-sdhci_pci_data.patch"
+SRC_URI_append = " file://0004-mmc-sdhci-pci-Remove-dead-code-cd_gpio-cd_irq-et-al.patch"
+SRC_URI_append = " file://0005-mmc-sdhci-pci-Remove-dead-code-rst_n_gpio-et-al.patch"
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
-SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI_append = " file://0001-WIP-serial-8250_dma-use-sgl-on-transmit.patch"
+SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
+SRC_URI_append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-TTY.patch"
 
 # usefull kernel debug options here
 #SRC_URI_append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
