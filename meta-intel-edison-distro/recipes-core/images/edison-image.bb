@@ -103,7 +103,8 @@ IMAGE_INSTALL_append = " rt-tests"
 IMAGE_INSTALL_append = " battery-voltage"
 
 # Add linux performance monitoring tool
-IMAGE_INSTALL_append = " perf"
+# remove until the build hang issue gets sorted out
+#IMAGE_INSTALL_append = " perf"
 
 # package management - where to find this?
 #IMAGE_INSTALL_append = " aptitude"
