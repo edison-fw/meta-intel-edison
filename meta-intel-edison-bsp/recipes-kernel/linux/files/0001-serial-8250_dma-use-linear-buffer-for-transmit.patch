@@ -1,0 +1,117 @@
+From 1a7d521d3b9191dfa4efeaa78c7f53ec2a70601b Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 17 Mar 2018 13:54:18 +0100
+Subject: [PATCH] serial: 8250_dma: use linear buffer for transmit
+
+8250_dma used the circular xmit->buf as DMA output buffer. This causes messages that wrap around
+in the circular buffer to be transmitted using 2 DMA transfers. Depending on baud rate and processor
+load this can cause an interchar gap in the middle of the message. On the receiving end the gap
+may cause a short receive timeout, possibly long enough to terminate a DMA transfer, but too short
+to restart a receive DMA transfer in time thus causing a receive buffer overrun.
+Fix this but creating a linear tx_buffer and copying all of xmit->buf into it.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/tty/serial/8250/8250.h     |  1 +
+ drivers/tty/serial/8250/8250_dma.c | 33 ++++++++++++++++++++++++------
+ 2 files changed, 28 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
+index 52bb21205bb6..5ab8b05e87ac 100644
+--- a/drivers/tty/serial/8250/8250.h
++++ b/drivers/tty/serial/8250/8250.h
+@@ -41,6 +41,7 @@ struct uart_8250_dma {
+ 	dma_cookie_t		tx_cookie;
+ 
+ 	void			*rx_buf;
++	void			*tx_buf;
+ 
+ 	size_t			rx_size;
+ 	size_t			tx_size;
+diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
+index 890fa7ddaa7f..5988fc10b6c5 100644
+--- a/drivers/tty/serial/8250/8250_dma.c
++++ b/drivers/tty/serial/8250/8250_dma.c
+@@ -8,6 +8,7 @@
+ #include <linux/tty_flip.h>
+ #include <linux/serial_reg.h>
+ #include <linux/dma-mapping.h>
++#include <linux/slab.h>
+ 
+ #include "8250.h"
+ 
+@@ -65,6 +66,9 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ 	struct circ_buf			*xmit = &p->port.state->xmit;
+ 	struct dma_async_tx_descriptor	*desc;
+ 	int ret;
++	size_t				chunk1;
++	size_t 				chunk2;
++	int				head;
+ 
+ 	if (dma->tx_running)
+ 		return 0;
+@@ -75,10 +79,18 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ 		return 0;
+ 	}
+ 
+-	dma->tx_size = CIRC_CNT_TO_END(xmit->head, xmit->tail, UART_XMIT_SIZE);
++	head = xmit->head;
++	chunk1 = CIRC_CNT_TO_END(head, xmit->tail, UART_XMIT_SIZE);
++	memcpy(dma->tx_buf, xmit->buf + xmit->tail, chunk1);
++	
++	chunk2 = CIRC_CNT(head, xmit->tail, UART_XMIT_SIZE) - chunk1;
++	if (chunk2 > 0) {
++		memcpy(dma->tx_buf + chunk1, xmit->buf, chunk2);
++	}
++	dma->tx_size = chunk1 + chunk2;
+ 
+ 	desc = dmaengine_prep_slave_single(dma->txchan,
+-					   dma->tx_addr + xmit->tail,
++					   dma->tx_addr,
+ 					   dma->tx_size, DMA_MEM_TO_DEV,
+ 					   DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 	if (!desc) {
+@@ -217,20 +229,27 @@ int serial8250_request_dma(struct uart_8250_port *p)
+ 	}
+ 
+ 	/* TX buffer */
++	dma->tx_buf = kmalloc(UART_XMIT_SIZE, GFP_KERNEL);
++	if (!dma->tx_buf) {
++		ret = -ENOMEM;
++		goto free_coherent_rx;
++	}
++
+ 	dma->tx_addr = dma_map_single(dma->txchan->device->dev,
+-					p->port.state->xmit.buf,
++					dma->tx_buf,
+ 					UART_XMIT_SIZE,
+ 					DMA_TO_DEVICE);
+ 	if (dma_mapping_error(dma->txchan->device->dev, dma->tx_addr)) {
+-		dma_free_coherent(dma->rxchan->device->dev, dma->rx_size,
+-				  dma->rx_buf, dma->rx_addr);
+ 		ret = -ENOMEM;
+-		goto err;
++		goto free_coherent_rx;
+ 	}
+ 
+ 	dev_dbg_ratelimited(p->port.dev, "got both dma channels\n");
+ 
+ 	return 0;
++free_coherent_rx:
++	dma_free_coherent(dma->rxchan->device->dev, dma->rx_size,
++				dma->rx_buf, dma->rx_addr);
+ err:
+ 	dma_release_channel(dma->txchan);
+ release_rx:
+@@ -257,6 +276,8 @@ void serial8250_release_dma(struct uart_8250_port *p)
+ 	dmaengine_terminate_sync(dma->txchan);
+ 	dma_unmap_single(dma->txchan->device->dev, dma->tx_addr,
+ 			 UART_XMIT_SIZE, DMA_TO_DEVICE);
++	kfree(dma->tx_buf);
++	dma->tx_buf = NULL;
+ 	dma_release_channel(dma->txchan);
+ 	dma->txchan = NULL;
+ 	dma->tx_running = 0;
+-- 
+2.27.0
+
