@@ -65,13 +65,10 @@ SRC_URI_append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.c
 SRC_URI_append = " file://0043b-TODO-driver-core-Break-infinite-loop-when-deferred-p.patch"
 SRC_URI_append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI_append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
-SRC_URI_append = " file://0001-serial-8250_dma-decrease-latency-on-RX.patch"
 SRC_URI_append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI_append = " file://0001-WIP-serial-8250_dma-use-sgl-on-transmit.patch"
+SRC_URI_append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI_append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
-SRC_URI_append = " file://0054-usb-dwc3-gadget-Skip-checking-Update-Transfer-status.patch"
-SRC_URI_append = " file://0055-usb-dwc3-gadget-Ignore-Update-Transfer-cmd-params.patch"
-SRC_URI_append = " file://0056-usb-dwc3-gadget-Skip-reading-GEVNTSIZn.patch"
+SRC_URI_append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-TTY.patch"
 
 
 # usefull kernel debug options here
