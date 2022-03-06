@@ -48,6 +48,7 @@ SRC_URI_append = " file://0041-enable-EXTCON_INTEL_MRFLD.cfg"
 
 # our additional configs
 SRC_URI_append = " file://ftdi_sio.cfg"
+SRC_URI_append = " file://ch341.cfg"
 SRC_URI_append = " file://smsc95xx.cfg"
 SRC_URI_append = " file://bt_more.cfg"
 SRC_URI_append = " file://i2c_chardev.cfg"
