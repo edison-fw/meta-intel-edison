@@ -80,9 +80,6 @@ IMAGE_INSTALL_append = " nodejs-npm"
 IMAGE_INSTALL_append = " mraa-dev"
 IMAGE_INSTALL_append = " mraa-doc"
 
-# UPM
-IMAGE_INSTALL_append = " upm-dev"
-
 # INTEL MCU FW - disable for now as not supported by kernel
 #IMAGE_INSTALL_append = " mcu-fw-load"
 #IMAGE_INSTALL_append = " mcu-fw-bin"
