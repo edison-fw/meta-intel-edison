@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="hardknott"
-yocto_tag="hardknott"
+yocto_branch="honister"
+yocto_tag="honister"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
@@ -41,7 +41,7 @@ MACHINE = "edison"
 DISTRO = "poky-edison"
 USER_CLASSES ?= "buildstats image-prelink"
 PATCHRESOLVE = "noop"
-CONF_VERSION = "1"
+SCONF_VERSION = "1"
 EDISONREPO_TOP_DIR = "$top_repo_dir"
 DL_DIR ?= "$my_dl_dir"
 SSTATE_DIR ?= "$my_sstate_dir"
