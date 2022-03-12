@@ -76,10 +76,6 @@ IMAGE_INSTALL_append = " mosquitto-clients"
 IMAGE_INSTALL_append = " nodejs-dev"
 IMAGE_INSTALL_append = " nodejs-npm"
 
-# MRAA
-IMAGE_INSTALL_append = " mraa-dev"
-IMAGE_INSTALL_append = " mraa-doc"
-
 # INTEL MCU FW - disable for now as not supported by kernel
 #IMAGE_INSTALL_append = " mcu-fw-load"
 #IMAGE_INSTALL_append = " mcu-fw-bin"
