@@ -76,6 +76,11 @@ IMAGE_INSTALL_append = " mosquitto-clients"
 IMAGE_INSTALL_append = " nodejs-dev"
 IMAGE_INSTALL_append = " nodejs-npm"
 
+# libiio replaces the former MRAA and UPM to access sensor/actuator drivers in the kernel
+IMAGE_INSTALL_append = " libiio"
+IMAGE_INSTALL_append = " libiio-iiod"
+IMAGE_INSTALL_append = " libiio-python3"
+
 # INTEL MCU FW - disable for now as not supported by kernel
 #IMAGE_INSTALL_append = " mcu-fw-load"
 #IMAGE_INSTALL_append = " mcu-fw-bin"
