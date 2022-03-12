@@ -60,6 +60,7 @@ SRC_URI_append = " file://btrfs.cfg"
 SRC_URI_append = " file://sof_nocodec.cfg"
 SRC_URI_append = " file://audio.cfg"
 SRC_URI_append = " file://tun.cfg"
+SRC_URI_append = " file://iio.cfg"
 SRC_URI_append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
 
 # kernel patches
