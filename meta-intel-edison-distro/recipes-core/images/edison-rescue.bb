@@ -30,13 +30,13 @@ KERNEL_IMAGETYPE_pn-edison-rescue = "bzImage-initramfs-edison.bin"
 
 IMAGE_ROOTFS_SIZE = "64"
 
-IMAGE_INSTALL_append = " kernel-modules"
-IMAGE_INSTALL_append = " u-boot-fw-utils"
+IMAGE_INSTALL:append = " kernel-modules"
+IMAGE_INSTALL:append = " u-boot-fw-utils"
 
 # Those are necessary to manually create partitions and file systems on the eMMC
-IMAGE_INSTALL_append = " parted"
-IMAGE_INSTALL_append = " e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks libcomerr libss libe2p libext2fs dosfstools"
-IMAGE_INSTALL_append = " btrfs-tools"
+IMAGE_INSTALL:append = " parted"
+IMAGE_INSTALL:append = " e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks libcomerr libss libe2p libext2fs dosfstools"
+IMAGE_INSTALL:append = " btrfs-tools"
 
 DEPENDS += "u-boot"
 

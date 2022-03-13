@@ -3,15 +3,15 @@ SECTION = "base"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
 inherit systemd
-SYSTEMD_SERVICE_${PN} = "init-led.service"
+SYSTEMD_SERVICE:${PN} = "init-led.service"
 
-RDEPENDS_${PN} = "libgpiod-python"
+RDEPENDS:${PN} = "libgpiod-python"
 
 SRC_URI = "file://init-led"
-SRC_URI += "file://init-led.service"
+SRC_URI:append = " file://init-led.service"
 
 S = "${WORKDIR}"
 

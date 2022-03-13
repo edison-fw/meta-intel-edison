@@ -6,14 +6,14 @@ DEPENDS = "mtd-utils bison-native"
 
 require u-boot-common_${PV}.inc
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-SRC_URI += "file://fw_env.config"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI:append = " file://fw_env.config"
 
 S = "${WORKDIR}/git"
 
-INSANE_SKIP_${PN} = "already-stripped"
-EXTRA_OEMAKE_class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} ${LDFLAGS}" HOSTCC="${BUILD_CC} ${BUILD_CFLAGS} ${BUILD_LDFLAGS}" V=1'
-EXTRA_OEMAKE_class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
+INSANE_SKIP:${PN} = "already-stripped"
+EXTRA_OEMAKE:class-target = 'CROSS_COMPILE=${TARGET_PREFIX} CC="${CC} ${CFLAGS} ${LDFLAGS}" HOSTCC="${BUILD_CC} ${BUILD_CFLAGS} ${BUILD_LDFLAGS}" V=1'
+EXTRA_OEMAKE:class-cross = 'ARCH=${TARGET_ARCH} CC="${CC} ${CFLAGS} ${LDFLAGS}" V=1'
 
 inherit uboot-config
 
@@ -36,7 +36,7 @@ do_install_class-cross () {
 	install -m 755 ${S}/tools/env/fw_printenv ${D}${bindir_cross}/fw_setenv
 }
 
-SYSROOT_DIRS_append_class-cross = " ${bindir_cross}"
+SYSROOT_DIRS:append:class-cross = " ${bindir_cross}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 BBCLASSEXTEND = "cross"

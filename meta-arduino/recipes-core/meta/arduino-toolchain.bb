@@ -93,7 +93,7 @@ fakeroot overwrite_dirs() {
 	fi
 }
 
-fakeroot python do_populate_sdk_append() {
+fakeroot python do_populate_sdk:append() {
     bb.build.exec_func("prepare_work_area", d)
     bb.build.exec_func("rename_conflicts", d)
     bb.build.exec_func("overwrite_dirs", d)

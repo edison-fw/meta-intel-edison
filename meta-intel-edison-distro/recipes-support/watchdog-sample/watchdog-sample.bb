@@ -3,14 +3,14 @@ SECTION = "base"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/watchdog-sample/:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/watchdog-sample/:"
 
 SRC_URI += "file://watchdog-sample.service"
 SRC_URI += "file://watchdog-sample.c"
 
-SYSTEMD_SERVICE_${PN} = "watchdog-sample.service"
+SYSTEMD_SERVICE:${PN} = "watchdog-sample.service"
 
-RDEPENDS_${PN} = "systemd"
+RDEPENDS:${PN} = "systemd"
 DEPENDS = "systemd"
 
 inherit systemd
@@ -32,8 +32,8 @@ do_install() {
 	install -c -m 0755 ${B}/watchdog-sample ${D}${bindir}
 }
 
-FILES_${PN} = "${base_libdir}/systemd/system/watchdog-sample.service"
-FILES_${PN} += "${bindir}/watchdog-sample"
+FILES:${PN} = "${base_libdir}/systemd/system/watchdog-sample.service"
+FILES:${PN} += "${bindir}/watchdog-sample"
 
 # As this package is tied to systemd, only build it when we're also building systemd.
 python () {
@@ -41,4 +41,4 @@ python () {
         raise bb.parse.SkipPackage("'systemd' not in DISTRO_FEATURES")
 }
 
-INSANE_SKIP_${PN} = "ldflags"
+INSANE_SKIP:${PN} = "ldflags"

@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=ea398a763463b76b18da15f013c0c531"
 
 S = "${WORKDIR}/git"
 
-RDEPENDS_${PN} = "python3-core python3-bottle"
+RDEPENDS:${PN} = "python3-core python3-bottle"
 
 do_install() {
    install -d ${D}${libdir}/edison_config_tools
@@ -25,9 +25,9 @@ do_install() {
 inherit systemd
 
 SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_SERVICE_${PN} = "edison_config.service"
+SYSTEMD_SERVICE:${PN} = "edison_config.service"
 
-FILES_${PN} = "${libdir}/edison_config_tools \
+FILES:${PN} = "${libdir}/edison_config_tools \
                ${systemd_unitdir}/system \
                /var/lib/edison_config_tools \
                ${bindir}/"

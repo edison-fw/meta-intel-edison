@@ -18,14 +18,14 @@ PACKAGE_INSTALL += " e2fsprogs-mke2fs"
 PACKAGE_INSTALL += " util-linux-partx"
 PACKAGE_INSTALL += " u-boot-fw-utils"
 PACKAGE_INSTALL += " parted"
-PACKAGE_INSTALL_remove = " initramfs-live-install initramfs-module-install"
-PACKAGE_INSTALL_remove = " initramfs-live-install-efi initramfs-module-install-efi"
-PACKAGE_INSTALL_remove = " kernel-image"
+PACKAGE_INSTALL:remove = " initramfs-live-install initramfs-module-install"
+PACKAGE_INSTALL:remove = " initramfs-live-install-efi initramfs-module-install-efi"
+PACKAGE_INSTALL:remove = " kernel-image"
 
 ROOTFS_POSTPROCESS_COMMAND += "clobber_unused; "
 
 clobber_unused () {
         rm ${IMAGE_ROOTFS}/boot/*
-        rm ${IMAGE_ROOTFS}/usr/lib/libpython*
+#        rm ${IMAGE_ROOTFS}/usr/lib/libpython*
         rm -rf ${IMAGE_ROOTFS}/usr/lib/python3.7
 }

@@ -39,23 +39,23 @@ do_install () {
     install -m 0644 ${WORKDIR}/sketch_reset.service ${D}${systemd_unitdir}/system/
 }
 
-pkg_postinst_${PN} () {
+pkg_postinst:${PN} () {
 
 }
 
-pkg_prerm_${PN} () {
+pkg_prerm:${PN} () {
 
 }
 
 inherit systemd
 
-SYSTEMD_SERVICE_${PN} = "clloader.service sketch_reset.service"
+SYSTEMD_SERVICE:${PN} = "clloader.service sketch_reset.service"
 SYSTEMD_AUTO_ENABLE = "disable"
 
-FILES_${PN} += "${systemd_unitdir}/system/clloader.service \
+FILES:${PN} += "${systemd_unitdir}/system/clloader.service \
 		${systemd_unitdir}/system/sketch_reset.service \
 		opt/edison \
 		sketch \
 		"
 
-FILES_${PN}-dbg += "opt/edison/.debug sketch/.debug"
+FILES:${PN}-dbg += "opt/edison/.debug sketch/.debug"

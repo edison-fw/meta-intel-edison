@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = "file://edison-firmware/LICENCE.Intel;md5=54b4f1a2dd35fd85bc7
 
 PV = "1.8"
 
-FILES_${PN} += "/lib/firmware/intel/*"
+FILES:${PN} += "/lib/firmware/intel/*"
 
 inherit allarch update-alternatives
 

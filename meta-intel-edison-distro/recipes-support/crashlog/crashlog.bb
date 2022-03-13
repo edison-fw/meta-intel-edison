@@ -7,9 +7,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 SRC_URI += "file://crashlog.service"
 SRC_URI += "file://retrieve_crashlog.sh"
 
-SYSTEMD_SERVICE_${PN} = "crashlog.service"
+SYSTEMD_SERVICE:${PN} = "crashlog.service"
 
-RDEPENDS_${PN} = "systemd"
+RDEPENDS:${PN} = "systemd"
 DEPENDS = "systemd"
 inherit systemd
 

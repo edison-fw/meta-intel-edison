@@ -3,12 +3,12 @@ SECTION = "base"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
 inherit systemd
-SYSTEMD_SERVICE_${PN} = "blink-led.service flash-led.service"
+SYSTEMD_SERVICE:${PN} = "blink-led.service flash-led.service"
 
-RDEPENDS_${PN} = "libgpiod-python init-led"
+RDEPENDS:${PN} = "libgpiod-python init-led"
 
 SRC_URI = "file://blink-led"
 SRC_URI += "file://blink-led.service"

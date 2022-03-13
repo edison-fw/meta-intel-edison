@@ -15,9 +15,9 @@ inherit allarch systemd update-rc.d
 INITSCRIPT_NAME = "run-timezone"
 INITSCRIPT_PARAMS = "start 99 S ."
 
-SYSTEMD_SERVICE_${PN} = "run-timezone.service"
+SYSTEMD_SERVICE:${PN} = "run-timezone.service"
 
-RDEPENDS_${PN} = "curl packagegroup-tzdata"
+RDEPENDS:${PN} = "curl packagegroup-tzdata"
 
 do_configure() {
 	:
