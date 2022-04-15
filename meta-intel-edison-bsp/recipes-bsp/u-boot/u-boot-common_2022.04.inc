@@ -18,15 +18,16 @@ PE = "1"
 
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 		
-SRCREV = "d80bb749fab53da72c4a0e09b8c2d2aaa3103c91"
+SRCREV = "e4b6ebd3de982ae7185dbf689a030e73fd06e0d2"
 
 SRC_URI:append = " file://${MACHINE}.env"
 SRC_URI:append = " file://target_env/"
 #SRC_URI:append = " file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI:append = " file://btrfs.cfg"
 SRC_URI:append = " file://0001-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
-SRC_URI:append = " file://0001-x86-tangier-Enable-support-for-SD-SDIO-family-in-the.patch"
-SRC_URI:append = " file://0002-x86-edison-Don-t-take-SD-card-detect-pin-into-consid.patch"
 
-PV = "2021.10"
+PV = "2022.04"
 S = "${WORKDIR}/git"
+B = "${WORKDIR}/build"
+inherit pkgconfig
+do_configure[cleandirs] = "${B}"
