@@ -31,7 +31,7 @@ KERNEL_IMAGETYPE_pn-edison-rescue = "bzImage-initramfs-edison.bin"
 IMAGE_ROOTFS_SIZE = "64"
 
 IMAGE_INSTALL:append = " kernel-modules"
-IMAGE_INSTALL:append = " u-boot-fw-utils"
+IMAGE_INSTALL:append = " libubootenv-bin"
 
 # Those are necessary to manually create partitions and file systems on the eMMC
 IMAGE_INSTALL:append = " parted"
