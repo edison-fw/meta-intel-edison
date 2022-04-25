@@ -45,6 +45,8 @@ SRC_URI:append = " file://0038-enable-PHY_TUSB1210.cfg"
 SRC_URI:append = " file://0039-enable-USB_CONFIGFS.cfg"
 SRC_URI:append = " file://0040-enable-INTEL_MRFLD_ADC.cfg"
 SRC_URI:append = " file://0041-enable-EXTCON_INTEL_MRFLD.cfg"
+# FIXME: when building 5.13 and above for 32b the stack protector code hangs
+SRC_URI:append = " ${@bb.utils.contains("DEFAULTTUNE", "corei7-32", " file://stack.cfg", "", d)}"
 
 # our additional configs
 SRC_URI:append = " file://ftdi_sio.cfg"

@@ -45,6 +45,8 @@ SRC_URI:append = " file://0038-enable-PHY_TUSB1210.cfg"
 SRC_URI:append = " file://0039-enable-USB_CONFIGFS.cfg"
 SRC_URI:append = " file://0040-enable-INTEL_MRFLD_ADC.cfg"
 SRC_URI:append = " file://0041-enable-EXTCON_INTEL_MRFLD.cfg"
+# FIXME: when building 5.13 and above for 32b the stack protector code hangs
+SRC_URI:append = " ${@bb.utils.contains("DEFAULTTUNE", "corei7-32", " file://stack.cfg", "", d)}"
 
 # our additional configs
 SRC_URI:append = " file://ftdi_sio.cfg"
@@ -62,24 +64,28 @@ SRC_URI:append = " file://audio.cfg"
 SRC_URI:append = " file://tun.cfg"
 SRC_URI:append = " file://iio.cfg"
 SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
+SRC_URI:append = " file://ftrace.cfg"
+SRC_URI:append = " file://boottime_trace.cfg"
+#SRC_URI:append = " file://dyn_debug.cfg"
 
 # kernel patches
-SRC_URI:append = " file://0043b-TODO-driver-core-Break-infinite-loop-when-deferred-p.patch"
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
-SRC_URI:append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
+SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
+#SRC_URI:append = " file://0001-WIP-serial-8250_dma-use-sgl-on-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
-SRC_URI:append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-TTY.patch"
-
+SRC_URI:append = " file://0001-Revert-ASoC-SOF-Intel-Check-the-bar-size-before-rema.patch"
+SRC_URI:append = " file://0001-usb-ulpi-defer-ulpi_register-on-ulpi_read_id-timeout.patch"
+SRC_URI:append = " file://0001-usb-dwc3-core-defer-probe-on-ulpi_read_id-timeout.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 
-SRCREV ??= "v${PV}"
+SRCREV ??= "${AUTOREV}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 
 LINUX_VERSION ?= "${PV}"
+KERNEL_VERSION_SANITY_SKIP="1"
 
 COMPATIBLE_MACHINE = "edison"
 
@@ -95,4 +101,4 @@ do_kernel_configme[depends] += "bison-native:do_populate_sysroot flex-native:do_
 DEPENDS += "openssl-native util-linux-native"
 DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
 
-do_kernel_configcheck[noexec] = "1"
+#do_kernel_configcheck[noexec] = "1"
