@@ -111,6 +111,7 @@ IMAGE_INSTALL:append = " diffutils"
 
 # Provides strace and gdb
 IMAGE_FEATURES += " tools-debug"
+IMAGE_INSTALL:append = " rsync"
 
 # Add the nano text editor
 IMAGE_INSTALL:append = " nano"
