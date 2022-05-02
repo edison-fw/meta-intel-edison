@@ -134,15 +134,20 @@ folders:
     jurl: /2.7-Install_Ubuntu.html
     ref: 2.7-Install_Ubuntu
     pdf: true
-    
+
 - title: SDK
   pdf: true
   jurl: /minitoc_theme_build.html
 
   folderitems:
   - title: Building and installing the SDK
-    jurl: /3-Building-the-SDK.html
-    ref: 3-Building-the-SDK
+    jurl: /3.0-Building-the-SDK.html
+    ref: 3.0-Building-the-SDK
+    pdf: true
+
+  - title: Remote development
+    jurl: /3.1-Remote-develop.html
+    ref: 3.1-Remote-develop
     pdf: true
 
 - title: Current state
