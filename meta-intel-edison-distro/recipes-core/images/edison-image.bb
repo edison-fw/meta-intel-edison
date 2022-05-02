@@ -54,11 +54,6 @@ IMAGE_INSTALL:append = " pulseaudio-server libpulsecore libpulsecommon libpulse 
 #Add Gstreamer
 IMAGE_INSTALL:append = " gstreamer1.0 gstreamer1.0-meta-base gstreamer1.0-meta-audio"
 
-
-# Edison Arduino stuff
-IMAGE_INSTALL:append = " clloader"
-IMAGE_INSTALL:append = " sketch-check"
-
 # Edison Middleware stuff
 IMAGE_INSTALL:append = " packagegroup-core-buildessential"
 IMAGE_INSTALL:append = " zeromq-dev"
