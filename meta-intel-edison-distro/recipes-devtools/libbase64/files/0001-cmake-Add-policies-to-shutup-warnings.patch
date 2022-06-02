@@ -1,0 +1,29 @@
+From f891b2f81dd659fa0ea94dff64d36d52f4b9754e Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Tue, 10 May 2022 22:09:20 +0200
+Subject: [PATCH] cmake: Add policies to shutup warnings
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ CMakeLists.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0365a94..16c732b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -14,6 +14,11 @@ cmake_minimum_required(VERSION 3.1)
+ 
+ project(base64 LANGUAGES C VERSION 0.4.0)
+ 
++cmake_policy(SET CMP0082 NEW)
++cmake_policy(SET CMP0060 NEW)
++cmake_policy(SET CMP0065 NEW)
++cmake_policy(SET CMP0127 NEW)
++
+ include(GNUInstallDirs)
+ include(CMakeDependentOption)
+ include(FeatureSummary)
+-- 
+2.34.1
+

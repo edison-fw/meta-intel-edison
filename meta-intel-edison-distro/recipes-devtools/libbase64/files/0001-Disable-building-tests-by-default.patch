@@ -1,0 +1,25 @@
+From 8abb204a947ef8b46e1464fa82f655f02f221a3b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Henrik=20S=2E=20Ga=C3=9Fmann?= <henrik.gassmann@adesso.de>
+Date: Mon, 23 May 2022 13:40:50 +0200
+Subject: [PATCH] Disable building tests by default
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 28c8ee7..04ce10c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -42,7 +42,7 @@ set_package_properties(OpenMP PROPERTIES
+ ########################################################################
+ # Compilation options
+ option(BASE64_WERROR "Treat warnings as error" ON)
+-option(BASE64_BUILD_TESTS "add test projects" ON)
++option(BASE64_BUILD_TESTS "add test projects" OFF)
+ cmake_dependent_option(BASE64_WITH_OpenMP "use OpenMP" OFF "OpenMP_FOUND" OFF)
+ add_feature_info("OpenMP codec" BASE64_WITH_OpenMP "spreads codec work accross multiple threads")
+ cmake_dependent_option(BASE64_REGENERATE_TABLES "regenerate the codec tables" OFF "NOT CMAKE_CROSSCOMPILING" OFF)
+-- 
+2.34.1
+
