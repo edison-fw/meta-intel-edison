@@ -5,10 +5,8 @@ echo === Generating debian folder ===
 echo ================================
 
 ROOTDIR=$1
-if [ -z "$ROOTDIR" ]
-then
-echo "Select a distribution" ||
-exit 1
+if [ -z "$ROOTDIR" ]; then
+    echo "Select a distribution" || exit 1
 fi
 
 cd out/linux64/build
@@ -19,7 +17,11 @@ sudo mkdir -p $ROOTDIR/home/root
 
 LC_ALL=C LANGUAGE=C LANG=C sudo chroot $ROOTDIR /bin/bash -c "apt clean"
 LC_ALL=C LANGUAGE=C LANG=C sudo chroot $ROOTDIR /bin/bash -c "apt update"
-LC_ALL=C LANGUAGE=C LANG=C sudo chroot $ROOTDIR /bin/bash -c "apt install -y wpasupplicant rfkill vim ssh sudo connman parted cloud-guest-utils net-tools"
+# sorting by https://build.moz.one
+LC_ALL=C LANGUAGE=C LANG=C sudo chroot $ROOTDIR /bin/bash -c "apt install -y  \
+    bash-completion cloud-guest-utils connman curl dnsutils htop ifupdown  \
+    iputils-ping kmod nano net-tools network-manager openssh-server parted rfkill  \
+    ssh sudo systemd systemd-sysv tree vim wget wireless-tools wpasupplicant"
 
 sudo cp -r tmp/deploy/deb $ROOTDIR/tmp/
 sudo cp -r ../../../meta-intel-edison/meta-intel-edison-distro/recipes-core/base-files/base-files/fstab.btrfs $ROOTDIR/etc/fstab
@@ -32,7 +34,7 @@ sudo chroot $ROOTDIR /bin/bash -c "dpkg -i /tmp/deb/corei7-64/gadget_*.deb"
 sudo rm -rf $ROOTDIR/tmp/*
 
 sudo rm -f $ROOTDIR/etc/hostname
-sudo echo edison > $ROOTDIR/etc/hostname
+sudo echo edison >$ROOTDIR/etc/hostname
 
 sudo rm -f $ROOTDIR/etc/resolv.conf
 sudo ln -s /run/connman/resolv.conf /$ROOTDIR/etc/resolv.conf
