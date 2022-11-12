@@ -13,12 +13,12 @@ DESCRIPTION = "U-Boot"
 SECTION = "bootloaders"
 
 LICENSE = "GPL-2.0"
-LIC_FILES_CHKSUM = "file://Licenses/README;md5=5a7450c57ffe5ae63fd732446b988025"
+LIC_FILES_CHKSUM = "file://Licenses/README;md5=2ca5f2c35c8cc335f0a19756634782f1"
 PE = "1"
 
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
-		
-SRCREV = "e4b6ebd3de982ae7185dbf689a030e73fd06e0d2"
+
+SRCREV = "4debc57a3da6c3f4d3f89a637e99206f4cea0a96"
 
 SRC_URI:append = " file://${MACHINE}.env"
 SRC_URI:append = " file://target_env/"
@@ -26,7 +26,7 @@ SRC_URI:append = " file://target_env/"
 SRC_URI:append = " file://btrfs.cfg"
 SRC_URI:append = " file://0001-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 
-PV = "2022.04"
+PV = "2022.10"
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 inherit pkgconfig
