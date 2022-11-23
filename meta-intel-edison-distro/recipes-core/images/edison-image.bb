@@ -75,6 +75,7 @@ IMAGE_INSTALL:append = " nodejs-npm"
 IMAGE_INSTALL:append = " libiio"
 IMAGE_INSTALL:append = " libiio-iiod"
 IMAGE_INSTALL:append = " libiio-python3"
+IMAGE_INSTALL:append = " libiio-tests"
 
 # gpiod replaces the former MRAA and UPM to access sensor/actuator drivers in the kernel
 IMAGE_INSTALL:append = " libgpiod-python"
