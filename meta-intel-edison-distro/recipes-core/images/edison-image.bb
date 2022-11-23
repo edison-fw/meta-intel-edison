@@ -76,6 +76,10 @@ IMAGE_INSTALL:append = " libiio"
 IMAGE_INSTALL:append = " libiio-iiod"
 IMAGE_INSTALL:append = " libiio-python3"
 
+# gpiod replaces the former MRAA and UPM to access sensor/actuator drivers in the kernel
+IMAGE_INSTALL:append = " libgpiod-python"
+IMAGE_INSTALL:append = " libgpiodcxx"
+
 # INTEL MCU FW - disable for now as not supported by kernel
 #IMAGE_INSTALL:append = " mcu-fw-load"
 #IMAGE_INSTALL:append = " mcu-fw-bin"
