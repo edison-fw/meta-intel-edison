@@ -54,7 +54,7 @@ folders:
     jurl: /0.5-Road-map.html
     ref: 0.5-Road-map
     pdf: true
-    
+
   - title: News
     jurl: /0.6-News.html
     ref: 0.6-News
@@ -109,7 +109,7 @@ folders:
     jurl: /2.2-Building-and-installing-the-kernel.html
     ref: 2.2-Building-and-installing-the-kernel
     pdf: true
-    
+
   - title: Building and flashing U-Boot
     jurl: /2.3-Building-and-flashing-U-boot.html
     ref: 2.3-Building-and-flashing-U-boot
@@ -129,7 +129,7 @@ folders:
     jurl: /2.6-Building-Debian.html
     ref: 2.6-Building-Debian
     pdf: true
-    
+
   - title: Installing Ubuntu
     jurl: /2.7-Install_Ubuntu.html
     ref: 2.7-Install_Ubuntu
@@ -175,9 +175,13 @@ folders:
     jurl: /4.5-mraa-upm.html
     ref: 4.5-mraa-upm
     pdf: true
+  - title: LibIIO
+    jurl: /4.6-libiio.html
+    ref: 4.6-libiio
+    pdf: true
   - title: Making contact the first time
-    jurl: /4.6-contact.html
-    ref: 4.6-contact
+    jurl: /4.7-contact.html
+    ref: 4.7-contact
     pdf: true
 
 - title: Hacking
@@ -185,15 +189,15 @@ folders:
   jurl: /minitoc_theme_build.html
 
   folderitems:
-  - title: Creating a deb repository 
+  - title: Creating a deb repository
     jurl: /5.0-Creating-a-deb-repository.html
     ref: 5.0-Creating-a-deb-repository
     pdf: true
-  - title: Bitbake tricks 
+  - title: Bitbake tricks
     jurl: /5.1-Bitbake-tricks
     ref: 5.1-Bitbake-tricks
     pdf: true
-  - title: Creating documentation 
+  - title: Creating documentation
     jurl: /5.2-Documentation.html
     ref: 5.2-Documentation
     pdf: true
