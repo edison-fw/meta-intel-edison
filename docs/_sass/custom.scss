@@ -252,7 +252,7 @@ div#toc2 ul li ul li {
 
 
 pre {
-    overflow: auto;
+    overflow-x: auto;
     margin: 20px 0px;
     background-color: grey;
     color: whitesmoke;
@@ -392,4 +392,11 @@ blockquote {
 a[data-toggle="tooltip"] {
     color: green;
     border-bottom: 1px dashed gray;
+}
+
+pre code {
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: pre;
+    display: inline-block;
 }
