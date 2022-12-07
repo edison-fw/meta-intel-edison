@@ -74,7 +74,7 @@ SRC_URI:append = " file://0004-mmc-sdhci-pci-Remove-dead-code-cd_gpio-cd_irq-et-
 SRC_URI:append = " file://0005-mmc-sdhci-pci-Remove-dead-code-rst_n_gpio-et-al.patch"
 SRC_URI:append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
+SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 SRC_URI:append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-TTY.patch"
 
@@ -87,17 +87,3 @@ LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 LINUX_VERSION ?= "${PV}"
 
 COMPATIBLE_MACHINE = "edison"
-
-# Fix a bug where "make alldefconfig" run triggered by merge_config.sh doesn't find bison and flex.
-# This is just a band aid and should probably be brought to Yocto mail list for fixing/clarification.
-# They added a patch for this a while ago, setting explicit dependency on bison-native,
-# but (1) here we have it anyway and (2) I don't see how it can help as DEPENDS only sets a link
-# between do_configure and do_populate_sysroot and do_kernel_configme runs before do_configure.
-# https://git.yoctoproject.org/cgit.cgi/poky/commit/meta/classes/kernel.bbclass?id=20e4d309e12bf10e2351e0016b606e85599b80f6
-do_kernel_configme[depends] += "bison-native:do_populate_sysroot flex-native:do_populate_sysroot"
-
-# This one is necessary too - otherwise the compilation itself fails later.
-DEPENDS += "openssl-native util-linux-native"
-DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
-
-do_kernel_configcheck[noexec] = "1"

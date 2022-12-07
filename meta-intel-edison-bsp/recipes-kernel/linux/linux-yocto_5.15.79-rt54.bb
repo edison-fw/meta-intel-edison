@@ -75,7 +75,7 @@ SRC_URI:append = " file://0004-mmc-sdhci-pci-Remove-dead-code-cd_gpio-cd_irq-et-
 SRC_URI:append = " file://0005-mmc-sdhci-pci-Remove-dead-code-rst_n_gpio-et-al.patch"
 SRC_URI:append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001-serial-8250_dma-use-linear-buffer-for-transmit.patch"
+SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 SRC_URI:append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-TTY.patch"
 
