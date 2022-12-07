@@ -28,7 +28,8 @@ Currently we have Intel's original (factory) firmware: original and created addi
 * **zeus** (64 bit) based on Yocto Warrior with kernel 5.6.
 * **dunfell** (64 bit) based on Yocto Dunfell with kernel 5.11. 
 * **gatesgarth** (64 bit) based on Yocto Gatesgarth with LTS kernel 5.10, PREEMPT_RT kernel 5.10 and current kernel 5.14
-* * **hardknott** (64 bit) based on Yocto Hardknott with LTS kernel 5.15.25, PREEMPT_RT kernel 5.15.25-rt33 and testing kernel 5.16.0
+* **hardknott** (64 bit) based on Yocto Hardknott with LTS kernel 5.15.25, PREEMPT_RT kernel 5.15.25-rt33 and testing kernel 5.16.0
+* **honister** (64 bit) based on Yocto Honister with LTS kernel 5.15.81, PREEMPT_RT kernel 5.15.79-rt54 and testing kernel 6.0.0
 
 See https://wiki.yoctoproject.org/wiki/Releases on Yocto releases and support status.
 
@@ -36,6 +37,6 @@ See https://wiki.yoctoproject.org/wiki/Releases on Yocto releases and support st
 
 Yocto Morty will build on Ubuntu Artful (17.10) while Dunfell (the Yocto project LTS version) builds on Ubuntu Groovy (20.10).
 
-Generally **sumo32** will give best results if you rely on MRAA and UPM. In all other cases, use the latest, **hardknott**.
+Generally **sumo32** will give best results if you rely on MRAA and UPM. In all other cases, use the latest, **honister**.
 
-**gatesgarth** has a 64 bit kernel because we can, but may be actually slower than the 32bit kernel. **master** has the same as gatesgarth, but 32 bits.
+**honister** has a 64 bit kernel because we can, but may sometimes be actually slower than the 32bit kernel. **master** has the same as honister, but 32 bits.
