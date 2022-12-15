@@ -1,0 +1,92 @@
+From a55b36852a0dccec66d16f84b1503d610ceabcd7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Henrik=20S=2E=20Ga=C3=9Fmann?= <henrik.gassmann@adesso.de>
+Date: Mon, 23 May 2022 14:46:32 +0200
+Subject: [PATCH] Only build CLI on supported platforms
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+Co-authored-by: Henrik Gaßmann <BurningEnlightenment@users.noreply.github.com>
+---
+ CMakeLists.txt      | 19 +++++++++++++++++--
+ bin/CMakeLists.txt  |  5 -----
+ test/CMakeLists.txt |  2 +-
+ 3 files changed, 18 insertions(+), 8 deletions(-)
+ delete mode 100644 bin/CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 04ce10c..06de420 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -21,6 +21,7 @@ project(base64 LANGUAGES C VERSION 0.4.0)
+ 
+ include(GNUInstallDirs)
+ include(CMakeDependentOption)
++include(CheckIncludeFile)
+ include(FeatureSummary)
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
+ 
+@@ -29,6 +30,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
+ include(TargetArch)
+ detect_target_architecture(_TARGET_ARCH)
+ 
++check_include_file(getopt.h HAVE_GETOPT_H)
++cmake_dependent_option(BASE64_BUILD_CLI "Build the cli for encoding and decoding" ON "HAVE_GETOPT_H" OFF)
++add_feature_info(CLI BASE64_BUILD_CLI "enables the CLI executable for encoding and decoding")
+ 
+ ###################################################################
+ # optional/conditional dependencies
+@@ -235,12 +239,23 @@ endif()
+ 
+ ########################################################################
+ # base64
+-add_subdirectory(bin)
++if (BASE64_BUILD_CLI)
++    add_executable(base64-bin 
++        bin/base64.c
++    )
++    target_link_libraries(base64-bin PRIVATE base64)
++    set_target_properties(base64-bin PROPERTIES 
++        OUTPUT_NAME base64
++    )   
++endif()
+ 
+ ########################################################################
+ # cmake install
+ install(DIRECTORY include/ TYPE INCLUDE)
+-install(TARGETS base64 EXPORT base64-targets)
++install(TARGETS base64 EXPORT base64-targets DESTINATION ${CMAKE_INSTALL_LIBDIR})
++if (BASE64_BUILD_CLI)
++    install(TARGETS base64-bin EXPORT base64-targets DESTINATION ${CMAKE_INSTALL_BINDIR})
++endif()
+ 
+ include(CMakePackageConfigHelpers)
+ configure_package_config_file(cmake/base64-config.cmake.in
+diff --git a/bin/CMakeLists.txt b/bin/CMakeLists.txt
+deleted file mode 100644
+index 0e14772..0000000
+--- a/bin/CMakeLists.txt
++++ /dev/null
+@@ -1,5 +0,0 @@
+-# executable has same name as lib, see https://gist.github.com/jlgerber/eafc4ee2b9954e27dd2bb009496b1b03
+-add_executable(base64-bin base64.c)
+-target_link_libraries(base64-bin PRIVATE base64)
+-install(TARGETS base64-bin DESTINATION bin)
+-set_target_properties(base64-bin PROPERTIES OUTPUT_NAME base64)
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index 5f08118..ef87870 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -23,7 +23,7 @@ function(add_base64_test TEST_NAME)
+     add_test(NAME ${TEST_NAME}
+         COMMAND ${TEST_NAME}
+     )
+-    install(TARGETS ${TEST_NAME} DESTINATION bin)
++    install(TARGETS ${TEST_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endfunction()
+ 
+ 
+-- 
+2.34.1
+

@@ -7,9 +7,9 @@ SRC_URI = "file://post-install.service \
                 file://post-install.sh"
 inherit allarch 
                 
-SYSTEMD_SERVICE_${PN} = "post-install.service"
+SYSTEMD_SERVICE:${PN} = "post-install.service"
 
-RDEPENDS_${PN} = "systemd bash blink-led"
+RDEPENDS:${PN} = "systemd bash blink-led"
 
 do_install() {
 	install -d ${D}/sbin
@@ -28,7 +28,7 @@ do_install() {
 		${D}${sysconfdir}/systemd/system/basic.target.wants/post-install.service
 }
 
-FILES_${PN} = "${base_libdir}/systemd/system/*.service \
+FILES:${PN} = "${base_libdir}/systemd/system/*.service \
 				${sysconfdir} \
 				/sbin/post-install.sh"
 

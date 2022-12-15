@@ -3,12 +3,12 @@ SECTION = "base"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
 SRC_URI = "file://gadget.rules"
-SRC_URI += "file://conf-gadget.sh"
+SRC_URI:append = " file://conf-gadget.sh"
 
-RDEPENDS_${PN} = "bash"
+RDEPENDS:${PN} = "bash"
 
 S = "${WORKDIR}"
 
@@ -21,5 +21,5 @@ do_install() {
         install -c -m 644 ${WORKDIR}/gadget.rules ${D}/${sysconfdir}/udev/rules.d
 }
 
-FILES_${PN} = "${sysconfdir}/udev/rules.d/gadget.rules"
-FILES_${PN} += "${bindir}/conf-gadget.sh"
+FILES:${PN} = "${sysconfdir}/udev/rules.d/gadget.rules"
+FILES:${PN} += "${bindir}/conf-gadget.sh"

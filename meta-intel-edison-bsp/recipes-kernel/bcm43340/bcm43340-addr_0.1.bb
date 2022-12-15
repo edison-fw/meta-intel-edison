@@ -3,16 +3,16 @@ SECTION = "base"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
 inherit systemd
 
-RDEPENDS_${PN} = "bluez5-noinst-tools bash"
+RDEPENDS:${PN} = "bluez5-noinst-tools bash"
 
-SYSTEMD_SERVICE_${PN} = "bluetooth_bd_addr.service"
+SYSTEMD_SERVICE:${PN} = "bluetooth_bd_addr.service"
 
 SRC_URI = "file://bluetooth_bd_addr.sh"
-SRC_URI += "file://bluetooth_bd_addr.service"
+SRC_URI:append = " file://bluetooth_bd_addr.service"
 
 S = "${WORKDIR}"
 
@@ -25,5 +25,5 @@ do_install() {
         install -c -m 644 ${WORKDIR}/bluetooth_bd_addr.service ${D}/${systemd_unitdir}/system
 }
 
-FILES_${PN} = "${base_libdir}/systemd/system/bluetooth_bd_addr.service"
-FILES_${PN} += "${bindir}/bluetooth_bd_addr.sh"
+FILES:${PN} = "${base_libdir}/systemd/system/bluetooth_bd_addr.service"
+FILES:${PN} += "${bindir}/bluetooth_bd_addr.sh"

@@ -4,12 +4,15 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 ROOT_MOUNT="/rootfs"
 ROOT_IMAGE="rootfs.img"
+ROOT_TYPE="ramfs"
 MOUNT="/bin/mount"
 UMOUNT="/bin/umount"
 ISOLINUX=""
 
 ROOT_DISK=""
 skip_load_tables="no"
+# for debugging
+#set -xv
 
 # Copied from initramfs-framework. The core of this script probably should be
 # turned into initramfs-framework modules to reduce duplication.
@@ -46,7 +49,7 @@ early_setup() {
 }
 
 acpi_load() {
-	if [ "$skip_load_tables" = "yes" ]; then 
+	if [ "$skip_load_tables" = "yes" ]; then
 		echo "Loading acpi tables deferred"
 	elif [ -d /sys/firmware/acpi ]; then
 		echo "Kernel with acpi enabled detected"
@@ -71,7 +74,8 @@ read_args() {
             rootimage=*)
                 ROOT_IMAGE=$optarg ;;
             rootfstype=*)
-                modprobe $optarg 2> /dev/null ;;
+                ROOT_TYPE=$optarg
+                modprobe $ROOT_TYPE 2> /dev/null ;;
             rootflags=*)
                 ROOTFLAGS="-o ${optarg}" ;;
             LABEL=*)
@@ -93,7 +97,7 @@ read_args() {
                         shelltimeout=30
                 else
                         shelltimeout=$optarg
-                fi 
+                fi
         esac
     done
 }
@@ -112,7 +116,7 @@ boot_root() {
 
     # Allow for identification of the real root even after boot
     mkdir -p  /realroot
-    mount -n ${ROOTFLAGS} ${ROOT_DEVICE} /realroot
+    mount -n -t ${ROOT_TYPE} ${ROOTFLAGS} ${ROOT_DEVICE} /realroot
 
     # check if init found
     if [[ -h /realroot/sbin/init || -f /realroot/sbin/init ]]; then
@@ -177,7 +181,7 @@ do
         ROOT_DISK="$i"
         break
     done
-# don't wait for more than $shelltimeout seconds, if it's set        
+# don't wait for more than $shelltimeout seconds, if it's set
     if [ -n "$shelltimeout" ]; then
         echo -n " " $(( $shelltimeout - $C ))
         if [ $C -ge $shelltimeout ]; then

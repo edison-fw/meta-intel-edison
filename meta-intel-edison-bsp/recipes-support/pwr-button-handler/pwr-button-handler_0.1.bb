@@ -5,9 +5,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 inherit systemd
 
-RDEPENDS_${PN} = "python3 bash blink-led"
+RDEPENDS:${PN} = "python3 bash blink-led"
 
-SYSTEMD_SERVICE_${PN} = "pwr-button-handler.service"
+SYSTEMD_SERVICE:${PN} = "pwr-button-handler.service"
 
 SRC_URI = "file://pwr-button-handler.c"
 SRC_URI += "file://simple-agent"
@@ -39,8 +39,8 @@ do_install() {
         install -m 644 ${WORKDIR}/pwr-button-handler.conf ${D}${libdir}/systemd/logind.conf.d/
 }
 
-FILES_${PN} = "${base_libdir}/systemd/system/pwr-button-handler.service"
-FILES_${PN} += "${bindir}/pwr_button_handler"
-FILES_${PN} += "${bindir}/simple-agent"
-FILES_${PN} += "${bindir}/connect_bluetooth.sh"
-FILES_${PN} += "${libdir}/systemd/logind.conf.d/pwr-button-handler.conf"
+FILES:${PN} = "${base_libdir}/systemd/system/pwr-button-handler.service"
+FILES:${PN} += "${bindir}/pwr_button_handler"
+FILES:${PN} += "${bindir}/simple-agent"
+FILES:${PN} += "${bindir}/connect_bluetooth.sh"
+FILES:${PN} += "${libdir}/systemd/logind.conf.d/pwr-button-handler.conf"

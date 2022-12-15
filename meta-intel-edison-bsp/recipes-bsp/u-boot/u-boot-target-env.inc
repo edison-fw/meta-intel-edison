@@ -82,7 +82,7 @@ python do_environment_mkimage() {
     return 0
 }
 
-do_deploy_append() {
+do_deploy:append() {
     install -d ${DEPLOYDIR}
     # deploy  binary U-boot environments
     echo "Deploying U-boot Environments binary files in ${DEPLOYDIR}/${ENV_DEPLOY_DIR}"

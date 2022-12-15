@@ -6,7 +6,7 @@ SECTION = "kernel"
 # Install bluetooth service
 # For bluetooth to work it may need `rfkill unblock 1`
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
 SRC_URI = "git://github.com/01org/edison-firmware.git;branch=master;protocol=git;rev=8585a10b3527666b2d35b3dcacffede3ec00cb53;destsuffix=edison-firmware \
            git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git;branch=main;protocol=git;rev=1ffb7381a483a95d4bff923e7a73204dea0f3a66;destsuffix=linux-firmware \
@@ -21,7 +21,7 @@ LIC_FILES_CHKSUM = "file://edison-firmware/broadcom_cws/wlan/firmware/LICENCE.br
 PV = "6.20.190"
 PR = "r2"
 
-FILES_${PN} += "/lib/firmware/brcm/*"
+FILES:${PN} += "/lib/firmware/brcm/*"
 
 inherit allarch update-alternatives
 

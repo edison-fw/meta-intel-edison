@@ -1,0 +1,25 @@
+From 536a317b3d6bc07da989d29be8ccbb48f29ecc09 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Wed, 16 Mar 2022 23:04:31 +0100
+Subject: [PATCH] signing-keys: build empty meta-package
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ meta/recipes-core/meta/signing-keys.bb | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meta/recipes-core/meta/signing-keys.bb b/meta/recipes-core/meta/signing-keys.bb
+index 03463f95f5..b5c7f897fd 100644
+--- a/meta/recipes-core/meta/signing-keys.bb
++++ b/meta/recipes-core/meta/signing-keys.bb
+@@ -9,6 +9,7 @@ inherit allarch deploy
+ 
+ EXCLUDE_FROM_WORLD = "1"
+ INHIBIT_DEFAULT_DEPS = "1"
++ALLOW_EMPTY:${PN} = "1"
+ 
+ SYSROOT_DIRS += "${sysconfdir}/pki"
+ 
+-- 
+2.32.0
+

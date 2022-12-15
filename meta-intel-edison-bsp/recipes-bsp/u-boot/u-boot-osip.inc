@@ -183,7 +183,7 @@ python do_osip_mkimage() {
     main()
 }
 
-do_deploy_append() {
+do_deploy:append() {
     install -d ${DEPLOYDIR}
     install ${UBOOT_IMG} ${DEPLOYDIR}/${UBOOT_OSIP_IMAGE}
 

@@ -1,0 +1,27 @@
+From 829660dd9fa40fcc420ea0bd2722e6a0829cfa45 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Thu, 5 May 2022 22:25:36 +0200
+Subject: [PATCH] When building with OpenMP support link to openmp lib
+
+See https://cliutils.gitlab.io/modern-cmake/chapters/packages/OpenMP.html
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4aaf21d..8232bcb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -224,6 +224,7 @@ if (BASE64_WITH_OpenMP)
+         PRIVATE
+             ${OpenMP_C_FLAGS}
+     )
++    target_link_libraries(base64 OpenMP::OpenMP_C)
+ endif()
+ 
+ ########################################################################
+-- 
+2.34.1
+

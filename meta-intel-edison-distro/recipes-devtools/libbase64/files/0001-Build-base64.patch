@@ -1,0 +1,41 @@
+From cf8279d5c924b16645e0da2e019fe999c4df9b46 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 7 May 2022 20:44:26 +0200
+Subject: [PATCH] Build base64
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ CMakeLists.txt     | 4 ++++
+ bin/CMakeLists.txt | 5 +++++
+ 2 files changed, 9 insertions(+)
+ create mode 100644 bin/CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8232bcb..0365a94 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -233,6 +233,10 @@ if (BASE64_BUILD_TESTS)
+     add_subdirectory(test)
+ endif()
+ 
++########################################################################
++# base64
++add_subdirectory(bin)
++
+ ########################################################################
+ # cmake install
+ install(DIRECTORY include/ TYPE INCLUDE)
+diff --git a/bin/CMakeLists.txt b/bin/CMakeLists.txt
+new file mode 100644
+index 0000000..0e14772
+--- /dev/null
++++ b/bin/CMakeLists.txt
+@@ -0,0 +1,5 @@
++# executable has same name as lib, see https://gist.github.com/jlgerber/eafc4ee2b9954e27dd2bb009496b1b03
++add_executable(base64-bin base64.c)
++target_link_libraries(base64-bin PRIVATE base64)
++install(TARGETS base64-bin DESTINATION bin)
++set_target_properties(base64-bin PROPERTIES OUTPUT_NAME base64)
+-- 
+2.34.1
+

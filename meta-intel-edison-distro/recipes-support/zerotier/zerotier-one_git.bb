@@ -45,10 +45,10 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=11bbae9cacaf61dd7fc10035f6f5c68e \
 # file://ext/hiredis-0.14.1/COPYING;md5=d84d659a35c666d23233e54503aaea51
 # file://ext/redis-plus-plus-1.1.1/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files/:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
 SRC_URI = "git://github.com/zerotier/ZeroTierOne;protocol=https"
-SRC_URI_append = " file://0001-systemd-fix-zerotier-hanging-on-shutdown.patch"
+SRC_URI:append = " file://0001-systemd-fix-zerotier-hanging-on-shutdown.patch"
 
 # Modify these as desired
 PV = "1.6.5+git${SRCPV}"

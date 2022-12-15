@@ -2,7 +2,7 @@ DESCRIPTION = "A minimal functional image to run EDISON"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 LICENSE = "MIT"
 IMAGE_INSTALL = "packagegroup-core-boot  ${CORE_IMAGE_EXTRA_INSTALL}"
-IMAGE_INSTALL_append = " openssh-sftp-server"
+IMAGE_INSTALL:append = " openssh-sftp-server"
 
 IMAGE_LINGUAS = " "
 
@@ -37,61 +37,61 @@ IMAGE_FEATURES += "package-management ssh-server-openssh"
 # Allow passwordless root login and postinst logging
 IMAGE_FEATURES += "debug-tweaks"
 
-IMAGE_INSTALL_append = " wpa-supplicant"
-IMAGE_INSTALL_append = " iw"
-IMAGE_INSTALL_append = " bridge-utils"
-IMAGE_INSTALL_append = " bluez5"
-IMAGE_INSTALL_append = " kernel-modules"
-IMAGE_INSTALL_append = " iptables"
-IMAGE_INSTALL_append = " libstdc++"
-IMAGE_INSTALL_append = " u-boot-fw-utils"
-IMAGE_INSTALL_append = " file"
-IMAGE_INSTALL_append = " pciutils"
-IMAGE_INSTALL_append = " usbutils"
-IMAGE_INSTALL_append = " lshw"
-IMAGE_INSTALL_append = " ldd"
-IMAGE_INSTALL_append = " i2c-tools"
-IMAGE_INSTALL_append = " watchdog-sample"
-IMAGE_INSTALL_append = " wget"
-IMAGE_INSTALL_append = " sudo"
+IMAGE_INSTALL:append = " wpa-supplicant"
+IMAGE_INSTALL:append = " iw"
+IMAGE_INSTALL:append = " bridge-utils"
+IMAGE_INSTALL:append = " bluez5"
+IMAGE_INSTALL:append = " kernel-modules"
+IMAGE_INSTALL:append = " iptables"
+IMAGE_INSTALL:append = " libstdc++"
+IMAGE_INSTALL:append = " libubootenv-bin"
+IMAGE_INSTALL:append = " file"
+IMAGE_INSTALL:append = " pciutils"
+IMAGE_INSTALL:append = " usbutils"
+IMAGE_INSTALL:append = " lshw"
+IMAGE_INSTALL:append = " ldd"
+IMAGE_INSTALL:append = " i2c-tools"
+IMAGE_INSTALL:append = " watchdog-sample"
+IMAGE_INSTALL:append = " wget"
+IMAGE_INSTALL:append = " sudo"
 
-IMAGE_INSTALL_append = " screen"
+IMAGE_INSTALL:append = " screen"
 
 # Python and some basic modules
-IMAGE_INSTALL_append = " python3"
+IMAGE_INSTALL:append = " python3"
 
 # To allow booting alternate kernel
-IMAGE_INSTALL_append = " bootsuccess"
+IMAGE_INSTALL:append = " bootsuccess"
 
 
 # Wifi firmware
 # removed modules, already built into kernel
-IMAGE_INSTALL_append = " bcm43340-fw"
-IMAGE_INSTALL_append = " bcm43340-addr"
+IMAGE_INSTALL:append = " bcm43340-fw"
+IMAGE_INSTALL:append = " bcm43340-addr"
 
 # Gadget setup
-IMAGE_INSTALL_append = " gadget"
+IMAGE_INSTALL:append = " gadget"
 
 # Adds various other tools
-IMAGE_INSTALL_append = " lsof"
-IMAGE_INSTALL_append = " less"
+IMAGE_INSTALL:append = " lsof"
+IMAGE_INSTALL:append = " less"
 
 # Those are necessary to manually create partitions and file systems on the eMMC
-IMAGE_INSTALL_append = " parted"
-IMAGE_INSTALL_append = " e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks libcomerr libss libe2p libext2fs dosfstools"
-IMAGE_INSTALL_append = " btrfs-tools"
-IMAGE_INSTALL_append = " p7zip"
+IMAGE_INSTALL:append = " parted"
+IMAGE_INSTALL:append = " e2fsprogs-e2fsck e2fsprogs-mke2fs e2fsprogs-tune2fs e2fsprogs-badblocks libcomerr libss libe2p libext2fs dosfstools"
+IMAGE_INSTALL:append = " btrfs-tools"
+IMAGE_INSTALL:append = " p7zip"
 
 # Time related
-IMAGE_INSTALL_append = " tzdata"
+IMAGE_INSTALL:append = " tzdata"
 
 # linux 5.0.0 requires a source of entropy, use TRNG
-IMAGE_INSTALL_append = " rng-tools"
+IMAGE_INSTALL:append = " rng-tools"
 
-IMAGE_INSTALL_append = " libgpiod-tools"
+IMAGE_INSTALL:append = " libgpiod-tools"
 
 # Add monitoring tools
-IMAGE_INSTALL_append = " htop"
+IMAGE_INSTALL:append = " htop"
 
 DEPENDS += "u-boot"
 

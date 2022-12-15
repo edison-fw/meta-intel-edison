@@ -7,9 +7,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 SRC_URI += "file://cleanjournal.service"
 SRC_URI += "file://clean_journal.sh"
 
-SYSTEMD_SERVICE_${PN} = "cleanjournal.service"
+SYSTEMD_SERVICE:${PN} = "cleanjournal.service"
 
-RDEPENDS_${PN} = "systemd"
+RDEPENDS:${PN} = "systemd"
 DEPENDS = "systemd"
 inherit systemd
 
