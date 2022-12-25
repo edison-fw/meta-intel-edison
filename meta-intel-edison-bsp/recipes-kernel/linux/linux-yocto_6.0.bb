@@ -2,10 +2,9 @@ KBRANCH ?= "master"
 
 require recipes-kernel/linux/linux-yocto.inc
 
-LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://github.com/torvalds/linux.git;protocol=https"
+SRC_URI = "git://github.com/torvalds/linux.git;branch=master;protocol=https"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI:append = " file://0001-enable-to-build-a-netboot-image.cfg"
@@ -82,20 +81,12 @@ SRC_URI:append = " file://0001-usb-dwc3-core-defer-probe-on-ulpi_read_id-timeout
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 
-SRCREV ??= "v${PV}"
+SRCREV ??= "4fe89d07dcc2804c8b562f6c7896a45643d34b2f"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-
-LINUX_VERSION ?= "${PV}"
+PV = "${LINUX_VERSION}+git${SRCPV}"
+LINUX_VERSION ?= "6.0"
 
 COMPATIBLE_MACHINE = "edison"
-
-# Fix a bug where "make alldefconfig" run triggered by merge_config.sh doesn't find bison and flex.
-# This is just a band aid and should probably be brought to Yocto mail list for fixing/clarification.
-# They added a patch for this a while ago, setting explicit dependency on bison-native,
-# but (1) here we have it anyway and (2) I don't see how it can help as DEPENDS only sets a link
-# between do_configure and do_populate_sysroot and do_kernel_configme runs before do_configure.
-# https://git.yoctoproject.org/cgit.cgi/poky/commit/meta/classes/kernel.bbclass?id=20e4d309e12bf10e2351e0016b606e85599b80f6
-do_kernel_configme[depends] += "bison-native:do_populate_sysroot flex-native:do_populate_sysroot"
 
 # This one is necessary too - otherwise the compilation itself fails later.
 DEPENDS += "openssl-native util-linux-native"
