@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="honister"
-yocto_tag="honister"
+yocto_branch="kirkstone"
+yocto_tag="kirkstone"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
@@ -39,14 +39,14 @@ EOF
   cat >> $yocto_conf_dir/local.conf <<EOF
 MACHINE = "edison"
 DISTRO = "poky-edison"
-USER_CLASSES ?= "buildstats image-prelink"
+USER_CLASSES ?= "buildstats"
 PATCHRESOLVE = "noop"
 SCONF_VERSION = "1"
 EDISONREPO_TOP_DIR = "$top_repo_dir"
 DL_DIR ?= "$my_dl_dir"
 SSTATE_DIR ?= "$my_sstate_dir"
 BUILDNAME = "$my_build_name"
-LICENSE_FLAGS_WHITELIST += "commercial"
+LICENSE_FLAGS_ACCEPTED += "commercial"
 COPY_LIC_MANIFEST = "1"
 COPY_LIC_DIRS = "1"
 FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
@@ -337,8 +337,8 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Applying patch on poky"
   cd $poky_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-gpg-sign-Add-parameters-to-gpg-signature-function.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0002-package_manager-sign-DEB-package-feeds.patch
+#  git apply $top_repo_dir/meta-intel-edison/utils/0001-gpg-sign-Add-parameters-to-gpg-signature-function.patch
+#  git apply $top_repo_dir/meta-intel-edison/utils/0002-package_manager-sign-DEB-package-feeds.patch
 #  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
