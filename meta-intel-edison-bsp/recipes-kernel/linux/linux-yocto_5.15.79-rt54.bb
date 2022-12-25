@@ -2,7 +2,6 @@ KBRANCH ?= "v5.10-rt-rebase"
 
 require recipes-kernel/linux/linux-yocto.inc
 
-LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git;protocol=https;branch=v5.15-rt-rebase"
@@ -83,10 +82,10 @@ SRC_URI:append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 
-SRCREV ??= "v${PV}-rebase"
+SRCREV ??= "0cfce3902db9f0faa865a88dc713f2af639dd20f"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-
-LINUX_VERSION ?= "${PV}"
+PV = "${LINUX_VERSION}+git${SRCPV}"
+LINUX_VERSION ?= "v5.15.79-rt54-rebase"
 
 COMPATIBLE_MACHINE = "edison"
 
