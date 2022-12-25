@@ -47,7 +47,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=11bbae9cacaf61dd7fc10035f6f5c68e \
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
-SRC_URI = "git://github.com/zerotier/ZeroTierOne;protocol=https"
+SRC_URI = "git://github.com/zerotier/ZeroTierOne;branch=master;protocol=https"
 SRC_URI:append = " file://0001-systemd-fix-zerotier-hanging-on-shutdown.patch"
 
 # Modify these as desired
