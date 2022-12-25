@@ -3,7 +3,7 @@ HOMEPAGE = "https://github.com/thesofproject"
 SECTION = "kernel"
 
 SRCREV ??= "806d7e3a414d51515952f746fbb73540e1c3500f"
-SRC_URI = "git://github.com/thesofproject/sof-bin.git;branch=main;protocol=git;destsuffix=edison-firmware"
+SRC_URI = "git://github.com/thesofproject/sof-bin.git;branch=main;protocol=https;destsuffix=edison-firmware"
 
 S = "${WORKDIR}"
 
