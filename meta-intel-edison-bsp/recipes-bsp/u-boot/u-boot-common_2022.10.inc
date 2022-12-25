@@ -12,7 +12,7 @@ as well as hardware data such as the Ethernet MAC address)."
 DESCRIPTION = "U-Boot"
 SECTION = "bootloaders"
 
-LICENSE = "GPL-2.0"
+LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=2ca5f2c35c8cc335f0a19756634782f1"
 PE = "1"
 
