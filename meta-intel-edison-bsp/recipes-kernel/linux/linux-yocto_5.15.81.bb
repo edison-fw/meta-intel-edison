@@ -2,7 +2,6 @@ KBRANCH ?= "linux-5.15.y"
 
 require recipes-kernel/linux/linux-yocto.inc
 
-LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git;protocol=https;branch=linux-5.15.y"
@@ -82,9 +81,13 @@ SRC_URI:append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 
-SRCREV ??= "v${PV}"
+SRCREV = "e4a7232c917cd1b56d5b4fa9d7a23e3eabfecba0"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-
-LINUX_VERSION ?= "${PV}"
+PV = "${LINUX_VERSION}+git${SRCPV}"
+LINUX_VERSION ?= "5.15.81"
 
 COMPATIBLE_MACHINE = "edison"
+
+DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
+DEPENDS += "openssl-native util-linux-native"
+DEPENDS += "gmp-native libmpc-native"
