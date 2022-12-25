@@ -2,10 +2,9 @@ KBRANCH ?= "master"
 
 require recipes-kernel/linux/linux-yocto.inc
 
-LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://github.com/torvalds/linux.git;protocol=https"
+SRC_URI = "git://github.com/torvalds/linux.git;branch=master;protocol=https"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI:append = " file://0001-enable-to-build-a-netboot-image.cfg"
