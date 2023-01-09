@@ -1,11 +1,25 @@
-From 8f8e638fca7402569d9c905c8f5120d20cd44868 Mon Sep 17 00:00:00 2001
-From: Trevor Gamblin <trevor.gamblin@windriver.com>
-Date: Mon, 7 Jun 2021 15:03:06 -0400
-Subject: [PATCH] Add shared make jobserver support
+From 28fd4b9e6e60bdd07352827ec713510ae86a39c6 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Mon, 2 Jan 2023 17:48:19 +0100
+Subject: [PATCH 1/1] Add shared make jobserver support
 
 This is a rework of Richard Purdie's patch at
 http://git.yoctoproject.org/cgit.cgi/poky-contrib/commit/?h=rpurdie/wipqueue4&id=d66a327fb6189db5de8bc489859235dcba306237
-in order to work with the latest revision of the project.
+in order to work with kirkstone.
+
+Except for refreshing the patch to apply, additional changes were needed:
+* bitbake-worker filtered out exporting BB_MAKEFIFO to the environment, this
+  may need a more elegant change in bb.data.exported_vars()
+* make --jobserver-fds is replaced by jobserver-auth
+* make not longer gives priority to -j in MAKEFLAGS over the command line
+* python sets file descriptors as non-inheritable by default meed os.set_inheritable()
+* pyhton even inheritable file descriptors are closed by default, need close_fds=False
+
+This works with current versions of make (4.3). Future versions of make (4.4) will
+also need --jobserver-style=pipe to force simple pipes or pass --jobserver-auth=fifo:PATH
+to pass a named pipe (preferred).
+
+Make jobserver documented here: https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html
 
 From the original patch description:
 
@@ -27,19 +41,38 @@ From the original patch description:
 |    set everywhere) (need to check for -j in make commandline)
 
 Signed-off-by: Trevor Gamblin <trevor.gamblin@windriver.com>
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
- bitbake/bin/bitbake-worker  |  1 +
- bitbake/lib/bb/runqueue.py  | 24 ++++++++++++++++++++++++
+ bitbake/bin/bitbake-worker  | 17 +++++++-------
+ bitbake/lib/bb/runqueue.py  | 26 ++++++++++++++++++++-
  meta/conf/bitbake.conf      |  2 +-
- scripts/make-intercept/make | 31 +++++++++++++++++++++++++++++++
- 4 files changed, 57 insertions(+), 1 deletion(-)
+ scripts/make-intercept/make | 45 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 80 insertions(+), 10 deletions(-)
  create mode 100755 scripts/make-intercept/make
 
 diff --git a/bitbake/bin/bitbake-worker b/bitbake/bin/bitbake-worker
-index 9334f11fb8..1e5b5fab9f 100755
+index 2f3e9f72f9..df1594da8f 100755
 --- a/bitbake/bin/bitbake-worker
 +++ b/bitbake/bin/bitbake-worker
-@@ -231,6 +231,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
+@@ -47,7 +47,7 @@ try:
+     if sys.stdout.name == '<stdout>':
+         import fcntl
+         fl = fcntl.fcntl(sys.stdout.fileno(), fcntl.F_GETFL)
+-        fl |= os.O_SYNC 
++        fl |= os.O_SYNC
+         fcntl.fcntl(sys.stdout.fileno(), fcntl.F_SETFL, fl)
+         #sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+ except:
+@@ -86,7 +86,7 @@ def worker_fire_prepickled(event):
+ 
+ #
+ # We can end up with write contention with the cooker, it can be trying to send commands
+-# and we can be trying to send event data back. Therefore use a separate thread for writing 
++# and we can be trying to send event data back. Therefore use a separate thread for writing
+ # back data to cooker.
+ #
+ worker_thread_exit = False
+@@ -249,6 +249,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
                  the_data.setVar("BUILDNAME", workerdata["buildname"])
                  the_data.setVar("DATE", workerdata["date"])
                  the_data.setVar("TIME", workerdata["time"])
@@ -47,26 +80,71 @@ index 9334f11fb8..1e5b5fab9f 100755
                  for varname, value in extraconfigdata.items():
                      the_data.setVar(varname, value)
  
+@@ -270,14 +271,14 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
+                     else:
+                         logger.debug("Skipping disable network for %s since %s is not a local uid." % (taskname, uid))
+ 
+-                # exported_vars() returns a generator which *cannot* be passed to os.environ.update() 
+-                # successfully. We also need to unset anything from the environment which shouldn't be there 
++                # exported_vars() returns a generator which *cannot* be passed to os.environ.update()
++                # successfully. We also need to unset anything from the environment which shouldn't be there
+                 exports = bb.data.exported_vars(the_data)
+ 
+                 bb.utils.empty_environment()
+                 for e, v in exports:
+                     os.environ[e] = v
+-
++                os.environ["BB_MAKEFIFO"] = workerdata["makefifo"]
+                 for e in fakeenv:
+                     os.environ[e] = fakeenv[e]
+                     the_data.setVar(e, fakeenv[e])
+@@ -315,7 +316,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
+         else:
+             profname = "profile-%s.log" % (fn.replace("/", "-") + "-" + taskname)
+             prof = profile.Profile()
+-            try: 
++            try:
+                 ret = profile.Profile.runcall(prof, child)
+             finally:
+                 prof.dump_stats(profname)
+@@ -379,7 +380,7 @@ class BitbakeWorker(object):
+         self.extraconfigdata = None
+         self.build_pids = {}
+         self.build_pipes = {}
+-    
++
+         signal.signal(signal.SIGTERM, self.sigterm_exception)
+         # Let SIGHUP exit as SIGTERM
+         signal.signal(signal.SIGHUP, self.sigterm_exception)
+@@ -397,7 +398,7 @@ class BitbakeWorker(object):
+         signal.signal(signal.SIGTERM, signal.SIG_DFL)
+         os.kill(os.getpid(), signal.SIGTERM)
+ 
+-    def serve(self):        
++    def serve(self):
+         while True:
+             (ready, _, _) = select.select([self.input] + [i.input for i in self.build_pipes.values()], [] , [], 1)
+             if self.input in ready:
 diff --git a/bitbake/lib/bb/runqueue.py b/bitbake/lib/bb/runqueue.py
-index aa1d6b2711..b2236a9a0d 100644
+index ba75660555..072f2d49b7 100644
 --- a/bitbake/lib/bb/runqueue.py
 +++ b/bitbake/lib/bb/runqueue.py
-@@ -1271,6 +1271,7 @@ class RunQueue:
+@@ -1325,6 +1325,7 @@ class RunQueue:
              "date" : self.cfgData.getVar("DATE"),
              "time" : self.cfgData.getVar("TIME"),
              "hashservaddr" : self.cooker.hashservaddr,
-+            "makefifo" : self.cfgData.getVar("BB_MAKEFIFO", True),
++            "makefifo" : self.cfgData.getVar("BB_MAKEFIFO"),
+             "umask" : self.cfgData.getVar("BB_DEFAULT_UMASK"),
          }
  
-         worker.stdin.write(b"<cookerconfig>" + pickle.dumps(self.cooker.configuration) + b"</cookerconfig>")
-@@ -1429,6 +1430,27 @@ class RunQueue:
+@@ -1476,6 +1477,27 @@ class RunQueue:
  
          return bb.utils.better_eval(call, locs)
  
 +    def setup_make_fifo(self):
 +        fifoname = "/tmp/makefifo"
 +        self.cfgData.setVar("BB_MAKEFIFO", fifoname)
-+        m = re.search(r'-j (\d+)', self.cfgData.getVar("PARALLEL_MAKE", True))
++        m = re.search(r'-j (\d+)', self.cfgData.getVar("PARALLEL_MAKE"))
 +        if m:
 +            threads = int(m.group(1))
 +        else:
@@ -75,7 +153,7 @@ index aa1d6b2711..b2236a9a0d 100644
 +        if os.path.exists(fifoname):
 +            os.remove(fifoname)
 +        os.mkfifo(fifoname)
-+ 
++
 +        # Has to be open for read and writing
 +        self.makereadfd = os.open(fifoname, os.O_RDONLY|os.O_NONBLOCK)
 +        self.makewritefd = os.open(fifoname, os.O_WRONLY)
@@ -87,7 +165,7 @@ index aa1d6b2711..b2236a9a0d 100644
      def _execute_runqueue(self):
          """
          Run the tasks in a queue prepared by rqdata.prepare()
-@@ -1463,6 +1485,8 @@ class RunQueue:
+@@ -1510,6 +1532,8 @@ class RunQueue:
              self.rqdata.init_progress_reporter.next_stage()
              bb.event.fire(bb.event.DepTreeGenerated(depgraph), self.cooker.data)
  
@@ -96,25 +174,34 @@ index aa1d6b2711..b2236a9a0d 100644
              if not self.dm_event_handler_registered:
                   res = bb.event.register(self.dm_event_handler_name,
                                           lambda x: self.dm.check(self) if self.state in [runQueueRunning, runQueueCleanUp] else False,
+@@ -1814,7 +1838,7 @@ class RunQueueExecute:
+                 bb.fatal("Invalid BB_PRESSURE_MAX_MEMORY %s, minimum value is %s." % (self.max_memory_pressure, lower_limit))
+             if self.max_memory_pressure > upper_limit:
+                 bb.warn("Your build will be largely unregulated since BB_PRESSURE_MAX_MEMORY is set to %s. It is very unlikely that such high pressure will be experienced." % (self.max_io_pressure))
+-            
++
+         # List of setscene tasks which we've covered
+         self.scenequeue_covered = set()
+         # List of tasks which are covered (including setscene ones)
 diff --git a/meta/conf/bitbake.conf b/meta/conf/bitbake.conf
-index eb282d1741..2ea9e5e46b 100644
+index 82b115e3a2..eaa0f00256 100644
 --- a/meta/conf/bitbake.conf
 +++ b/meta/conf/bitbake.conf
-@@ -471,7 +471,7 @@ EXTRA_IMAGEDEPENDS = ""
+@@ -503,7 +503,7 @@ EXTRA_IMAGEDEPENDS = ""
  # Toolchain info.
  ##################################################################
  
--PATH_prepend = "${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
-+PATH_prepend = "${COREBASE}/scripts/make-intercept:${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
+-PATH:prepend = "${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
++PATH:prepend = "${COREBASE}/scripts/make-intercept:${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
  export PATH
  
  ##################################################################
 diff --git a/scripts/make-intercept/make b/scripts/make-intercept/make
 new file mode 100755
-index 0000000000..56b24e468d
+index 0000000000..ec61be6967
 --- /dev/null
 +++ b/scripts/make-intercept/make
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,45 @@
 +#!/usr/bin/env python3
 +import sys
 +import os
@@ -125,27 +212,41 @@ index 0000000000..56b24e468d
 +
 +    r = os.open(fifoname, os.O_RDONLY|os.O_NONBLOCK)
 +    w = os.open(fifoname, os.O_WRONLY)
++    # since python 3.3 handles are no longer inheritable by default
++    os.set_inheritable(w, True)
 +    os.close(r)
 +    r = os.open(fifoname, os.O_RDONLY)
++    os.set_inheritable(r, True)
 +
++    # look for -j n and if seen delete it
 +    seen = False
++    Next = False
++    NewArgv = []
 +    for i in sys.argv:
-+        if "-j" in i:
-+            seen = True
++        if Next:
++            Next = False
++        else:
++            if "-j" in i:
++                seen = True
++                Next = True
++            else:
++                NewArgv.append(i)
++
 +    if seen:
-+        os.environ["MAKEFLAGS"] = "-j --jobserver-fds=" + str(r) + "," + str(w)
++        os.environ["MAKEFLAGS"] = "-j --jobserver-auth=" + str(r) + "," + str(w)
 +
 +newpath = []
 +origpath = os.environ["PATH"].split(":")
 +for p in origpath:
 +    if "make-intercept" in p:
-+         continue
++        continue
 +    newpath.append(p)
 +os.environ["PATH"] = ":".join(newpath)
 +
-+sys.argv[0] = "make"
++NewArgv[0] = "make"
 +
-+sys.exit(subprocess.call(sys.argv, shell=False))
++# even if inheritable still nede to explicitly prevent from being closed
++sys.exit(subprocess.call(NewArgv, shell=False, close_fds=False))
 -- 
-2.30.2
+2.37.2
 
