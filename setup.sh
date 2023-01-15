@@ -338,6 +338,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd $poky_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-ninja-jobserver-support.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
 
