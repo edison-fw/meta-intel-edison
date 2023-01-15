@@ -26,7 +26,7 @@ SRC_URI:append = " file://target_env/"
 SRC_URI:append = " file://btrfs.cfg"
 SRC_URI:append = " file://0001-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 
-PV = "2022.10"
+PV = "2023.01"
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 inherit pkgconfig
