@@ -1,28 +1,41 @@
-From 3cd2bd1af816b91add50f1c5dc06a87f5cbe34c8 Mon Sep 17 00:00:00 2001
+From 8f078b2705cae1dc115c0367af5ac8858ba92195 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
-Date: Thu, 10 Nov 2022 21:10:14 +0100
+Date: Mon, 16 Jan 2023 21:33:06 +0100
 Subject: [PATCH 1/1] usb: ulpi: defer ulpi_register on ulpi_read_id timeout
 
-Since commit 0f010171
-Dual Role support on Intel Merrifield platform broke due to rearranging
-the call to dwc3_get_extcon().
+Since commit 0f0101719138 ("usb: dwc3: Don't switch OTG -> peripheral
+if extcon is present") Dual Role support on Intel Merrifield platform
+broke due to rearranging the call to dwc3_get_extcon().
 
 It appears to be caused by ulpi_read_id() on the first test write failing
 with -ETIMEDOUT. Currently ulpi_read_id() expects to discover the phy via
-DT when the test write fails and returns 0 in that case even if DT does not
+DT when the test write fails and returns 0 in that case, even if DT does not
 provide the phy. As a result usb probe completes without phy.
 
+Make ulpi_read_id() prefer to rely on OF match and only enumerate if not.
+If enumerating and the first test write fails return -ETIMEDOUT to the
+caller. The caller should then handle it appropriately. F.i. dwc3_core_init()
+sets -EPROBE_DEFER in this case and bails out.
+
+Fixes: ef6a7bcfb01c ("usb: ulpi: Support device discovery via DT")
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
- drivers/usb/common/ulpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/common/ulpi.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/common/ulpi.c b/drivers/usb/common/ulpi.c
-index d7c8461976ce..60e8174686a1 100644
+index d7c8461976ce..ebc5b0687818 100644
 --- a/drivers/usb/common/ulpi.c
 +++ b/drivers/usb/common/ulpi.c
-@@ -207,7 +207,7 @@ static int ulpi_read_id(struct ulpi *ulpi)
- 	/* Test the interface */
+@@ -204,15 +204,19 @@ static int ulpi_read_id(struct ulpi *ulpi)
+ {
+ 	int ret;
+ 
+-	/* Test the interface */
++	/* if OF node registered use that instead of enumerating */
++	if (ulpi->dev.of_node)
++		goto err;
++	/* Test the interface, if not responding defer probe */
  	ret = ulpi_write(ulpi, ULPI_SCRATCH, 0xaa);
  	if (ret < 0)
 -		goto err;
@@ -30,6 +43,20 @@ index d7c8461976ce..60e8174686a1 100644
  
  	ret = ulpi_read(ulpi, ULPI_SCRATCH);
  	if (ret < 0)
+ 		return ret;
+ 
++	/* originally Heikki returned -ENODEV, don't know why Stephen changed it */
+ 	if (ret != 0xaa)
+ 		goto err;
+ 
+@@ -222,6 +226,7 @@ static int ulpi_read_id(struct ulpi *ulpi)
+ 	ulpi->id.product = ulpi_read(ulpi, ULPI_PRODUCT_ID_LOW);
+ 	ulpi->id.product |= ulpi_read(ulpi, ULPI_PRODUCT_ID_HIGH) << 8;
+ 
++	/* this should probably go */
+ 	/* Some ULPI devices don't have a vendor id so rely on OF match */
+ 	if (ulpi->id.vendor == 0)
+ 		goto err;
 -- 
-2.34.1
+2.37.2
 

@@ -1,10 +1,10 @@
-KBRANCH ?= "linux-5.15.y"
+KBRANCH ?= "linux-6.1.y"
 
 require recipes-kernel/linux/linux-yocto.inc
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git;protocol=https;branch=linux-5.15.y"
+SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git;protocol=https;branch=linux-6.1.y"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI:append = " file://0001-enable-to-build-a-netboot-image.cfg"
@@ -63,31 +63,29 @@ SRC_URI:append = " file://sof_nocodec.cfg"
 SRC_URI:append = " file://audio.cfg"
 SRC_URI:append = " file://tun.cfg"
 SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
+SRC_URI:append = " file://iio.cfg"
 
 # kernel patches
-SRC_URI:append = " file://0043b-TODO-driver-core-Break-infinite-loop-when-deferred-p.patch"
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
-SRC_URI:append = " file://0001-mmc-sdhci-Deduplicate-sdhci_get_cd_nogpio.patch"
-SRC_URI:append = " file://0002-mmc-sdhci-Remove-unused-prototype-declaration-in-the.patch"
-SRC_URI:append = " file://0003-mmc-sdhci-pci-Remove-dead-code-struct-sdhci_pci_data.patch"
-SRC_URI:append = " file://0004-mmc-sdhci-pci-Remove-dead-code-cd_gpio-cd_irq-et-al.patch"
-SRC_URI:append = " file://0005-mmc-sdhci-pci-Remove-dead-code-rst_n_gpio-et-al.patch"
-SRC_URI:append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
-SRC_URI:append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-TTY.patch"
+SRC_URI:append = " file://0001-Revert-ASoC-SOF-Intel-Check-the-bar-size-before-rema.patch"
+#SRC_URI:append = " file://0001-usb-ulpi-defer-ulpi_register-on-ulpi_read_id-timeout.patch"
+SRC_URI:append = " file://0001-iio-light-tsl2563-Do-not-hardcode-interrupt-trigger-.patch"
+SRC_URI:append = " file://0001-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
+SRC_URI:append = " file://0001-usb-dwc3-core-Trace-phy-write-register-lockup.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 
-SRCREV = "e4a7232c917cd1b56d5b4fa9d7a23e3eabfecba0"
+SRCREV = "v${LINUX_VERSION}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 PV = "${LINUX_VERSION}+git${SRCPV}"
-LINUX_VERSION ?= "5.15.81"
+LINUX_VERSION ?= "6.1.10"
 
 COMPATIBLE_MACHINE = "edison"
 
-DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
-DEPENDS += "openssl-native util-linux-native"
-DEPENDS += "gmp-native libmpc-native"
+#DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
+#DEPENDS += "openssl-native util-linux-native"
+#DEPENDS += "gmp-native libmpc-native"
