@@ -1,10 +1,10 @@
-KBRANCH ?= "v5.10-rt-rebase"
+KBRANCH ?= "linux-6.1.y-rt-rebase"
 
 require recipes-kernel/linux/linux-yocto.inc
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git;protocol=https;branch=v5.15-rt-rebase"
+SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git;protocol=https;branch=v6.1-rt-rebase"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI:append = " file://0001-enable-to-build-a-netboot-image.cfg"
@@ -63,40 +63,25 @@ SRC_URI:append = " file://sof_nocodec.cfg"
 SRC_URI:append = " file://audio.cfg"
 SRC_URI:append = " file://tun.cfg"
 SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
+SRC_URI:append = " file://iio.cfg"
 SRC_URI:append = " file://preempt.cfg"
 
 # kernel patches
-SRC_URI:append = " file://0043b-TODO-driver-core-Break-infinite-loop-when-deferred-p.patch"
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
-SRC_URI:append = " file://0001-mmc-sdhci-Deduplicate-sdhci_get_cd_nogpio.patch"
-SRC_URI:append = " file://0002-mmc-sdhci-Remove-unused-prototype-declaration-in-the.patch"
-SRC_URI:append = " file://0003-mmc-sdhci-pci-Remove-dead-code-struct-sdhci_pci_data.patch"
-SRC_URI:append = " file://0004-mmc-sdhci-pci-Remove-dead-code-cd_gpio-cd_irq-et-al.patch"
-SRC_URI:append = " file://0005-mmc-sdhci-pci-Remove-dead-code-rst_n_gpio-et-al.patch"
-SRC_URI:append = " file://0001-menuconfig-mconf-cfg-Allow-specification-of-ncurses-.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
-SRC_URI:append = " file://0001-tty-tty_io-Switch-to-vmalloc-fallback-in-case-of-TTY.patch"
+SRC_URI:append = " file://0001-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
+SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
+#SRC_URI:append = " file://ftrace.cfg"
+#SRC_URI:append = " file://boottime_trace.cfg"
 
-SRCREV ??= "0cfce3902db9f0faa865a88dc713f2af639dd20f"
+SRCREV ??= "76032cf2d5865cbf9221614bde33321317aa1216"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 PV = "${LINUX_VERSION}+git${SRCPV}"
-LINUX_VERSION ?= "v5.15.79-rt54-rebase"
+LINUX_VERSION ?= "6.1.54-rt15-rebase"
 
 COMPATIBLE_MACHINE = "edison"
-
-# Fix a bug where "make alldefconfig" run triggered by merge_config.sh doesn't find bison and flex.
-# This is just a band aid and should probably be brought to Yocto mail list for fixing/clarification.
-# They added a patch for this a while ago, setting explicit dependency on bison-native,
-# but (1) here we have it anyway and (2) I don't see how it can help as DEPENDS only sets a link
-# between do_configure and do_populate_sysroot and do_kernel_configme runs before do_configure.
-# https://git.yoctoproject.org/cgit.cgi/poky/commit/meta/classes/kernel.bbclass?id=20e4d309e12bf10e2351e0016b606e85599b80f6
-do_kernel_configme[depends] += "bison-native:do_populate_sysroot flex-native:do_populate_sysroot"
-
-# This one is necessary too - otherwise the compilation itself fails later.
-DEPENDS += "openssl-native util-linux-native"
-DEPENDS += "${@bb.utils.contains('ARCH', 'x86', 'elfutils-native', '', d)}"
