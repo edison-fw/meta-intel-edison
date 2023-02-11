@@ -1,0 +1,46 @@
+From 5a762108e13e5b7edfa6b92d1656a2a1e92e9031 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Tue, 31 Jan 2023 21:37:02 +0100
+Subject: [PATCH 1/1] usb: dwc3: core: Fix dwc3_core_soft_reset before anything
+ else
+
+Before an ULPI PHY can be enumerated first the dwc3 core (device side) and PHY
+needs to be reset by dwc3_core_soft_reset() as described in 58a0f23fddd0
+("USB: DWC3: Issue device soft reset before core soft reset")
+
+commit 98112041bcca ("usb: dwc3: core: Fix ULPI PHYs and prevent phy_get/ulpi_init during suspend/resume")
+broke this.
+
+Fix this by preceeding / moving dwc3_core_soft_reset() before dwc3_core_ulpi_init()
+which enumerates and register the PHY.
+
+Fixes: 98112041bcca ("usb: dwc3: core: Fix ULPI PHYs and prevent phy_get/ulpi_init during suspend/resume")
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/usb/dwc3/core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 476b63618511..7b19443ee836 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -1099,12 +1099,13 @@ static int dwc3_core_init(struct dwc3 *dwc)
+ 		goto err0;
+
+ 	if (!dwc->ulpi_ready) {
++		ret = dwc3_core_soft_reset(dwc);
++		if (ret)
++			goto err0;
+ 		ret = dwc3_core_ulpi_init(dwc);
+ 		if (ret) {
+-			if (ret == -ETIMEDOUT) {
+-				dwc3_core_soft_reset(dwc);
++			if (ret == -ETIMEDOUT)
+ 				ret = -EPROBE_DEFER;
+-			}
+ 			goto err0;
+ 		}
+ 		dwc->ulpi_ready = true;
+--
+2.37.2
+
