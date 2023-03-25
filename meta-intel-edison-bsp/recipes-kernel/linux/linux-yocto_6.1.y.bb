@@ -70,8 +70,6 @@ SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
-SRC_URI:append = " file://0001-Revert-ASoC-SOF-Intel-Check-the-bar-size-before-rema.patch"
-SRC_URI:append = " file://0001-iio-light-tsl2563-Do-not-hardcode-interrupt-trigger-.patch"
 SRC_URI:append = " file://0001-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
 
@@ -83,7 +81,7 @@ SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patc
 SRCREV = "v${LINUX_VERSION}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 PV = "${LINUX_VERSION}+git${SRCPV}"
-LINUX_VERSION ?= "6.1.10"
+LINUX_VERSION ?= "6.1.55"
 
 COMPATIBLE_MACHINE = "edison"
 
