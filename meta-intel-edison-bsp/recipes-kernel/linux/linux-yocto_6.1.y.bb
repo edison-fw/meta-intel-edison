@@ -71,10 +71,9 @@ SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-contino
 SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 SRC_URI:append = " file://0001-Revert-ASoC-SOF-Intel-Check-the-bar-size-before-rema.patch"
-#SRC_URI:append = " file://0001-usb-ulpi-defer-ulpi_register-on-ulpi_read_id-timeout.patch"
 SRC_URI:append = " file://0001-iio-light-tsl2563-Do-not-hardcode-interrupt-trigger-.patch"
 SRC_URI:append = " file://0001-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
-SRC_URI:append = " file://0001-usb-dwc3-core-Trace-phy-write-register-lockup.patch"
+SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
