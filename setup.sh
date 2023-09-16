@@ -51,7 +51,7 @@ COPY_LIC_MANIFEST = "1"
 COPY_LIC_DIRS = "1"
 FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
 PACKAGE_CLASSES += " package_deb sign_package_feed"
-PACKAGE_FEED_GPG_NAME = "E78D3359A86650AE"
+PACKAGE_FEED_GPG_NAME = "6449A703BCA9A698055ACB23976A9A3F994268DB"
 PACKAGE_FEED_GPG_PASSPHRASE_FILE="$top_repo_dir/meta-intel-edison/utils/key/passphrase"
 PACKAGE_CLASSES ?= "$extra_package_type"
 $extra_archiving
