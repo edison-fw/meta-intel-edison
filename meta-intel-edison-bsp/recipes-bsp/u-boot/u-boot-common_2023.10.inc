@@ -18,7 +18,7 @@ PE = "1"
 
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 
-SRCREV = "62e2ad1ceafbfdf2c44d3dc1b6efc81e768a96b9"
+SRCREV = "4459ed60cb1e0562bc5b40405e2b4b9bbf766d57"
 
 SRC_URI:append = " file://${MACHINE}.env"
 SRC_URI:append = " file://target_env/"
@@ -26,7 +26,7 @@ SRC_URI:append = " file://target_env/"
 SRC_URI:append = " file://btrfs.cfg"
 SRC_URI:append = " file://0001-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 
-PV = "2023.01"
+PV = "2023.10"
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 inherit pkgconfig
