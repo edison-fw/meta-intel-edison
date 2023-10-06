@@ -18,7 +18,7 @@ PE = "1"
 
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 
-SRCREV = "4debc57a3da6c3f4d3f89a637e99206f4cea0a96"
+SRCREV = "62e2ad1ceafbfdf2c44d3dc1b6efc81e768a96b9"
 
 SRC_URI:append = " file://${MACHINE}.env"
 SRC_URI:append = " file://target_env/"
