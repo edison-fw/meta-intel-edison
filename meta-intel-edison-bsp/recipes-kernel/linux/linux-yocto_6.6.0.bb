@@ -73,8 +73,6 @@ SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.p
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
-SRC_URI:append = " file://0061-gpiolib-Fix-debug-messaging-in-gpiod_find_and_reques.patch"
-SRC_URI:append = " file://0062-gpiolib-Make-debug-messages-in-gpiod_find_by_fwnode-.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
