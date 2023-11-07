@@ -30,13 +30,14 @@ Currently we have Intel's original (factory) firmware: original and created addi
 * **gatesgarth** (64 bit) based on Yocto Gatesgarth with LTS kernel 5.10, PREEMPT_RT kernel 5.10 and current kernel 5.14
 * **hardknott** (64 bit) based on Yocto Hardknott with LTS kernel 5.15.25, PREEMPT_RT kernel 5.15.25-rt33 and testing kernel 5.16.0
 * **honister** (64 bit) based on Yocto Honister with LTS kernel 5.15.81, PREEMPT_RT kernel 5.15.79-rt54 and testing kernel 6.0.0
+* * **kirkstone** (64 bit) based on Yocto Honister with LTS kernel v6.1.55, PREEMPT_RT kernel v6.1.54-rt15 and testing kernel 6.6.0
 
 See https://wiki.yoctoproject.org/wiki/Releases on Yocto releases and support status.
 
 # What to choose
 
-Yocto Morty will build on Ubuntu Artful (17.10) while Dunfell (the Yocto project LTS version) builds on Ubuntu Groovy (20.10).
+Yocto Morty will build on Ubuntu Artful (17.10) while Kirkstone (the Yocto project LTS version) builds on Ubuntu Jammy (22.10).
 
-Generally **sumo32** will give best results if you rely on MRAA and UPM. In all other cases, use the latest, **honister**.
+Generally **sumo32** will give best results if you rely on MRAA and UPM. In all other cases, use the latest, **kirkstone**.
 
-**honister** has a 64 bit kernel because we can, but may sometimes be actually slower than the 32bit kernel. **master** has the same as honister, but 32 bits.
+**kirkstone** has a 64 bit kernel because we can, but may sometimes be actually slower than the 32bit kernel. **master** has the same as kirkstone, but 32 bits.
