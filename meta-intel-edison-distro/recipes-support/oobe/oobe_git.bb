@@ -17,6 +17,9 @@ do_compile() {
     # changing the home directory to the working directory, the .npmrc will be created in this directory
     export HOME=${WORKDIR}
 
+    # Roll back to the last commit that was compatible with Sumo32 (no python3, still has server.js)
+    git checkout 250de53880e4627e79f42b30a0db132b0bba3347
+
     # does not build dev packages
     npm config set dev false
 
