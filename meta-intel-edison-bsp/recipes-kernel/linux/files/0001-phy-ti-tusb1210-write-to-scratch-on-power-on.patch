@@ -1,0 +1,25 @@
+From 9826a1ce331e0418aadf47c33be421452ed9e904 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sun, 26 Feb 2023 22:07:44 +0100
+Subject: [PATCH 1/1] phy: ti: tusb1210: write to scratch on power on
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/phy/ti/phy-tusb1210.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/phy/ti/phy-tusb1210.c b/drivers/phy/ti/phy-tusb1210.c
+index 669c13d6e402..2b39f14e0b3b 100644
+--- a/drivers/phy/ti/phy-tusb1210.c
++++ b/drivers/phy/ti/phy-tusb1210.c
+@@ -104,6 +104,7 @@ static int tusb1210_power_on(struct phy *phy)
+ 
+ 	msleep(TUSB1210_RESET_TIME_MS);
+ 
++	tusb1210_ulpi_write(tusb, ULPI_SCRATCH, 0xff);
+ 	/* Restore the optional eye diagram optimization value */
+ 	tusb1210_ulpi_write(tusb, TUSB1210_VENDOR_SPECIFIC2, tusb->vendor_specific2);
+ 
+-- 
+2.37.2
+

@@ -37,8 +37,8 @@ parser.add_argument("--duty_cycle",  type=float, default=0.5, help="duty cycle b
 
 args = parser.parse_args()
 
-led = gpiod.Chip("gpiochip0").get_line(40)
-if led.consumer() != "heartbeat":
+led = gpiod.Chip("/dev/gpiochip0").get_line_info(40)
+if led.consumer != "heartbeat":
 	led.release()
 	sys.exit(1)
 

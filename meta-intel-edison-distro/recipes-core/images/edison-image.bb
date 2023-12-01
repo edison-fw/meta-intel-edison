@@ -70,6 +70,7 @@ IMAGE_INSTALL:append = " mosquitto-clients"
 # node and sub-components
 IMAGE_INSTALL:append = " nodejs-dev"
 IMAGE_INSTALL:append = " nodejs-npm"
+IMAGE_INSTALL:append = " nodejs-module-libiio"
 
 # libiio replaces the former MRAA and UPM to access sensor/actuator drivers in the kernel
 IMAGE_INSTALL:append = " libiio"
@@ -78,7 +79,7 @@ IMAGE_INSTALL:append = " libiio-python3"
 IMAGE_INSTALL:append = " libiio-tests"
 
 # gpiod replaces the former MRAA and UPM to access sensor/actuator drivers in the kernel
-IMAGE_INSTALL:append = " libgpiod-python"
+IMAGE_INSTALL:append = " python3-gpiod"
 IMAGE_INSTALL:append = " libgpiodcxx"
 
 # libserialport replaces the former MRAA and UPM to access serial ports

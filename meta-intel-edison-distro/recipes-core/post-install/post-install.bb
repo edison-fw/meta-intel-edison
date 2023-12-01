@@ -1,12 +1,12 @@
 DESCRIPTION = "Post install systemd target"
-LICENSE = "GPLv2"
+LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/GPL-2.0-only;md5=801f80980d171dd6425610833a22dbe6"
 # todo Yocto provides run-postinsts generic recipe which should be extended to install the script and make this script obsolete
 
 SRC_URI = "file://post-install.service \
                 file://post-install.sh"
-inherit allarch 
-                
+inherit allarch
+
 SYSTEMD_SERVICE:${PN} = "post-install.service"
 
 RDEPENDS:${PN} = "systemd bash blink-led"

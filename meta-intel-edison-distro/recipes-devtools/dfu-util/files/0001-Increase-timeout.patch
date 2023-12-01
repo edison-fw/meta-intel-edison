@@ -1,0 +1,31 @@
+From 4f981423a0d40c16f6a2e7ec3ea3a2d7cfa03434 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 28 Jan 2023 14:43:09 +0100
+Subject: [PATCH 1/1] Increase timeout
+
+Flashing larger partitions requires a longer time. This issue has
+been investigated here https://github.com/espressif/esp-idf/issues/6999
+and appears to apply to Intel Edison Arduino when flashing a single
+btrfs partition.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ src/dfu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/dfu.c b/src/dfu.c
+index 091e74b..f79ba08 100644
+--- a/src/dfu.c
++++ b/src/dfu.c
+@@ -33,7 +33,7 @@
+ #include "dfu.h"
+ #include "quirks.h"
+ 
+-static int dfu_timeout = 5000;  /* 5 seconds - default */
++static int dfu_timeout = 10000;  /* 10 seconds - default */
+ 
+ /*
+  *  DFU_DETACH Request (DFU Spec 1.0, Section 5.1)
+-- 
+2.37.2
+

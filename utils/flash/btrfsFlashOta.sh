@@ -90,7 +90,7 @@ function install_image {
     scp ${build_dir}/tmp/deploy/images/edison/edison-image-edison.snapshot.7z ${EDISON}:/mnt
     echo Creating subvolume from snapshot, please wait a few minutes
     ssh ${EDISON} '7za e /mnt/edison-image-edison.snapshot.7z -so | btrfs receive /mnt; rm /mnt/edison-image-edison.snapshot.7z'
-    ssh ${EDISON} "btrfs property set -ts /mnt/@new ro false && umount /mnt > /dev/null"
+    ssh ${EDISON} "btrfs property set -f -ts /mnt/@new ro false && umount /mnt > /dev/null"
     echo Subvolume created, you can now \'reboot alt\' image
 }
 

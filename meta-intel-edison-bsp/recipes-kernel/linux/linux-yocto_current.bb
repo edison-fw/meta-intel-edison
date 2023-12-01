@@ -2,10 +2,9 @@ KBRANCH ?= "master"
 
 require recipes-kernel/linux/linux-yocto.inc
 
-LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://github.com/torvalds/linux.git;protocol=https"
+SRC_URI = "git://github.com/torvalds/linux.git;branch=master;protocol=https"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI:append = " file://0001-enable-to-build-a-netboot-image.cfg"
@@ -45,6 +44,7 @@ SRC_URI:append = " file://0038-enable-PHY_TUSB1210.cfg"
 SRC_URI:append = " file://0039-enable-USB_CONFIGFS.cfg"
 SRC_URI:append = " file://0040-enable-INTEL_MRFLD_ADC.cfg"
 SRC_URI:append = " file://0041-enable-EXTCON_INTEL_MRFLD.cfg"
+SRC_URI:append = " file://0042-disable-LOCALVERSION_AUTO.cfg"
 # FIXME: when building 5.13 and above for 32b the stack protector code hangs
 # https://lkml.org/lkml/2022/9/29/647
 SRC_URI:append = " ${@bb.utils.contains("DEFAULTTUNE", "corei7-32", " file://stack.cfg", "", d)}"
@@ -63,29 +63,28 @@ SRC_URI:append = " file://btrfs.cfg"
 SRC_URI:append = " file://sof_nocodec.cfg"
 SRC_URI:append = " file://audio.cfg"
 SRC_URI:append = " file://tun.cfg"
-SRC_URI:append = " file://iio.cfg"
 SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
-SRC_URI:append = " file://ftrace.cfg"
-SRC_URI:append = " file://boottime_trace.cfg"
-#SRC_URI:append = " file://dyn_debug.cfg"
+SRC_URI:append = " file://iio.cfg"
 
 # kernel patches
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-#SRC_URI:append = " file://0001-WIP-serial-8250_dma-use-sgl-on-transmit.patch"
 SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
-SRC_URI:append = " file://0001-Revert-ASoC-SOF-Intel-Check-the-bar-size-before-rema.patch"
-SRC_URI:append = " file://0001-usb-ulpi-defer-ulpi_register-on-ulpi_read_id-timeout.patch"
-SRC_URI:append = " file://0001-usb-dwc3-core-defer-probe-on-ulpi_read_id-timeout.patch"
+SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
+SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
+#SRC_URI:append = " file://ftrace.cfg"
+# the following is usefull for driver testing but comes with a performance hit
+# it may also cause different kmalloc() placement or false WARN's
+#SRC_URI:append = " file://0042-enable-DMA_DEBUG.cfg"
 
 SRCREV ??= "${AUTOREV}"
+LINUX_KERNEL_TYPE = "standard"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-
-LINUX_VERSION ?= "${PV}"
+LINUX_VERSION ?= "current+git${SRCPV}"
 KERNEL_VERSION_SANITY_SKIP="1"
 
 COMPATIBLE_MACHINE = "edison"

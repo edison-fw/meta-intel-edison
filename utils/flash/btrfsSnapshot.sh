@@ -28,7 +28,7 @@ if [[ `findmnt -M "tmpbtrfs"` ]]; then
 else
     rm -rf tmpbtrfs
     mkdir tmpbtrfs
-    sudo mount -o loop ${deploy_dir}/${image_name}.${image_ext} tmpbtrfs
+    sudo mount -o loop -o compress=lzo ${deploy_dir}/${image_name}.${image_ext} tmpbtrfs
 fi
 
 if [ -f tmpbtrfs/etc/fstab.btrfs ]; then

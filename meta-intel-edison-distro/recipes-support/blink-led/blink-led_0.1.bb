@@ -8,7 +8,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 inherit systemd
 SYSTEMD_SERVICE:${PN} = "blink-led.service flash-led.service"
 
-RDEPENDS:${PN} = "libgpiod-python init-led"
+RDEPENDS:${PN} = "python3-gpiod"
 
 SRC_URI = "file://blink-led"
 SRC_URI += "file://blink-led.service"
