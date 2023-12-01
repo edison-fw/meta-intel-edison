@@ -75,8 +75,9 @@ SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patc
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
-#SRC_URI:append = " file://ftrace.cfg"
-#SRC_URI:append = " file://boottime_trace.cfg"
+# the following is usefull for driver testing but comes with a performance hit
+# it may also cause different kmalloc() placement or false WARN's
+#SRC_URI:append = " file://0042-enable-DMA_DEBUG.cfg"
 
 SRCREV = "v${LINUX_VERSION}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
