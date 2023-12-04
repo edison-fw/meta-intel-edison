@@ -1,6 +1,6 @@
-From 7cf3677adb2df96e848b66bfb6aea674bee75f21 Mon Sep 17 00:00:00 2001
+From c7d690a88269f2a559a0616c3037d07255de95d3 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
-Date: Sat, 14 Jan 2023 23:10:33 +0100
+Date: Sat, 2 Dec 2023 21:47:23 +0100
 Subject: [PATCH 1/1] Add shared ninja jobserver support
 
 This patch depends on the patch "Add shared make jobserver support"
@@ -21,10 +21,10 @@ minor modification.
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
  meta/recipes-devtools/ninja/files/ninja.py    | 37 +++++++++++++++++++
- .../{ninja_1.10.2.bb => ninja_1.12.0.bb}      | 10 +++--
- 2 files changed, 44 insertions(+), 3 deletions(-)
+ .../{ninja_1.11.1.bb => ninja_1.12.0.bb}      | 13 +++++--
+ 2 files changed, 47 insertions(+), 3 deletions(-)
  create mode 100755 meta/recipes-devtools/ninja/files/ninja.py
- rename meta/recipes-devtools/ninja/{ninja_1.10.2.bb => ninja_1.12.0.bb} (67%)
+ rename meta/recipes-devtools/ninja/{ninja_1.11.1.bb => ninja_1.12.0.bb} (64%)
 
 diff --git a/meta/recipes-devtools/ninja/files/ninja.py b/meta/recipes-devtools/ninja/files/ninja.py
 new file mode 100755
@@ -69,38 +69,41 @@ index 0000000000..d3e1b55f25
 +
 +# even if inheritable still nede to explicitly prevent from being closed
 +sys.exit(subprocess.call(NewArgv, shell=False, close_fds=False))
-diff --git a/meta/recipes-devtools/ninja/ninja_1.10.2.bb b/meta/recipes-devtools/ninja/ninja_1.12.0.bb
-similarity index 67%
-rename from meta/recipes-devtools/ninja/ninja_1.10.2.bb
+diff --git a/meta/recipes-devtools/ninja/ninja_1.11.1.bb b/meta/recipes-devtools/ninja/ninja_1.12.0.bb
+similarity index 64%
+rename from meta/recipes-devtools/ninja/ninja_1.11.1.bb
 rename to meta/recipes-devtools/ninja/ninja_1.12.0.bb
-index 7270321d6e..9b32f4c06c 100644
---- a/meta/recipes-devtools/ninja/ninja_1.10.2.bb
+index 255f5efb70..bdba0d8740 100644
+--- a/meta/recipes-devtools/ninja/ninja_1.11.1.bb
 +++ b/meta/recipes-devtools/ninja/ninja_1.12.0.bb
 @@ -6,9 +6,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=a81586a64ad4e476c791cda7e2f2c52e"
-
+ 
  DEPENDS = "re2c-native ninja-native"
-
--SRCREV = "e72d1d581c945c158ed68d9bc48911063022a2c6"
+ 
+-SRCREV = "a524bf3f6bacd1b4ad85d719eed2737d8562f27a"
 +SRCREV = "bee56b62adb847e5812c6cf3bf2115cca0aa4702"
-
+ 
 -SRC_URI = "git://github.com/ninja-build/ninja.git;branch=release;protocol=https"
 +SRC_URI = "git://github.com/htot/ninja.git;branch=master;protocol=https \
 +	file://ninja.py \
 +	"
 +SRC_URI[sha256sum] = "5702446cd3919e73b39e4de8903c087025f068edd11825f271d8b7fa026d71b0"
  UPSTREAM_CHECK_GITTAGREGEX = "v(?P<pver>.*)"
-
+ 
  S = "${WORKDIR}/git"
-@@ -25,7 +28,8 @@ do_compile() {
+@@ -25,7 +28,11 @@ do_compile() {
  }
-
+ 
  do_install() {
 -	install -D -m 0755  ${S}/ninja ${D}${bindir}/ninja
 +	install -D -m 0755  ${WORKDIR}/ninja.py ${D}${bindir}/ninja
 +	install -D -m 0755  ${S}/ninja ${D}${bindir}/ninja.run
  }
-
+ 
  BBCLASSEXTEND = "native nativesdk"
---
-2.37.2
++
++# This is a different Ninja
++CVE_CHECK_IGNORE += "CVE-2021-4336"
+-- 
+2.40.1
 

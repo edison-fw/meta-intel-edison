@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="kirkstone"
-yocto_tag="kirkstone"
+yocto_branch="langdale"
+yocto_tag="langdale"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
