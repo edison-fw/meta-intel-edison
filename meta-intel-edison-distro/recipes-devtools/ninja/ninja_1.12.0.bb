@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=a81586a64ad4e476c791cda7e2f2c52e"
 
 DEPENDS = "re2c-native ninja-native cmake-native"
 
-SRCREV = "bee56b62adb847e5812c6cf3bf2115cca0aa4702"
+SRCREV = "c9e21dbbc4c746ba397c0f9bec5f65c99f783c08"
 
 SRC_URI = "git://github.com/htot/ninja.git;branch=master;protocol=https \
 	file://ninja.py \
