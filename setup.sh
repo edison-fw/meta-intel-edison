@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="langdale"
-yocto_tag="langdale"
+yocto_branch="mickledore"
+yocto_tag="mickledore"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
@@ -338,8 +338,8 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   cd $poky_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-ninja-jobserver-support.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-jobserver-create-queue-in-TMPDIR.patch
+#  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-ninja-jobserver-support.patch
+#  git apply $top_repo_dir/meta-intel-edison/utils/0001-jobserver-create-queue-in-TMPDIR.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0001-signing-keys-build-empty-meta-package.patch
   cd $mingw_dir
   git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
