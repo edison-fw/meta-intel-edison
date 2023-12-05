@@ -259,12 +259,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   fi
 
   case $my_sdk_host in
-    win32)
-      extra_conf="SDKMACHINE = \"i686-mingw32\""
-      ;;
-    win64)
-      extra_conf="SDKMACHINE = \"x86_64-mingw32\""
-      ;;
     linux32)
       extra_conf="SDKMACHINE = \"i686\""
       ;;
@@ -281,7 +275,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   do_update_cache "poky" "git://git.yoctoproject.org"
   do_update_cache "meta-openembedded" "https://github.com/openembedded"
   do_update_cache "meta-intel" "git://git.yoctoproject.org"
-  do_update_cache "meta-mingw" "git://git.yoctoproject.org"
   do_update_cache "meta-acpi" "https://github.com/edison-fw"
   do_update_cache "meta-qt5" "https://github.com/meta-qt5"
 
@@ -293,10 +286,6 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   git clone -b ${yocto_branch} ${my_dl_dir}/poky-mirror.git poky
   cd $poky_dir
   git checkout ${yocto_tag}
-
-  mingw_dir=$poky_dir/meta-mingw
-  echo "Cloning Mingw layer to ${mingw_dir} directory from local cache"
-  git clone -b ${yocto_branch} ${my_dl_dir}/meta-mingw-mirror.git meta-mingw
 
   cd $poky_dir
   oe_dir=$poky_dir/meta-openembedded
@@ -341,18 +330,11 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 #  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-ninja-jobserver-support.patch
 #  git apply $top_repo_dir/meta-intel-edison/utils/0001-jobserver-create-queue-in-TMPDIR.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0001-signing-keys-build-empty-meta-package.patch
-  cd $mingw_dir
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-Enable-SDKTAROPTS.patch
 
   # We have keys for creating a signed DEB repo, register them
   cd ${top_repo_dir}/meta-intel-edison/utils/key/
   gpg --import meta-intel-edison_pub.gpg
   gpg --allow-secret-key-import --passphrase-file passphrase --batch --import meta-intel-edison_secret.gpg
-
-  if [[ $my_sdk_host == win* ]]
-  then
-    do_append_layer $mingw_dir
-  fi
 
   yocto_conf_dir=$my_build_dir/build/conf
 
