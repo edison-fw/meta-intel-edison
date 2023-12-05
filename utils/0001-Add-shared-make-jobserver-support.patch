@@ -1,6 +1,6 @@
-From 28fd4b9e6e60bdd07352827ec713510ae86a39c6 Mon Sep 17 00:00:00 2001
+From 287469f18e54ef5fa918fe35204df2466ecd9236 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
-Date: Mon, 2 Jan 2023 17:48:19 +0100
+Date: Mon, 18 Dec 2023 23:12:48 +0100
 Subject: [PATCH 1/1] Add shared make jobserver support
 
 This is a rework of Richard Purdie's patch at
@@ -12,11 +12,7 @@ Except for refreshing the patch to apply, additional changes were needed:
   may need a more elegant change in bb.data.exported_vars()
 * make --jobserver-fds is replaced by jobserver-auth
 * make not longer gives priority to -j in MAKEFLAGS over the command line
-* python sets file descriptors as non-inheritable by default meed os.set_inheritable()
-* pyhton even inheritable file descriptors are closed by default, need close_fds=False
-
-This works with current versions of make (4.3). Future versions of make (4.4) will
-also need --jobserver-style=pipe to force simple pipes or pass --jobserver-auth=fifo:PATH
+* This version autodetects make 4.4 and then uses --jobserver-auth=fifo:PATH
 to pass a named pipe (preferred).
 
 Make jobserver documented here: https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html
@@ -42,19 +38,26 @@ From the original patch description:
 
 Signed-off-by: Trevor Gamblin <trevor.gamblin@windriver.com>
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+
+jobserver create queue in TMPDIR
+
+Certains hosts may be running multiple bitbake's in parallel. Each
+should have their own job queue.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
- bitbake/bin/bitbake-worker  | 17 +++++++-------
- bitbake/lib/bb/runqueue.py  | 26 ++++++++++++++++++++-
+ bitbake/bin/bitbake-worker  | 17 +++++-----
+ bitbake/lib/bb/runqueue.py  | 26 +++++++++++++-
  meta/conf/bitbake.conf      |  2 +-
- scripts/make-intercept/make | 45 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 80 insertions(+), 10 deletions(-)
+ scripts/make-intercept/make | 67 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 102 insertions(+), 10 deletions(-)
  create mode 100755 scripts/make-intercept/make
 
 diff --git a/bitbake/bin/bitbake-worker b/bitbake/bin/bitbake-worker
-index 2f3e9f72f9..df1594da8f 100755
+index d743ff5105..76846c95b3 100755
 --- a/bitbake/bin/bitbake-worker
 +++ b/bitbake/bin/bitbake-worker
-@@ -47,7 +47,7 @@ try:
+@@ -46,7 +46,7 @@ try:
      if sys.stdout.name == '<stdout>':
          import fcntl
          fl = fcntl.fcntl(sys.stdout.fileno(), fcntl.F_GETFL)
@@ -63,7 +66,7 @@ index 2f3e9f72f9..df1594da8f 100755
          fcntl.fcntl(sys.stdout.fileno(), fcntl.F_SETFL, fl)
          #sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
  except:
-@@ -86,7 +86,7 @@ def worker_fire_prepickled(event):
+@@ -85,7 +85,7 @@ def worker_fire_prepickled(event):
  
  #
  # We can end up with write contention with the cooker, it can be trying to send commands
@@ -72,7 +75,7 @@ index 2f3e9f72f9..df1594da8f 100755
  # back data to cooker.
  #
  worker_thread_exit = False
-@@ -249,6 +249,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
+@@ -254,6 +254,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
                  the_data.setVar("BUILDNAME", workerdata["buildname"])
                  the_data.setVar("DATE", workerdata["date"])
                  the_data.setVar("TIME", workerdata["time"])
@@ -80,7 +83,7 @@ index 2f3e9f72f9..df1594da8f 100755
                  for varname, value in extraconfigdata.items():
                      the_data.setVar(varname, value)
  
-@@ -270,14 +271,14 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
+@@ -276,14 +277,14 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
                      else:
                          logger.debug("Skipping disable network for %s since %s is not a local uid." % (taskname, uid))
  
@@ -98,7 +101,7 @@ index 2f3e9f72f9..df1594da8f 100755
                  for e in fakeenv:
                      os.environ[e] = fakeenv[e]
                      the_data.setVar(e, fakeenv[e])
-@@ -315,7 +316,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, fn, task, taskname, taskha
+@@ -321,7 +322,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
          else:
              profname = "profile-%s.log" % (fn.replace("/", "-") + "-" + taskname)
              prof = profile.Profile()
@@ -107,7 +110,7 @@ index 2f3e9f72f9..df1594da8f 100755
                  ret = profile.Profile.runcall(prof, child)
              finally:
                  prof.dump_stats(profname)
-@@ -379,7 +380,7 @@ class BitbakeWorker(object):
+@@ -385,7 +386,7 @@ class BitbakeWorker(object):
          self.extraconfigdata = None
          self.build_pids = {}
          self.build_pipes = {}
@@ -116,7 +119,7 @@ index 2f3e9f72f9..df1594da8f 100755
          signal.signal(signal.SIGTERM, self.sigterm_exception)
          # Let SIGHUP exit as SIGTERM
          signal.signal(signal.SIGHUP, self.sigterm_exception)
-@@ -397,7 +398,7 @@ class BitbakeWorker(object):
+@@ -403,7 +404,7 @@ class BitbakeWorker(object):
          signal.signal(signal.SIGTERM, signal.SIG_DFL)
          os.kill(os.getpid(), signal.SIGTERM)
  
@@ -126,10 +129,10 @@ index 2f3e9f72f9..df1594da8f 100755
              (ready, _, _) = select.select([self.input] + [i.input for i in self.build_pipes.values()], [] , [], 1)
              if self.input in ready:
 diff --git a/bitbake/lib/bb/runqueue.py b/bitbake/lib/bb/runqueue.py
-index ba75660555..072f2d49b7 100644
+index 99fac63616..8e1a860be1 100644
 --- a/bitbake/lib/bb/runqueue.py
 +++ b/bitbake/lib/bb/runqueue.py
-@@ -1325,6 +1325,7 @@ class RunQueue:
+@@ -1343,6 +1343,7 @@ class RunQueue:
              "date" : self.cfgData.getVar("DATE"),
              "time" : self.cfgData.getVar("TIME"),
              "hashservaddr" : self.cooker.hashservaddr,
@@ -137,12 +140,12 @@ index ba75660555..072f2d49b7 100644
              "umask" : self.cfgData.getVar("BB_DEFAULT_UMASK"),
          }
  
-@@ -1476,6 +1477,27 @@ class RunQueue:
+@@ -1494,6 +1495,27 @@ class RunQueue:
  
          return bb.utils.better_eval(call, locs)
  
 +    def setup_make_fifo(self):
-+        fifoname = "/tmp/makefifo"
++        fifoname = self.cfgData.getVar("TMPDIR") + "/makefifo"
 +        self.cfgData.setVar("BB_MAKEFIFO", fifoname)
 +        m = re.search(r'-j (\d+)', self.cfgData.getVar("PARALLEL_MAKE"))
 +        if m:
@@ -165,7 +168,7 @@ index ba75660555..072f2d49b7 100644
      def _execute_runqueue(self):
          """
          Run the tasks in a queue prepared by rqdata.prepare()
-@@ -1510,6 +1532,8 @@ class RunQueue:
+@@ -1529,6 +1551,8 @@ class RunQueue:
              self.rqdata.init_progress_reporter.next_stage()
              bb.event.fire(bb.event.DepTreeGenerated(depgraph), self.cooker.data)
  
@@ -173,8 +176,8 @@ index ba75660555..072f2d49b7 100644
 +
              if not self.dm_event_handler_registered:
                   res = bb.event.register(self.dm_event_handler_name,
-                                          lambda x: self.dm.check(self) if self.state in [runQueueRunning, runQueueCleanUp] else False,
-@@ -1814,7 +1838,7 @@ class RunQueueExecute:
+                                          lambda x, y: self.dm.check(self) if self.state in [runQueueRunning, runQueueCleanUp] else False,
+@@ -1832,7 +1856,7 @@ class RunQueueExecute:
                  bb.fatal("Invalid BB_PRESSURE_MAX_MEMORY %s, minimum value is %s." % (self.max_memory_pressure, lower_limit))
              if self.max_memory_pressure > upper_limit:
                  bb.warn("Your build will be largely unregulated since BB_PRESSURE_MAX_MEMORY is set to %s. It is very unlikely that such high pressure will be experienced." % (self.max_io_pressure))
@@ -184,10 +187,10 @@ index ba75660555..072f2d49b7 100644
          self.scenequeue_covered = set()
          # List of tasks which are covered (including setscene ones)
 diff --git a/meta/conf/bitbake.conf b/meta/conf/bitbake.conf
-index 82b115e3a2..eaa0f00256 100644
+index b2a8cea4b7..a324a31f24 100644
 --- a/meta/conf/bitbake.conf
 +++ b/meta/conf/bitbake.conf
-@@ -503,7 +503,7 @@ EXTRA_IMAGEDEPENDS = ""
+@@ -509,7 +509,7 @@ EXTRA_IMAGEDEPENDS = ""
  # Toolchain info.
  ##################################################################
  
@@ -198,25 +201,47 @@ index 82b115e3a2..eaa0f00256 100644
  ##################################################################
 diff --git a/scripts/make-intercept/make b/scripts/make-intercept/make
 new file mode 100755
-index 0000000000..ec61be6967
+index 0000000000..a41271692d
 --- /dev/null
 +++ b/scripts/make-intercept/make
-@@ -0,0 +1,45 @@
+@@ -0,0 +1,67 @@
 +#!/usr/bin/env python3
 +import sys
 +import os
 +import subprocess
 +
++# first find the correct make as we are here because make-intercept is in the path
++newpath = []
++origpath = os.environ["PATH"].split(":")
++for p in origpath:
++    if "make-intercept" in p:
++        continue
++    newpath.append(p)
++os.environ["PATH"] = ":".join(newpath)
++
++# find if the version of make supports named pipes
++NewArgv = []
++NewArgv.append("make")
++NewArgv.append("--version")
++
++output = subprocess.run(NewArgv, shell=False, capture_output=True,encoding='ascii').stdout
++ver =output.split('\n')[0].split()[-1]
++named_pipes = True
++# we assume that make version numbering is x.y and not x.y.z
++if float(ver[:3]) <= 4.3:
++    named_pipes = False
++
 +if "BB_MAKEFIFO" in os.environ:
 +    fifoname = os.environ["BB_MAKEFIFO"]
 +
-+    r = os.open(fifoname, os.O_RDONLY|os.O_NONBLOCK)
-+    w = os.open(fifoname, os.O_WRONLY)
-+    # since python 3.3 handles are no longer inheritable by default
-+    os.set_inheritable(w, True)
-+    os.close(r)
-+    r = os.open(fifoname, os.O_RDONLY)
-+    os.set_inheritable(r, True)
++    if not named_pipes:
++        r = os.open(fifoname, os.O_RDONLY|os.O_NONBLOCK)
++        w = os.open(fifoname, os.O_WRONLY)
++        # since python 3.3 handles are no longer inheritable by default
++        os.set_inheritable(w, True)
++        os.close(r)
++        r = os.open(fifoname, os.O_RDONLY)
++        os.set_inheritable(r, True)
 +
 +    # look for -j n and if seen delete it
 +    seen = False
@@ -233,20 +258,20 @@ index 0000000000..ec61be6967
 +                NewArgv.append(i)
 +
 +    if seen:
-+        os.environ["MAKEFLAGS"] = "-j --jobserver-auth=" + str(r) + "," + str(w)
-+
-+newpath = []
-+origpath = os.environ["PATH"].split(":")
-+for p in origpath:
-+    if "make-intercept" in p:
-+        continue
-+    newpath.append(p)
-+os.environ["PATH"] = ":".join(newpath)
++        if named_pipes:
++            w = os.open(fifoname, os.O_WRONLY|os.O_NONBLOCK)
++            os.environ["MAKEFLAGS"] = "-j --jobserver-auth=fifo:" + fifoname
++        else:
++            os.environ["MAKEFLAGS"] = "-j --jobserver-auth=" + str(r) + "," + str(w)
++else:
++    NewArgv = []
++    for i in sys.argv:
++        NewArgv.append(i)
 +
 +NewArgv[0] = "make"
 +
 +# even if inheritable still nede to explicitly prevent from being closed
-+sys.exit(subprocess.call(NewArgv, shell=False, close_fds=False))
++sys.exit(subprocess.run(NewArgv, shell=False, close_fds=False).returncode)
 -- 
-2.37.2
+2.40.1
 
