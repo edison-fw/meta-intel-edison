@@ -34,7 +34,7 @@ ENV_IMAGE = "${B}/env.bin"
 
 do_build_mkimage_tool () {
     cd ${B}
-    HOSTCC="${CC}" HOSTLD="${LD}" HOSTLDFLAGS="${LDFLAGS}" HOSTSTRIP=true oe_runmake  tools
+    HOSTCC="${CC}" HOSTLD="${LD}" HOSTLDFLAGS="${BUILD_LDFLAGS}" HOSTSTRIP=true oe_runmake  tools
 }
 
 python do_environment_mkimage() {
