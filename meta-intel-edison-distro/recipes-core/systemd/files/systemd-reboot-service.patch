@@ -10,6 +10,7 @@ Since v240 gets reset by SuccessAction=reboot-force.
 https://github.com/systemd/systemd/issues/11828
 Fix that by reverting.
 
+Upstream-Status: Inappropriate [Is applicable to Intel Edison only]
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
  units/systemd-reboot.service | 6 +++++-
@@ -29,6 +30,6 @@ index 505f60aabf..8ca8457b93 100644
 +Type=oneshot
 +ExecStart=/sbin/reboot --force --reboot
 +ExecStartPre=/bin/sh -c " if test -e /run/systemd/reboot-param ; then read REBOOTPARAM < /run/systemd/reboot-param ; fw_setenv bootargs_mode $REBOOTPARAM ; fi "
--- 
+--
 2.20.1
 
