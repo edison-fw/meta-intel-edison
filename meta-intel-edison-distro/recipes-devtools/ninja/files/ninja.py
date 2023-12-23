@@ -21,6 +21,7 @@ if "BB_MAKEFIFO" in os.environ:
                 NewArgv.append(i)
 
     if seen:
+        w = os.open(fifoname, os.O_WRONLY|os.O_NONBLOCK)
         os.environ["MAKEFLAGS"] = "-j --jobserver-auth=fifo:" + fifoname
 else:
     NewArgv = []
