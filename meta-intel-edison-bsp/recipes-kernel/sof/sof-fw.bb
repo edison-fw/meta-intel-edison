@@ -12,14 +12,14 @@ LIC_FILES_CHKSUM = "file://edison-firmware/LICENCE.Intel;md5=54b4f1a2dd35fd85bc7
 
 PV = "2.2.1"
 
-FILES:${PN} += "/lib/firmware/intel/*"
+FILES:${PN} += "${libdir}/firmware/intel/*"
 
 inherit allarch update-alternatives
 
 do_install() {
-        install -v -d  ${D}/lib/firmware/intel/
-        install -v -d  ${D}/lib/firmware/intel/sof/
-        install -v -d  ${D}/lib/firmware/intel/sof-tplg/
-        install -m 0755 edison-firmware//v2.2.x/sof/sof-byt.ri ${D}/lib/firmware/intel/sof/sof-byt.ri
-        install -m 0755 edison-firmware/v2.2.x/sof-tplg/sof-byt-nocodec.tplg ${D}/lib/firmware/intel/sof-tplg/sof-byt.tplg
+        install -v -d  ${D}${libdir}/firmware/intel/
+        install -v -d  ${D}${libdir}/firmware/intel/sof/
+        install -v -d  ${D}${libdir}/firmware/intel/sof-tplg/
+        install -m 0755 edison-firmware//v2.2.x/sof/sof-byt.ri ${D}${libdir}/firmware/intel/sof/sof-byt.ri
+        install -m 0755 edison-firmware/v2.2.x/sof-tplg/sof-byt-nocodec.tplg ${D}${libdir}/firmware/intel/sof-tplg/sof-byt.tplg
 }
