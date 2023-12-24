@@ -12,8 +12,8 @@ SYSTEMD_SERVICE:${PN} = "post-install.service"
 RDEPENDS:${PN} = "systemd bash blink-led"
 
 do_install() {
-	install -d ${D}/sbin
-	install -c -m 0744 ${WORKDIR}/post-install.sh ${D}/sbin
+	install -d ${D}${sbindir}
+	install -c -m 0744 ${WORKDIR}/post-install.sh ${D}${sbindir}
 	install -d ${D}${systemd_unitdir}/system
 	install -d ${D}${sysconfdir}/systemd/system/basic.target.wants
 	install -c -m 0644 ${WORKDIR}/post-install.service ${D}${systemd_unitdir}/system
@@ -30,7 +30,7 @@ do_install() {
 
 FILES:${PN} = "${base_libdir}/systemd/system/*.service \
 				${sysconfdir} \
-				/sbin/post-install.sh"
+				${sbindir}/post-install.sh"
 
 # As this package is tied to systemd, only build it when we're also building systemd.
 python () {
