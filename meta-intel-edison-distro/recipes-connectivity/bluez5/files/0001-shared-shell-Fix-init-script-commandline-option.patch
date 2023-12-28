@@ -1,0 +1,58 @@
+From 303925b28110469ad002ac19ce0eb9c84d6aceb2 Mon Sep 17 00:00:00 2001
+From: Juerg Haefliger <juerg.haefliger@canonical.com>
+Date: Mon, 30 Oct 2023 07:53:41 +0100
+Subject: [PATCH 1/1] shared/shell: Fix --init-script commandline option
+
+The newly added option -i/--init-script introduced a short option
+namespace collision with btmgmt's --index, both of which use '-i'.
+
+As a result, a provided --index is treated as a file name:
+
+$ sudo btmgmt --index 0 info
+Unable to open 0: No such file or directory (2)
+
+Fix this by using '-s' for --init-script.
+
+Fixes: https://github.com/bluez/bluez/issues/639
+Upstream-Status: Backport [303925b28110]
+---
+ src/shared/shell.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/shared/shell.c b/src/shared/shell.c
+index db79c882c..fbccff5b5 100644
+--- a/src/shared/shell.c
++++ b/src/shared/shell.c
+@@ -1128,7 +1128,7 @@ static void rl_init(void)
+ static const struct option main_options[] = {
+ 	{ "version",	no_argument, 0, 'v' },
+ 	{ "help",	no_argument, 0, 'h' },
+-	{ "init-script", required_argument, 0, 'i' },
++	{ "init-script", required_argument, 0, 's' },
+ 	{ "timeout",	required_argument, 0, 't' },
+ 	{ "monitor",	no_argument, 0, 'm' },
+ 	{ "zsh-complete",	no_argument, 0, 'z' },
+@@ -1169,9 +1169,9 @@ void bt_shell_init(int argc, char **argv, const struct bt_shell_opt *opt)
+ 	if (opt) {
+ 		memcpy(options + offset, opt->options,
+ 				sizeof(struct option) * opt->optno);
+-		snprintf(optstr, sizeof(optstr), "+mhvi:t:%s", opt->optstr);
++		snprintf(optstr, sizeof(optstr), "+mhvs:t:%s", opt->optstr);
+ 	} else
+-		snprintf(optstr, sizeof(optstr), "+mhvi:t:");
++		snprintf(optstr, sizeof(optstr), "+mhvs:t:");
+
+ 	data.name = strrchr(argv[0], '/');
+ 	if (!data.name)
+@@ -1193,7 +1193,7 @@ void bt_shell_init(int argc, char **argv, const struct bt_shell_opt *opt)
+ 			data.argv = &cmplt;
+ 			data.mode = 1;
+ 			goto done;
+-		case 'i':
++		case 's':
+ 			if (optarg)
+ 				data.init_fd = open(optarg, O_RDONLY);
+ 			if (data.init_fd < 0)
+--
+2.40.1
+
