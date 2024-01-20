@@ -1,0 +1,33 @@
+From 16ba526f906d12e8600e7222e95702023645da3a Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 20 Jan 2024 22:08:32 +0100
+Subject: [PATCH] linux-yocto: missing elfutils-native while building
+
+https://github.com/edison-fw/meta-intel-edison/issues/159
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ meta/recipes-kernel/linux/linux-yocto.inc | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/meta/recipes-kernel/linux/linux-yocto.inc b/meta/recipes-kernel/linux/linux-yocto.inc
+index 4943d5ab57..6671d31c64 100644
+--- a/meta/recipes-kernel/linux/linux-yocto.inc
++++ b/meta/recipes-kernel/linux/linux-yocto.inc
+@@ -58,8 +58,12 @@ do_install:append(){
+ # enable kernel-sample for oeqa/runtime/cases's ksample.py test
+ KERNEL_FEATURES:append:qemuall=" features/kernel-sample/kernel-sample.scc"
+ 
+-KERNEL_DEBUG_OPTIONS ?= "stack"
+-KERNEL_EXTRA_ARGS:append:x86-64 = " ${@bb.utils.contains('KERNEL_DEBUG_OPTIONS', 'stack', 'HOST_LIBELF_LIBS="-L${RECIPE_SYSROOT_NATIVE}/usr/lib/pkgconfig/../../../usr/lib/ -lelf"', '', d)}"
++KERNEL_DEBUG ?= ""
++# These used to be version specific, but are now common dependencies.  New
++# tools / dependencies will continue to be added in version specific recipes.
++DEPENDS += '${@bb.utils.contains_any("ARCH", [ "x86", "arm64", "powerpc" ], "elfutils-native", "", d)}'
++DEPENDS += "openssl-native util-linux-native"
++DEPENDS += "gmp-native libmpc-native"
+ 
+ do_devshell:prepend() {
+     # setup native pkg-config variables (kconfig scripts call pkg-config directly, cannot generically be overriden to pkg-config-native)
+-- 
+2.34.1
+
