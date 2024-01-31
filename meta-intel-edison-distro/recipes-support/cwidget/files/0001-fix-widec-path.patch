@@ -1,0 +1,40 @@
+From 93d4e8fc429d53a9ab246debac7fb7fc40a598e5 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 27 Jan 2024 22:41:19 +0100
+Subject: [PATCH 1/1] fix widec path
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ src/cwidget/curses++.h | 2 +-
+ src/cwidget/style.h    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/cwidget/curses++.h b/src/cwidget/curses++.h
+index 6754573..05d0580 100644
+--- a/src/cwidget/curses++.h
++++ b/src/cwidget/curses++.h
+@@ -24,7 +24,7 @@
+ #define CURSES_PLUSPLUS_H
+
+ #include <string>
+-#include <ncursesw/curses.h>
++#include <curses.h>
+
+ #include <cwidget/generic/util/eassert.h>
+
+diff --git a/src/cwidget/style.h b/src/cwidget/style.h
+index 61254aa..6e7ebb3 100644
+--- a/src/cwidget/style.h
++++ b/src/cwidget/style.h
+@@ -20,7 +20,7 @@
+ #ifndef STYLE_H
+ #define STYLE_H
+
+-#include <ncursesw/curses.h>
++#include <curses.h>
+
+ #include <cwidget/curses++.h>
+
+--
+2.40.1
+

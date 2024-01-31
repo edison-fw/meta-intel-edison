@@ -1,0 +1,42 @@
+From 0cca2ad1f524071c40ebeac4782aff29ede55d30 Mon Sep 17 00:00:00 2001
+From: Sven Joachim <svenjoac@gmx.de>
+Date: Mon, 26 Aug 2019 20:21:32 +0200
+Subject: [PATCH 1/1] Change gettext domainname to 'libcwidget4'
+
+This accommodates the domain to the changed SONAME.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ po/Makevars                     | 2 +-
+ src/cwidget/generic/util/i18n.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/po/Makevars b/po/Makevars
+index 45c398c..df35198 100644
+--- a/po/Makevars
++++ b/po/Makevars
+@@ -5,7 +5,7 @@
+ 
+ # Use library package name, to not clash with other versions if several are
+ # installed at the same time
+-DOMAIN = libcwidget3
++DOMAIN = libcwidget4
+ 
+ 
+ # These two variables depend on the location of this directory.
+diff --git a/src/cwidget/generic/util/i18n.h b/src/cwidget/generic/util/i18n.h
+index 88fb058..66f975e 100644
+--- a/src/cwidget/generic/util/i18n.h
++++ b/src/cwidget/generic/util/i18n.h
+@@ -24,7 +24,7 @@
+ 
+ // i18n definitions
+ 
+-#define CWIDGET_DOMAIN "libcwidget3"
++#define CWIDGET_DOMAIN "libcwidget4"
+ 
+ 
+ #ifdef HAVE_LOCALE_H
+-- 
+2.40.1
+

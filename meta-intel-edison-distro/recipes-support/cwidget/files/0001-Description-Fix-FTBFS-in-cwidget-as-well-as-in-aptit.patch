@@ -1,0 +1,30 @@
+From 14dfdd6dea8d651cf4b9c478747f25c13843c5b6 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 26 Jan 2024 23:06:50 +0100
+Subject: [PATCH 1/1] Description: Fix FTBFS in cwidget as well as in aptitude
+ due to missing #include <pthread.h>
+
+Author: Paul Wise <pabs@debian.org>
+Reviewed-By: Axel Beckert <abe@debian.org>
+Bug-Debian: https://bugs.debian.org/1015925
+Bug: https://bugs.debian.org/1015925
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ src/cwidget/generic/threads/threads.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/cwidget/generic/threads/threads.h b/src/cwidget/generic/threads/threads.h
+index 1600d9e..86db05a 100644
+--- a/src/cwidget/generic/threads/threads.h
++++ b/src/cwidget/generic/threads/threads.h
+@@ -26,6 +26,7 @@
+ #define THREADS_H
+ 
+ #include <errno.h>
++#include <pthread.h>
+ #include <cwidget/generic/util/exception.h>
+ 
+ namespace cwidget
+-- 
+2.40.1
+
