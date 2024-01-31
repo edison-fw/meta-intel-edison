@@ -1,0 +1,27 @@
+From 89a6b72f33fcd10d1c8882545ed5360a14effc1e Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 26 Jan 2024 21:19:55 +0100
+Subject: [PATCH 1/1] Description: Fix FTBFS with GCC 10
+
+Author: Axel Beckert <abe@debian.org>
+Bug-Debian: https://bugs.debian.org/966875
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ src/generic/views/download_progress.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/generic/views/download_progress.h b/src/generic/views/download_progress.h
+index 96b7173f..1fcbaf96 100644
+--- a/src/generic/views/download_progress.h
++++ b/src/generic/views/download_progress.h
+@@ -29,6 +29,7 @@
+ #include <optional>
+ #include <string>
+ #include <vector>
++#include <sstream>
+ 
+ namespace aptitude
+ {
+-- 
+2.40.1
+
