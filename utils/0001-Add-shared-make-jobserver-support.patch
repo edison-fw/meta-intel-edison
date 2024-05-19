@@ -1,6 +1,6 @@
-From 287469f18e54ef5fa918fe35204df2466ecd9236 Mon Sep 17 00:00:00 2001
+From 49bd0b88609bb9616744ee3d04a76658187be9d8 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
-Date: Mon, 18 Dec 2023 23:12:48 +0100
+Date: Mon, 20 May 2024 12:44:41 +0200
 Subject: [PATCH 1/1] Add shared make jobserver support
 
 This is a rework of Richard Purdie's patch at
@@ -47,14 +47,14 @@ should have their own job queue.
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
  bitbake/bin/bitbake-worker  | 17 +++++-----
- bitbake/lib/bb/runqueue.py  | 26 +++++++++++++-
+ bitbake/lib/bb/runqueue.py  | 24 +++++++++++++
  meta/conf/bitbake.conf      |  2 +-
  scripts/make-intercept/make | 67 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 102 insertions(+), 10 deletions(-)
+ 4 files changed, 101 insertions(+), 9 deletions(-)
  create mode 100755 scripts/make-intercept/make
 
 diff --git a/bitbake/bin/bitbake-worker b/bitbake/bin/bitbake-worker
-index d743ff5105..76846c95b3 100755
+index e8073f2ac3..31a0cda50e 100755
 --- a/bitbake/bin/bitbake-worker
 +++ b/bitbake/bin/bitbake-worker
 @@ -46,7 +46,7 @@ try:
@@ -75,7 +75,7 @@ index d743ff5105..76846c95b3 100755
  # back data to cooker.
  #
  worker_thread_exit = False
-@@ -254,6 +254,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
+@@ -257,6 +257,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
                  the_data.setVar("BUILDNAME", workerdata["buildname"])
                  the_data.setVar("DATE", workerdata["date"])
                  the_data.setVar("TIME", workerdata["time"])
@@ -83,7 +83,7 @@ index d743ff5105..76846c95b3 100755
                  for varname, value in extraconfigdata.items():
                      the_data.setVar(varname, value)
  
-@@ -276,14 +277,14 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
+@@ -279,14 +280,14 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
                      else:
                          logger.debug("Skipping disable network for %s since %s is not a local uid." % (taskname, uid))
  
@@ -101,7 +101,7 @@ index d743ff5105..76846c95b3 100755
                  for e in fakeenv:
                      os.environ[e] = fakeenv[e]
                      the_data.setVar(e, fakeenv[e])
-@@ -321,7 +322,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
+@@ -328,7 +329,7 @@ def fork_off_task(cfg, data, databuilder, workerdata, extraconfigdata, runtask):
          else:
              profname = "profile-%s.log" % (fn.replace("/", "-") + "-" + taskname)
              prof = profile.Profile()
@@ -110,7 +110,7 @@ index d743ff5105..76846c95b3 100755
                  ret = profile.Profile.runcall(prof, child)
              finally:
                  prof.dump_stats(profname)
-@@ -385,7 +386,7 @@ class BitbakeWorker(object):
+@@ -392,7 +393,7 @@ class BitbakeWorker(object):
          self.extraconfigdata = None
          self.build_pids = {}
          self.build_pipes = {}
@@ -119,7 +119,7 @@ index d743ff5105..76846c95b3 100755
          signal.signal(signal.SIGTERM, self.sigterm_exception)
          # Let SIGHUP exit as SIGTERM
          signal.signal(signal.SIGHUP, self.sigterm_exception)
-@@ -403,7 +404,7 @@ class BitbakeWorker(object):
+@@ -410,7 +411,7 @@ class BitbakeWorker(object):
          signal.signal(signal.SIGTERM, signal.SIG_DFL)
          os.kill(os.getpid(), signal.SIGTERM)
  
@@ -129,10 +129,10 @@ index d743ff5105..76846c95b3 100755
              (ready, _, _) = select.select([self.input] + [i.input for i in self.build_pipes.values()], [] , [], 1)
              if self.input in ready:
 diff --git a/bitbake/lib/bb/runqueue.py b/bitbake/lib/bb/runqueue.py
-index 99fac63616..8e1a860be1 100644
+index bc7e18175d..7167659480 100644
 --- a/bitbake/lib/bb/runqueue.py
 +++ b/bitbake/lib/bb/runqueue.py
-@@ -1343,6 +1343,7 @@ class RunQueue:
+@@ -1379,6 +1379,7 @@ class RunQueue:
              "date" : self.cfgData.getVar("DATE"),
              "time" : self.cfgData.getVar("TIME"),
              "hashservaddr" : self.cooker.hashservaddr,
@@ -140,7 +140,7 @@ index 99fac63616..8e1a860be1 100644
              "umask" : self.cfgData.getVar("BB_DEFAULT_UMASK"),
          }
  
-@@ -1494,6 +1495,27 @@ class RunQueue:
+@@ -1530,6 +1531,27 @@ class RunQueue:
  
          return bb.utils.better_eval(call, locs)
  
@@ -168,7 +168,7 @@ index 99fac63616..8e1a860be1 100644
      def _execute_runqueue(self):
          """
          Run the tasks in a queue prepared by rqdata.prepare()
-@@ -1529,6 +1551,8 @@ class RunQueue:
+@@ -1565,6 +1587,8 @@ class RunQueue:
              self.rqdata.init_progress_reporter.next_stage()
              bb.event.fire(bb.event.DepTreeGenerated(depgraph), self.cooker.data)
  
@@ -177,20 +177,11 @@ index 99fac63616..8e1a860be1 100644
              if not self.dm_event_handler_registered:
                   res = bb.event.register(self.dm_event_handler_name,
                                           lambda x, y: self.dm.check(self) if self.state in [runQueueRunning, runQueueCleanUp] else False,
-@@ -1832,7 +1856,7 @@ class RunQueueExecute:
-                 bb.fatal("Invalid BB_PRESSURE_MAX_MEMORY %s, minimum value is %s." % (self.max_memory_pressure, lower_limit))
-             if self.max_memory_pressure > upper_limit:
-                 bb.warn("Your build will be largely unregulated since BB_PRESSURE_MAX_MEMORY is set to %s. It is very unlikely that such high pressure will be experienced." % (self.max_io_pressure))
--            
-+
-         # List of setscene tasks which we've covered
-         self.scenequeue_covered = set()
-         # List of tasks which are covered (including setscene ones)
 diff --git a/meta/conf/bitbake.conf b/meta/conf/bitbake.conf
-index b2a8cea4b7..a324a31f24 100644
+index ba8bd5f975..931b0e419f 100644
 --- a/meta/conf/bitbake.conf
 +++ b/meta/conf/bitbake.conf
-@@ -509,7 +509,7 @@ EXTRA_IMAGEDEPENDS = ""
+@@ -502,7 +502,7 @@ EXTRA_IMAGEDEPENDS = ""
  # Toolchain info.
  ##################################################################
  
