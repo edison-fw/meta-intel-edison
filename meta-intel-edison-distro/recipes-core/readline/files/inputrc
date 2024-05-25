@@ -45,8 +45,6 @@ $if mode=emacs
 "\e[1;5D": backward-word
 "\e[5C": forward-word
 "\e[5D": backward-word
-"\e[C": forward-word
-"\e[D": backward-word
 
 # $if term=rxvt
 # "\e[8~": end-of-line
