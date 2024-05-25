@@ -1,0 +1,27 @@
+From 16feeb8612138864967ef78580ef2825f591cce5 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 3 May 2024 21:14:14 +0200
+Subject: [PATCH 1/1] Revert "usb: gadget: u_ether: Re-attach netif device to
+ mirror detachment"
+
+This reverts commit 76c945730cdffb572c7767073cc6515fd3f646b4.
+---
+ drivers/usb/gadget/function/u_ether.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index 444212c0b5a9..4f06eb515c6d 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -1163,8 +1163,6 @@ struct net_device *gether_connect(struct gether *link)
+ 		if (netif_running(dev->net))
+ 			eth_start(dev, GFP_ATOMIC);
+ 
+-		netif_device_attach(dev->net);
+-
+ 	/* on error, disable any endpoints  */
+ 	} else {
+ 		(void) usb_ep_disable(link->out_ep);
+-- 
+2.40.1
+

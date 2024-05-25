@@ -1,0 +1,27 @@
+From 4f6dc99760267287763debfd6e72fbdf509b76c6 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 3 May 2024 21:28:03 +0200
+Subject: [PATCH 1/1] Revert "usb: gadget: u_ether: Replace netif_stop_queue
+ with netif_device_detach"
+
+This reverts commit f49449fbc21e7e9550a5203902d69c8ae7dfd918.
+---
+ drivers/usb/gadget/function/u_ether.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index 4f06eb515c6d..be3b0bad554e 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -1200,7 +1200,7 @@ void gether_disconnect(struct gether *link)
+ 
+ 	DBG(dev, "%s\n", __func__);
+ 
+-	netif_device_detach(dev->net);
++	netif_stop_queue(dev->net);
+ 	netif_carrier_off(dev->net);
+ 
+ 	/* disable endpoints, forcing (synchronous) completion
+-- 
+2.40.1
+
