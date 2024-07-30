@@ -44,6 +44,7 @@ SRC_URI:append = " file://0038-enable-PHY_TUSB1210.cfg"
 SRC_URI:append = " file://0039-enable-USB_CONFIGFS.cfg"
 SRC_URI:append = " file://0040-enable-INTEL_MRFLD_ADC.cfg"
 SRC_URI:append = " file://0041-enable-EXTCON_INTEL_MRFLD.cfg"
+SRC_URI:append = " file://0042-disable-LOCALVERSION_AUTO.cfg"
 # FIXME: when building 5.13 and above for 32b the stack protector code hangs
 # https://lkml.org/lkml/2022/9/29/647
 SRC_URI:append = " ${@bb.utils.contains("DEFAULTTUNE", "corei7-32", " file://stack.cfg", "", d)}"
@@ -82,7 +83,7 @@ SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patc
 SRCREV = "v${LINUX_VERSION}"
 LINUX_KERNEL_TYPE = "standard"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-PV = "${LINUX_VERSION}+git${SRCPV}"
-LINUX_VERSION ?= "6.6.31"
+LINUX_VERSION ?= "6.6.43"
+KERNEL_VERSION_SANITY_SKIP="1"
 
 COMPATIBLE_MACHINE = "edison"

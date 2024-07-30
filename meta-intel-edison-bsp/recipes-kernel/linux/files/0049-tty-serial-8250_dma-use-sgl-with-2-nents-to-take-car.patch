@@ -1,0 +1,71 @@
+From a7b6928dd7130b7f1246b53d94aaa64dbba22598 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 7 Jun 2024 22:52:53 +0200
+Subject: [PATCH 1/1] tty: serial: 8250_dma: use sgl with 2 nents to take care
+ of buffer wrap
+
+Previously 8250_dma used a circular xmit->buf as DMA output buffer. This
+causes messages that wrap around in the circular buffer to be
+transmitted using 2 DMA transfers. Depending on baud rate and processor
+load this can cause an interchar gap in the middle of the message. On
+the receiving end the gap may cause a short receive timeout, possibly
+long enough to terminate a DMA transfer, but too short to restart a
+receive DMA transfer in time thus causing a receive buffer overrun.
+
+This is especially a problem for devices with high speed UARTs (HSU)
+where even deep 64 byte FIFO's are not sufficient to handle interrupt
+latency.
+
+The circular buffer has now been replaced by kfifo which requires a SG
+list with a single entry, which still causes 2 dma transfers when a wrap
+around occurs. Fix this by allowing up to 2 entries in the sgl.
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ drivers/tty/serial/8250/8250_dma.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
+index 8a353e3cc3dd..d215c494ee24 100644
+--- a/drivers/tty/serial/8250/8250_dma.c
++++ b/drivers/tty/serial/8250/8250_dma.c
+@@ -89,7 +89,9 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ 	struct tty_port			*tport = &p->port.state->port;
+ 	struct dma_async_tx_descriptor	*desc;
+ 	struct uart_port		*up = &p->port;
+-	struct scatterlist sg;
++	struct scatterlist		*sg;
++	struct scatterlist		sgl[2];
++	int i;
+ 	int ret;
+ 
+ 	if (dma->tx_running) {
+@@ -110,18 +112,17 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ 
+ 	serial8250_do_prepare_tx_dma(p);
+ 
+-	sg_init_table(&sg, 1);
+-	/* kfifo can do more than one sg, we don't (quite yet) */
+-	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
++	sg_init_table(sgl, ARRAY_SIZE(sgl));
++
++	ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, sgl, ARRAY_SIZE(sgl),
+ 					   UART_XMIT_SIZE, dma->tx_addr);
+ 
+-	/* we already checked empty fifo above, so there should be something */
+-	if (WARN_ON_ONCE(ret != 1))
+-		return 0;
++	dma->tx_size = 0;
+ 
+-	dma->tx_size = sg_dma_len(&sg);
++	for_each_sg(sgl, sg, ret, i)
++		dma->tx_size += sg_dma_len(sg);
+ 
+-	desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1,
++	desc = dmaengine_prep_slave_sg(dma->txchan, sgl, ret,
+ 				       DMA_MEM_TO_DEV,
+ 				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 	if (!desc) {
+-- 
+2.43.0
+

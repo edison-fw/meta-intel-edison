@@ -4,7 +4,7 @@ require recipes-kernel/linux/linux-yocto.inc
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git;branch=master;protocol=https"
+SRC_URI = "git://github.com/torvalds/linux.git;branch=master;protocol=https"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI:append = " file://0001-enable-to-build-a-netboot-image.cfg"
@@ -65,31 +65,26 @@ SRC_URI:append = " file://audio.cfg"
 SRC_URI:append = " file://tun.cfg"
 SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
 SRC_URI:append = " file://iio.cfg"
+SRC_URI:append = " file://cdc_eem.cfg"
 
 # kernel patches
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
+SRC_URI:append = " file://0049-tty-serial-8250_dma-use-sgl-with-2-nents-to-take-car.patch"
 SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
-SRC_URI:append = " file://0047-Revert-usb-gadget-u_ether-Replace-netif_stop_queue-w.patch"
-SRC_URI:append = " file://0048-Revert-usb-gadget-u_ether-Re-attach-netif-device-to-.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 #SRC_URI:append = " file://ftrace.cfg"
-# fix the path in the file boottime_trace.cfg before using
-#SRC_URI:append = " file://boottime_trace.cfg"
-#SRC_URI:append = " file://dyn_debug.cfg"
 # the following is usefull for driver testing but comes with a performance hit
 # it may also cause different kmalloc() placement or false WARN's
 #SRC_URI:append = " file://0042-enable-DMA_DEBUG.cfg"
 
-SRCREV ??= "${AUTOREV}"
+SRCREV = "v${LINUX_VERSION}"
 LINUX_KERNEL_TYPE = "standard"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-LINUX_VERSION ?= "next+git${SRCPV}"
+LINUX_VERSION ?= "6.10"
 KERNEL_VERSION_SANITY_SKIP="1"
 
 COMPATIBLE_MACHINE = "edison"

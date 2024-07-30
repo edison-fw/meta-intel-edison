@@ -70,15 +70,16 @@ SRC_URI:append = " file://cdc_eem.cfg"
 # kernel patches
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
+#SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch" breaks on 6.10-rc1 due to kfifo
+#SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
-SRC_URI:append = " file://0047-Revert-usb-gadget-u_ether-Replace-netif_stop_queue-w.patch"
-SRC_URI:append = " file://0048-Revert-usb-gadget-u_ether-Re-attach-netif-device-to-.patch"
+#SRC_URI:append = " file://0047-Revert-usb-gadget-u_ether-Replace-netif_stop_queue-w.patch"
+#SRC_URI:append = " file://0048-Revert-usb-gadget-u_ether-Re-attach-netif-device-to-.patch"
+SRC_URI:append = " file://0049-tty-serial-8250_dma-use-sgl-with-2-nents-to-take-car.patch"
 
 # usefull kernel debug options here
-#SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
+SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 SRC_URI:append = " file://ftrace.cfg"
 # the following is usefull for driver testing but comes with a performance hit
 # it may also cause different kmalloc() placement or false WARN's
