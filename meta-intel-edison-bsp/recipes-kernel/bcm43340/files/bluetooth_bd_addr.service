@@ -1,13 +1,20 @@
 [Unit]
 Description=Set the bluetooth hardware address
 Wants=factory.mount
+Wants=bluetooth.service
 After=bluetooth.service
-Requires=bluetooth.service
 
 [Service]
-ExecStart=/usr/bin/bluetooth_bd_addr.sh
+Type=oneshot
+RemainAfterExit=true
+TimeoutStartSec=60
 Restart=on-failure
-StandardOutput=journal+console
+ExecStart=/usr/bin/bluetooth_bd_addr.sh
+StandardOutput=journal
+StandardError=journal+console
+# Redirect stdin to ensure btmgmt doesn't hang
+StandardInput=tty
+LogLevelMax=info
 
 [Install]
 WantedBy=bluetooth.target
