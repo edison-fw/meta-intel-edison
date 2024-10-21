@@ -2,16 +2,13 @@
  * This file is used to read the battery voltage level.
  * and print this level,print the battery Capacity level.
  */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-#define uchar unsigned char
-#define uint  unsigned int
+#include <iio.h>
 
 /* the unit is mV */
 #define BATTERY_LEVEL_FULL	418
@@ -22,9 +19,6 @@
 #define BATTERY_LEVEL_NORMAL_PERCENT	90
 #define BATTERY_LEVEL_LOW_PERCENT	9
 #define BATTERY_LEVEL_DEAD_PERCENT	1
-
-
-char path[] = "/sys/bus/platform/drivers/mrfld_bcove_adc/mrfld_bcove_adc/iio:device0/in_voltage0_raw";
 
 void check_battery_level(int level)
 {
@@ -51,35 +45,55 @@ void check_battery_level(int level)
 	}
 }
 
-int main(void)
-{
-	int fd;
-	int err;
-	int battery_level;
-	uchar read_voltage[6] = {0};
+int main() {
+    struct iio_context *ctx;
+    struct iio_device *dev;
+    struct iio_channel *chn;
+    int ret;
+    int32_t battery_level;
+    char attr_value[64];  // Buffer to hold attribute values
 
-	fd = open(path, O_RDONLY);
-	if (fd == -1) {
-		fprintf(stderr, "battery-voltage: failed to open file %s\n", path);
-		return (-1);
-	}
+    // Create context (NULL means local context)
+    ctx = iio_create_local_context();
+    if (!ctx) {
+        fprintf(stderr, "Unable to create IIO context\n");
+        return -1;
+    }
 
-	err = read(fd, read_voltage, 4);
-	if (err == 0)
-	{
-		fprintf(stderr, "battery-voltage: read NULL\n");
-		close(fd);
-		return (-2);
-	}
+    // Find the device by its name
+    dev = iio_context_find_device(ctx, "mrfld_bcove_adc");
+    if (!dev) {
+        fprintf(stderr, "Device not found\n");
+        iio_context_destroy(ctx);
+        return -1;
+    }
 
-	battery_level = atoi(read_voltage);
+    // Find the channel "voltage0"
+    chn = iio_device_find_channel(dev, "voltage0", false);
+    if (!chn) {
+        fprintf(stderr, "Channel 'voltage0' not found\n");
+        iio_context_destroy(ctx);
+        return -1;
+    }
 
-	battery_level = battery_level * 1125;
+    // Enable the channel
+    iio_channel_enable(chn);
+
+    // Read the raw value from the channel
+    ret = iio_channel_attr_read(chn, "raw", attr_value, sizeof(attr_value));
+    if (ret < 0) {
+        fprintf(stderr, "Unable to read from channel\n");
+    } else {
+        battery_level = atoi(attr_value);
+	battery_level *= 1125;
 	battery_level >>= 8;
-
 	printf("Battery Voltage = %d mV\n", battery_level);
 	check_battery_level(battery_level / 10);
+    }
 
-	close(fd);
-	return 0;
+    // Disable the channel and destroy context
+    iio_channel_disable(chn);
+    iio_context_destroy(ctx);
+
+    return 0;
 }
