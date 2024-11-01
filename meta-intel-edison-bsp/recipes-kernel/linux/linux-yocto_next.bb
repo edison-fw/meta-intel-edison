@@ -48,6 +48,7 @@ SRC_URI:append = " file://0042-disable-LOCALVERSION_AUTO.cfg"
 # FIXME: when building 5.13 and above for 32b the stack protector code hangs
 # https://lkml.org/lkml/2022/9/29/647
 SRC_URI:append = " ${@bb.utils.contains("DEFAULTTUNE", "corei7-32", " file://stack.cfg", "", d)}"
+SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "rt", " file://preempt.cfg", "", d)}"
 
 # our additional configs
 SRC_URI:append = " file://ftdi_sio.cfg"
@@ -69,12 +70,8 @@ SRC_URI:append = " file://iio.cfg"
 # kernel patches
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
-SRC_URI:append = " file://0047-Revert-usb-gadget-u_ether-Replace-netif_stop_queue-w.patch"
-SRC_URI:append = " file://0048-Revert-usb-gadget-u_ether-Re-attach-netif-device-to-.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
@@ -87,7 +84,7 @@ SRC_URI:append = " file://0048-Revert-usb-gadget-u_ether-Re-attach-netif-device-
 #SRC_URI:append = " file://0042-enable-DMA_DEBUG.cfg"
 
 SRCREV ??= "${AUTOREV}"
-LINUX_KERNEL_TYPE = "standard"
+LINUX_KERNEL_TYPE = "${@bb.utils.contains("DISTRO_FEATURES", "rt", "preempt-rt", "standard", d)}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 LINUX_VERSION ?= "next+git${SRCPV}"
 KERNEL_VERSION_SANITY_SKIP="1"
