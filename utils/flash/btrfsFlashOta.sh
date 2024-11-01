@@ -175,5 +175,7 @@ else
   build_dir=$1
 fi
 
+echo Build dir:$build_dir
+
 send_ota "${DO_SEND}" "${KERNEL_VERSION}"
 
