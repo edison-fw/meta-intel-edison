@@ -16,17 +16,19 @@ LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=2ca5f2c35c8cc335f0a19756634782f1"
 PE = "1"
 
+PATCHTOOL = "git"
 SRC_URI = "git://github.com/u-boot/u-boot.git;branch=master;protocol=https"
 
-SRCREV = "4459ed60cb1e0562bc5b40405e2b4b9bbf766d57"
+SRCREV = "f919c3a889f0ec7d63a48b5d0ed064386b0980bd"
 
 SRC_URI:append = " file://${MACHINE}.env"
 SRC_URI:append = " file://target_env/"
-#SRC_URI:append = " file://0001-added-block-command-which-returns-the-block-size.patch"
+SRC_URI:append = " file://0001-added-block-command-which-returns-the-block-size.patch"
 SRC_URI:append = " file://btrfs.cfg"
+SRC_URI:append = " file://0042-disable-LOCALVERSION_AUTO.cfg"
 SRC_URI:append = " file://0001-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 
-PV = "2023.10"
+PV = "2024.10"
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
 inherit pkgconfig
