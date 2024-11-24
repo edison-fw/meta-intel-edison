@@ -30,6 +30,10 @@ index 505f60aabf..8ca8457b93 100644
 +Type=oneshot
 +ExecStart=/sbin/reboot --force --reboot
 +ExecStartPre=/bin/sh -c " if test -e /run/systemd/reboot-param ; then read REBOOTPARAM < /run/systemd/reboot-param ; fw_setenv bootargs_mode $REBOOTPARAM ; fi "
++ExecStartPre=/bin/systemctl stop systemd-journald-audit.socket
++ExecStartPre=/bin/systemctl stop systemd-journald-dev-log.socket
++ExecStartPre=/bin/systemctl stop systemd-journald.socket
++ExecStartPre=/bin/systemctl stop systemd-journald
 --
 2.20.1
 
