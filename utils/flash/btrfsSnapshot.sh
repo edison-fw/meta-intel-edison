@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 #
 
-dirs="bin boot dev etc home lib media mnt opt proc run sbin sketch sys tmp usr var"
+dirs="bin boot dev etc home lib media mnt opt proc run sbin sketch sys tmp usr var srv"
 deploy_dir=tmp/deploy/images/edison
 image_name=edison-image-edison.rootfs
 image_ext=btrfs
@@ -53,9 +53,11 @@ if [ ! -d tmpbtrfs/@modules ]; then
     sudo mv tmpbtrfs/lib/modules/* tmpbtrfs/@modules/
 fi
 
-# take @ snapshot of the partition
+# take @ snapshot of the partition and remove empty @modules and @boot
 if [ ! -d tmpbtrfs/@ ]; then
     sudo btrfs su snap tmpbtrfs tmpbtrfs/@
+    sudo rm -rf tmpbtrfs/@/@modules
+    sudo rm -rf tmpbtrfs/@/@boot
 fi
 
 # take @new snapshot of the partition, @new is now with empty /boot and /lib/modules
