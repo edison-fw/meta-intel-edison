@@ -1,0 +1,13 @@
+[Unit]
+Description=Prepare-udevd.service for umount /usr/lib/modules
+DefaultDependencies=no
+Before=umount.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl kill systemd-udevd-kernel.socket
+ExecStart=/usr/bin/systemctl kill systemd-udevd-control.socket
+ExecStart=/usr/bin/systemctl stop systemd-udevd
+
+[Install]
+WantedBy=umount.target
