@@ -56,8 +56,8 @@ setup_ap_ssid_and_passphrase () {
 }
 
  # There should be an existing ext4 factory partition mounted on /factory
- # In case there is none create it and fill with dummy serial and 
- # bd_addr. 
+ # In case there is none create it and fill with dummy serial and
+ # bd_addr.
 factory_partition () {
     if [ ! -d "/factory" ]; then
         echo "No /factory directory, creating .." | systemd-cat -p warning
@@ -88,6 +88,11 @@ factory_partition
 # Setup Access Point SSID and passphrase
 setup_ap_ssid_and_passphrase
 fi_echo $? "Generating Wifi Access Point SSID and passphrase"
+
+connmanctl enable gadget
+connmanctl connect gadget_aabbccddeef1_usb
+connmanctl config gadget_aabbccddeef1_usb --autoconnect yes
+fi_echo $? "Trying to establish network connection via usb"
 
 fi_echo "Post install success"
 
