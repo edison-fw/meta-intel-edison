@@ -1,6 +1,6 @@
 about_title: About the Documentation
 about_description: >
-  This is the onofficial Yocto for Edison Arduino documentation. You will find instructions how to setup a current Yocto, build recent U-Boot and Linux kernel and install tools on the rootfs.
+  This is the unofficial Yocto for Edison Arduino documentation. You will find instructions how to setup a current Yocto, build recent U-Boot and Linux kernel and install tools on the rootfs.
 
 column1_title: Column 1
 column1_links:
