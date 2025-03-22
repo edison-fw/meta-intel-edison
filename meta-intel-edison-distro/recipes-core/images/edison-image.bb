@@ -108,8 +108,8 @@ IMAGE_INSTALL:append = " battery-voltage"
 # remove until the build hang issue gets sorted out
 #IMAGE_INSTALL:append = " perf"
 
-# package management - where to find this?
-#IMAGE_INSTALL:append = " aptitude"
+# package management
+IMAGE_INSTALL:append = " aptitude"
 IMAGE_INSTALL:append = " gnupg"
 IMAGE_INSTALL:append = " diffutils"
 
