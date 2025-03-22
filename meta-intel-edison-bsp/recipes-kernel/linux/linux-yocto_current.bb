@@ -79,6 +79,7 @@ SRC_URI:append = " file://0093-platform-x86-intel_scu_ipc-Simplify-code-with-cle
 SRC_URI:append = " file://0094-platform-x86-intel_scu_ipc-Save-a-copy-of-the-entire.patch"
 
 # usefull kernel debug options here
+# Andy says: try to use GPIO descriptor APIs and stuff, this header is going to be removed in a few years.
 SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
 SRC_URI:append = " file://ftrace.cfg"
 # the following is usefull for driver testing but comes with a performance hit
