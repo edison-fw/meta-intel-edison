@@ -7,7 +7,7 @@
 
 dirs="bin boot dev etc home lib media mnt opt proc run sbin sketch sys tmp usr var"
 deploy_dir=tmp/deploy/images/edison
-image_name=edison-image-edison
+image_name=edison-image-edison.rootfs
 image_ext=btrfs
 initrd=core-image-minimal-initramfs-edison.cpio.gz
 
@@ -76,7 +76,7 @@ if [ -d tmpbtrfs/@new ]; then
 fi
 
 # btrfs compress the snapshot
-sudo 7za a ${deploy_dir}/edison-image-edison.snapshot.7z ${deploy_dir}/edison-image-edison.snapshot
+sudo 7za a ${deploy_dir}/${image_name}.snapshot.7z ${deploy_dir}/${image_name}.snapshot
 
 # btrfs delete the snapshot
 sudo rm ${deploy_dir}/${image_name}.snapshot

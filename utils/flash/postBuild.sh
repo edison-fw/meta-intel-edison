@@ -27,21 +27,21 @@ else
 fi
 
 # Get edison rootfs image size
-IMAGE_SIZE_MB=$((`stat --printf="%s" -L $build_dir/tmp/deploy/images/edison/edison-image-edison.ext4` / 1048576))
+IMAGE_SIZE_MB=$((`stat --printf="%s" -L $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.ext4` / 1048576))
 
 echo "EDISON_ROOTFS_MB = $EDISON_ROOTFS_MB, IMAGE_SIZE_MB = $IMAGE_SIZE_MB"
 
 # Compare rootfs partition settings with rootfs image
 if [ $EDISON_ROOTFS_MB -lt $IMAGE_SIZE_MB ]
 then
-        echo -e "\033[31mError: image edison-image-edison.ext4(${IMAGE_SIZE_MB}MB) has exceeded rootfs partition settings(${EDISON_ROOTFS_MB}MB)!\033[0m"
+        echo -e "\033[31mError: image edison-image-edison.rootfs.ext4(${IMAGE_SIZE_MB}MB) has exceeded rootfs partition settings(${EDISON_ROOTFS_MB}MB)!\033[0m"
         echo -e "\033[33mNeed to enlarge rootfs partition size, otherwise it will cause edison board bootup fail!\033[0m"
         echo -e "\033[33mYou can change it $env_dir/edison.env directly.\033[0m "
         exit 1
 fi
 
 # Copy boot partition (contains kernel and ramdisk)
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.hddimg $build_dir/toFlash/
+cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.hddimg $build_dir/toFlash/
 
 # Copy u-boot
 cp $build_dir/tmp/deploy/images/edison/u-boot-edison.img $build_dir/toFlash/
@@ -62,8 +62,8 @@ do
 done
 
 # Copy rootfs
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.ext4 $build_dir/toFlash/
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.btrfs $build_dir/toFlash/
+cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.ext4 $build_dir/toFlash/edison-image-edison.ext4
+cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.btrfs $build_dir/toFlash/edison-image-edison.btrfs
 
 # Copy flashing script
 cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
@@ -104,7 +104,7 @@ $mkimage_tool_path -a 0x10000 -T script -C none -n 'Edison Updater script' -d $b
 rm $build_dir/toFlash/ota_update.cmd
 
 # Generates a formatted list of all packages included in the image
-awk '{print $1 " " $3}' $build_dir/tmp/deploy/images/edison/edison-image-edison.manifest > $build_dir/toFlash/package-list.txt
+awk '{print $1 " " $3}' $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.manifest > $build_dir/toFlash/package-list.txt
 
 echo "**** Done ***"
 echo "Files ready to flash in $build_dir/toFlash/"
