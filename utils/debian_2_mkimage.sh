@@ -22,6 +22,7 @@ fsize=$((`stat --printf="%s" -L toFlash/${image_name}.${image_ext}` / 524288))
 dd if=/dev/zero of=${image_name}.${image_ext} bs=512K count=$fsize
 # Make and copy the rootfs content in the btrfs image
 sudo mkfs.btrfs -L rootfs -r $ROOTDIR ${image_name}.${image_ext}
+sudo rm -rf $ROOTDIR
 
 # mount the btrfs image
 if [[ `findmnt -M "tmpbtrfs"` ]]; then
@@ -98,7 +99,7 @@ echo ===========================================================
 echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 echo ===========================================================
 echo Image is ready to flash. Type:
-echo   sudo out/linux64/build/toFlash/flashall.sh
+echo   sudo out/linux64/build/toFlash/flashall.sh --btrfs
 echo and reset the board.
 echo Login with root account and the password you typed previously
 echo Alternatively to install as an alternative boot image use:

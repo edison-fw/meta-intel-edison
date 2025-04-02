@@ -1,12 +1,13 @@
-From 26ea323142943acde753ae3daecb7038bb142ba3 Mon Sep 17 00:00:00 2001
+From bdbc8b8e3d39bb3f7afafd1440eb9c3144fb0759 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
 Date: Sun, 18 Mar 2018 17:04:23 +0100
-Subject: [PATCH] 8250_mid: arm Rx DMA on all ports with DMA continously
+Subject: [PATCH 1/1] 8250_mid: arm Rx DMA on all ports with DMA continuously
 
-Instead of initiating Rx DMA when the first char arrives in the UART, arm Rx DMA
-continously. DMA transfers automatically empty the Rx FIFO, preventing overruns.
-As before, transfer terminates when the DMA buffer is full or when a 4 char
-interchar gap is received (timeout). After timeout we arm immediately the DMA again.
+Instead of initiating Rx DMA when the first char arrives in the UART,
+arm Rx DMA continuously. DMA transfers automatically empty the Rx FIFO,
+preventing overruns. As before, transfer terminates when the DMA buffer
+is full or when a 4 char interchar gap is received (timeout). After
+timeout we immediately arm the DMA again.
 
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
@@ -14,10 +15,10 @@ Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
  1 file changed, 27 insertions(+)
 
 diff --git a/drivers/tty/serial/8250/8250_mid.c b/drivers/tty/serial/8250/8250_mid.c
-index efa0515139f8..f79c07f0685a 100644
+index 8ec03863606e..f47db118317c 100644
 --- a/drivers/tty/serial/8250/8250_mid.c
 +++ b/drivers/tty/serial/8250/8250_mid.c
-@@ -88,6 +88,8 @@ static int tng_handle_irq(struct uart_port *p)
+@@ -92,6 +92,8 @@ static int tng_handle_irq(struct uart_port *p)
  	err = hsu_dma_get_status(chip, mid->dma_index * 2 + 1, &status);
  	if (err > 0) {
  		serial8250_rx_dma_flush(up);
@@ -26,7 +27,7 @@ index efa0515139f8..f79c07f0685a 100644
  		ret |= 1;
  	} else if (err == 0)
  		ret |= hsu_dma_do_irq(chip, mid->dma_index * 2 + 1, status);
-@@ -232,6 +234,29 @@ static void mid8250_set_termios(struct uart_port *p,
+@@ -239,6 +241,29 @@ static void mid8250_set_termios(struct uart_port *p, struct ktermios *termios,
  	serial8250_do_set_termios(p, termios, old);
  }
  
@@ -36,7 +37,7 @@ index efa0515139f8..f79c07f0685a 100644
 +	int ret;
 +
 +	ret = serial8250_do_startup(port);
-+	
++
 +	/* Arm Rx DMA at ->startup() time */
 +
 +	if (up->dma) up->dma->rx_dma(up);
@@ -56,15 +57,15 @@ index efa0515139f8..f79c07f0685a 100644
  static bool mid8250_dma_filter(struct dma_chan *chan, void *param)
  {
  	struct hsu_dma_slave *s = param;
-@@ -306,6 +331,8 @@ static int mid8250_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+@@ -311,6 +336,8 @@ static int mid8250_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  	uart.port.uartclk = mid->board->base_baud * 16;
  	uart.port.flags = UPF_SHARE_IRQ | UPF_FIXED_PORT | UPF_FIXED_TYPE;
  	uart.port.set_termios = mid8250_set_termios;
 +	uart.port.startup = mid8250_startup;
 +	uart.port.shutdown = mid8250_shutdown;
  
- 	uart.port.mapbase = pci_resource_start(pdev, bar);
- 	uart.port.membase = pcim_iomap(pdev, bar, 0);
+ 	uart.port.mapbase = pci_resource_start(pdev, mid->board->bar);
+ 	uart.port.membase = pcim_iomap(pdev, mid->board->bar, 0);
 -- 
-2.30.2
+2.43.0
 

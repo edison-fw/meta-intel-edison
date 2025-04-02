@@ -3,7 +3,7 @@ LICENSE = "MIT"
 
 SRC_URI = "git://github.com/edison-fw/edison-oobe;branch=master;protocol=https"
 
-SRCREV = "07512dfcb97d77c57adb024c6ca3473abbae0229"
+SRCREV = "438839dc69a614b77d8056ff539a82146bda216a"
 PV = "1.2.1+git${SRCPV}"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=ea398a763463b76b18da15f013c0c531"

@@ -48,6 +48,7 @@ SRC_URI:append = " file://0042-disable-LOCALVERSION_AUTO.cfg"
 # FIXME: when building 5.13 and above for 32b the stack protector code hangs
 # https://lkml.org/lkml/2022/9/29/647
 SRC_URI:append = " ${@bb.utils.contains("DEFAULTTUNE", "corei7-32", " file://stack.cfg", "", d)}"
+SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "rt", " file://preempt.cfg", "", d)}"
 
 # our additional configs
 SRC_URI:append = " file://ftdi_sio.cfg"
@@ -65,24 +66,28 @@ SRC_URI:append = " file://audio.cfg"
 SRC_URI:append = " file://tun.cfg"
 SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
 SRC_URI:append = " file://iio.cfg"
+SRC_URI:append = " file://cdc_eem.cfg"
+SRC_URI:append = " file://namespaces.cfg"
 
 # kernel patches
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
 SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
+SRC_URI:append = " file://0092-platform-x86-intel_scu_ipc-Replace-workaround-by-32-.patch"
+SRC_URI:append = " file://0093-platform-x86-intel_scu_ipc-Simplify-code-with-cleanu.patch"
+SRC_URI:append = " file://0094-platform-x86-intel_scu_ipc-Save-a-copy-of-the-entire.patch"
 
 # usefull kernel debug options here
-#SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
-#SRC_URI:append = " file://ftrace.cfg"
+# Andy says: try to use GPIO descriptor APIs and stuff, this header is going to be removed in a few years.
+SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
+SRC_URI:append = " file://ftrace.cfg"
 # the following is usefull for driver testing but comes with a performance hit
 # it may also cause different kmalloc() placement or false WARN's
 #SRC_URI:append = " file://0042-enable-DMA_DEBUG.cfg"
 
 SRCREV ??= "${AUTOREV}"
-LINUX_KERNEL_TYPE = "standard"
+LINUX_KERNEL_TYPE = "${@bb.utils.contains("DISTRO_FEATURES", "rt", "preempt-rt", "standard", d)}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
 LINUX_VERSION ?= "current+git${SRCPV}"
 KERNEL_VERSION_SANITY_SKIP="1"

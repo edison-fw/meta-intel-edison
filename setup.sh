@@ -25,8 +25,8 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="nanbield"
-yocto_tag="nanbield"
+yocto_branch="scarthgap"
+yocto_tag="scarthgap"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf

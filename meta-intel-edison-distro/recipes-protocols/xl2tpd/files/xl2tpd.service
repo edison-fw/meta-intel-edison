@@ -1,0 +1,11 @@
+[Unit]
+Description=Layer 2 Tunneling Protocol Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/xl2tpd -c /etc/xl2tpd.conf  -D
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,4 +1,7 @@
 tmpfs           /var/volatile      tmpfs      defaults              0  0
 
-/dev/disk/by-partlabel/factory	/factory	auto    noauto,x-systemd.automount,nosuid,nodev,noatime,discard     1   1
-/dev/disk/by-partlabel/home     /home       auto    nofail,x-systemd.automount,noatime,discard  1   1
+/dev/disk/by-partlabel/factory  /factory      auto    x-systemd.automount,nosuid,nodev,relatime,discard     1   1
+# if you are booting from sdhc and have btrfs on emmc you might want to want to mount the btrfs @home subvolume
+#/dev/disk/by-partlabel/home     /home         auto    nofail,relatime,x-systemd.device-timeout=15s,subvol=/@home  1  1
+# if you are booting from emmc you might want to want to mount the ext4 home partition
+#/dev/disk/by-partlabel/home     /home         auto    nofail,relatime,x-systemd.device-timeout=15s,subvol=/@home  1  1

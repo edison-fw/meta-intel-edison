@@ -26,7 +26,7 @@ LC_ALL=C LANGUAGE=C LANG=C sudo chroot $ROOTDIR /bin/bash -c "apt install -y  \
 sudo cp -r tmp/deploy/deb $ROOTDIR/tmp/
 sudo cp -r ../../../meta-intel-edison/meta-intel-edison-distro/recipes-core/base-files/base-files/fstab.btrfs $ROOTDIR/etc/fstab
 
-sudo chroot $ROOTDIR /bin/bash -c "dpkg -i /tmp/deb/edison/kernel-*.deb"
+sudo chroot $ROOTDIR /bin/bash -c "dpkg -i --force-bad-version /tmp/deb/edison/kernel-*.deb"
 sudo chroot $ROOTDIR /bin/bash -c "dpkg -r kernel-dev"
 sudo chroot $ROOTDIR /bin/bash -c "dpkg -i /tmp/deb/all/bcm43340-fw_*.deb"
 sudo chroot $ROOTDIR /bin/bash -c "dpkg -i /tmp/deb/corei7-64/gadget_*.deb"

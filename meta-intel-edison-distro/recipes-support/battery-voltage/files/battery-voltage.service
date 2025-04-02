@@ -1,0 +1,18 @@
+[Unit]
+Description=Battery Voltage daemon
+Wants=iiod.service
+After=iiod.service
+
+[Service]
+ExecStart=/usr/bin/battery-voltage
+Restart=on-failure
+Type=oneshot
+RemainAfterExit=true
+TimeoutStartSec=60
+StandardOutput=journal+console
+StandardError=journal
+LogLevelMax=info
+
+[Install]
+WantedBy=basic.target
+

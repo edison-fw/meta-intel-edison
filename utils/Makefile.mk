@@ -75,11 +75,11 @@ flash: _check_postbuild_was_done
 	./out/current/build/toFlash/flashall.sh
 
 debian: edison-image
-	@sudo $(CURDIR)/meta-intel-edison/utils/debian_1_create.sh bullseye
-	@sudo $(CURDIR)/meta-intel-edison/utils/debian_2_mkimage.sh bullseye
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_1_create.sh bookworm
+	@sudo $(CURDIR)/meta-intel-edison/utils/debian_2_mkimage.sh bookworm
 
 clean_debian:
-	@sudo rm -rf out/linux64/build/bullseye
+	@sudo rm -rf out/linux64/build/bookworm
 
 help:
 	@echo 'Main targets:'
@@ -116,7 +116,7 @@ _check_setup_was_done:
 
 _check_old_setup_exits:
 	@if [ ! -d $(CURDIR)/out/current/build/conf ]; then echo Please run \"make setup\" first ; exit 1 ; fi
-	
+
 _check_postbuild_was_done:
 	@if [ ! -f $(CURDIR)/out/current/build/toFlash/flashall.sh ]; then echo Please run \"make image/bootloader/kernel\" first ; exit 1 ; fi
 

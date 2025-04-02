@@ -1,10 +1,10 @@
-KBRANCH ?= "linux-6.1.y-rt-rebase"
+KBRANCH ?= "linux-6.12.y"
 
 require recipes-kernel/linux/linux-yocto.inc
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git;protocol=https;branch=v6.1-rt"
+SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git;protocol=https;branch=linux-6.12.y"
 
 # based on andy-shev's edison kernel configs https://github.com/andy-shev/linux/commits/eds-acpi
 SRC_URI:append = " file://0001-enable-to-build-a-netboot-image.cfg"
@@ -44,9 +44,11 @@ SRC_URI:append = " file://0038-enable-PHY_TUSB1210.cfg"
 SRC_URI:append = " file://0039-enable-USB_CONFIGFS.cfg"
 SRC_URI:append = " file://0040-enable-INTEL_MRFLD_ADC.cfg"
 SRC_URI:append = " file://0041-enable-EXTCON_INTEL_MRFLD.cfg"
+SRC_URI:append = " file://0042-disable-LOCALVERSION_AUTO.cfg"
 # FIXME: when building 5.13 and above for 32b the stack protector code hangs
 # https://lkml.org/lkml/2022/9/29/647
 SRC_URI:append = " ${@bb.utils.contains("DEFAULTTUNE", "corei7-32", " file://stack.cfg", "", d)}"
+SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "rt", " file://preempt.cfg", "", d)}"
 
 # our additional configs
 SRC_URI:append = " file://ftdi_sio.cfg"
@@ -64,15 +66,17 @@ SRC_URI:append = " file://audio.cfg"
 SRC_URI:append = " file://tun.cfg"
 SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.cfg", "", d)}"
 SRC_URI:append = " file://iio.cfg"
-SRC_URI:append = " file://preempt.cfg"
+SRC_URI:append = " file://cdc_eem.cfg"
+SRC_URI:append = " file://namespaces.cfg"
 
 # kernel patches
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
-SRC_URI:append = " file://0001a-serial-8250_dma-use-linear-buffer-for-transmit.patch"
-SRC_URI:append = " file://0001-serial-8250_port-when-using-DMA-do-not-split-writes-.patch"
-SRC_URI:append = " file://0001-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
+SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
+SRC_URI:append = " file://0092-platform-x86-intel_scu_ipc-Replace-workaround-by-32-.patch"
+SRC_URI:append = " file://0093-platform-x86-intel_scu_ipc-Simplify-code-with-cleanu.patch"
+SRC_URI:append = " file://0094-platform-x86-intel_scu_ipc-Save-a-copy-of-the-entire.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
@@ -81,8 +85,9 @@ SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patc
 #SRC_URI:append = " file://0042-enable-DMA_DEBUG.cfg"
 
 SRCREV = "v${LINUX_VERSION}"
+LINUX_KERNEL_TYPE = "${@bb.utils.contains("DISTRO_FEATURES", "rt", "preempt-rt", "standard", d)}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-PV = "${LINUX_VERSION}+git${SRCPV}"
-LINUX_VERSION ?= "6.1.54-rt15"
+LINUX_VERSION ?= "6.12.3"
+KERNEL_VERSION_SANITY_SKIP="1"
 
 COMPATIBLE_MACHINE = "edison"

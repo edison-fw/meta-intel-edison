@@ -41,7 +41,7 @@ then
 fi
 
 # Copy boot partition (contains kernel and ramdisk)
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.hddimg $build_dir/toFlash/
+cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.hddimg $build_dir/toFlash/edison-image-edison.hddimg
 
 # Copy u-boot
 cp $build_dir/tmp/deploy/images/edison/u-boot-edison.img $build_dir/toFlash/

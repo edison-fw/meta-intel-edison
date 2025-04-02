@@ -1,4 +1,0 @@
-In yocto project, the /etc/init.d folder is not used to init system.
-The scripts in rcX.d will be executed according to the systemd target instead.
-But for compatibility reason, just keep the way it is.
-

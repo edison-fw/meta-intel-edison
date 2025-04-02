@@ -74,5 +74,12 @@ echo 120 > configs/c.1/MaxPower
 
 # Activate gadgets
 echo dwc3.0.auto > UDC
-sleep 1
+# Wait until the interface has come up
+for pass in $(seq 5); do
+    readlink -q -e /sys/class/net/usb*
+    if [[ $? -eq 0 ]]; then
+        break
+    fi
+    sleep 1;
+done
 ip link set dev usb0 up

@@ -1,9 +1,9 @@
-From afa3f6029bb6c232cde8cae80073b8ee0749b0bb Mon Sep 17 00:00:00 2001
+From 338b578e4c24860d7adf94ac04df4479c1acd52f Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
-Date: Wed, 21 Dec 2022 22:39:23 +0100
-Subject: [PATCH 1/1] [PATCH] u-boot: Fix path to merge_config.sh
+Date: Sun, 22 Dec 2024 20:02:46 +0100
+Subject: [PATCH 1/1] u-boot: Fix path to merge_config.sh
 
-Current u-boot recipe in kirkstone fails during do_configure because
+Current u-boot recipe in scarthgap fails during do_configure because
 it cannot find the merge_config.sh. Fix the path
 
 Suggested-by: nishantpoorswani <nishantpoorswani@gmail.com>
@@ -13,27 +13,27 @@ Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/meta/recipes-bsp/u-boot/u-boot-configure.inc b/meta/recipes-bsp/u-boot/u-boot-configure.inc
-index 04e0894752..195bac16a2 100644
+index a15511f8b2..ca4d0e03e3 100644
 --- a/meta/recipes-bsp/u-boot/u-boot-configure.inc
 +++ b/meta/recipes-bsp/u-boot/u-boot-configure.inc
-@@ -18,7 +18,7 @@ do_configure () {
-                 if [ $j -eq $i ]; then
-                     oe_runmake -C ${S} O=${B}/${config} ${config}
-                     if [ -n "${@' '.join(find_cfgs(d))}" ]; then
--                        merge_config.sh -m -O ${B}/${config} ${B}/${config}/.config ${@" ".join(find_cfgs(d))}
-+                        ${S}/scripts/kconfig/merge_config.sh -m -O ${B}/${config} ${B}/${config}/.config ${@" ".join(find_cfgs(d))}
-                         oe_runmake -C ${S} O=${B}/${config} oldconfig
-                     fi
-                 fi
-@@ -33,7 +33,7 @@ do_configure () {
-         else
-             oe_runmake -C ${S} O=${B} oldconfig
-         fi
--        merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
-+        ${S}/scripts/kconfig/merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
-         cml1_do_configure
+@@ -35,7 +35,7 @@ uboot_configure_config () {
+ 
+     oe_runmake -C ${S} O=${B}/${config} ${config}
+     if [ -n "${@' '.join(find_cfgs(d))}" ]; then
+-        merge_config.sh -m -O ${B}/${config} ${B}/${config}/.config ${@" ".join(find_cfgs(d))}
++        ${S}/scripts/kconfig/merge_config.sh -m -O ${B}/${config} ${B}/${config}/.config ${@" ".join(find_cfgs(d))}
+         oe_runmake -C ${S} O=${B}/${config} oldconfig
      fi
  }
+@@ -46,7 +46,7 @@ uboot_configure () {
+     else
+         oe_runmake -C ${S} O=${B} oldconfig
+     fi
+-    merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
++    ${S}/scripts/kconfig/merge_config.sh -m .config ${@" ".join(find_cfgs(d))}
+     cml1_do_configure
+ }
+ 
 -- 
-2.37.2
+2.43.0
 

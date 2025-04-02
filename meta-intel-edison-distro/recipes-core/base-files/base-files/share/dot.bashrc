@@ -31,3 +31,7 @@ alias l='ls $LS_OPTIONS -lA'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+
+# some quick debug commands
+alias warnings='journalctl -p 4 -b'
+alias errors='journalctl -p 3 -b'

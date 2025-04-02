@@ -37,7 +37,7 @@ max_allowed_free_space=10
 
 # check remaining space and update clean_journal_needed variable
 check_free_space() {
-    current_free_space=$(df -h | grep /dev/root | awk '{print 100 - $5}' | sed 's/%//')
+    current_free_space=$(df -hl | grep /$ | awk '{print 100 - $5}' | sed 's/%//')
     if [ "$current_free_space" -lt "$max_allowed_free_space" ]; then
         clean_journal_needed=true
     else

@@ -8,5 +8,7 @@ then
 
     # Change the bluetooth public address
     rfkill unblock bluetooth
-    btmgmt -i hci0 public-addr  ${bd_addr}
+    btmgmt -i hci0 public-addr ${bd_addr}
 fi
+
+echo "Bluetooth public address set to ${bd_addr}"
