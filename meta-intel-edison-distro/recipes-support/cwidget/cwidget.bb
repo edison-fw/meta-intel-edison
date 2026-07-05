@@ -17,6 +17,4 @@ inherit autotools gettext pkgconfig
 
 DEPENDS = "ncurses libsigc++-2.0"
 
-S = "${WORKDIR}/git"
-
 EXTRA_OECONF = "--disable-werror"

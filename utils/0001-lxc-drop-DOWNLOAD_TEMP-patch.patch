@@ -1,0 +1,79 @@
+From 33c77563f195e7dc4abad436205524ac1a47149f Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 13 Jun 2026 21:21:46 +0200
+Subject: [PATCH 1/1] lxc: drop DOWNLOAD_TEMP patch
+
+This patch actually breaks lxc causing
+mktemp: failed to create file via template '-d/tmp.XXXXXXXXXX': No such file or directory
+
+The patch results to
+DOWNLOAD_TEMP="$(mktemp -p ${DOWNLOAD_TEMP} -d)"
+
+But at this point in the code it is guaranteed that
+DOWNLOAD_TEMP is unset. And `mktemp -p -d` results to the above error (on linux).
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ ...ually-create-DOWNLOAD_TEMP-directory.patch | 37 -------------------
+ recipes-containers/lxc/lxc_git.bb             |  1 -
+ 2 files changed, 38 deletions(-)
+ delete mode 100644 recipes-containers/lxc/files/templates-actually-create-DOWNLOAD_TEMP-directory.patch
+
+diff --git a/recipes-containers/lxc/files/templates-actually-create-DOWNLOAD_TEMP-directory.patch b/recipes-containers/lxc/files/templates-actually-create-DOWNLOAD_TEMP-directory.patch
+deleted file mode 100644
+index 3a2b1f0d..00000000
+--- a/recipes-containers/lxc/files/templates-actually-create-DOWNLOAD_TEMP-directory.patch
++++ /dev/null
+@@ -1,37 +0,0 @@
+-From b30643c37d0d64a15d15026ac94e548cae8a88d2 Mon Sep 17 00:00:00 2001
+-From: Mark Asselstine <mark.asselstine@windriver.com>
+-Date: Thu, 31 May 2018 16:21:45 -0400
+-Subject: [PATCH] templates: actually create DOWNLOAD_TEMP directory
+-
+-The way 'mktemp' is currently used you will get a temp directory in
+-$TMPDIR or '/tmp' and DOWNLOAD_TEMP will not be pointing to an actual
+-directory. This will result in the wget operations failing and the
+-container will fail to create:
+-
+-    ERROR: Failed to download http://....
+-
+-Instead we want to use the '-p' option for mktemp to set the base path
+-and this will ensure that the temp directory is created in the correct
+-location and DOWNLOAD_TEMP will be consistent with this location.
+-
+-Upstream-Status: Pending
+-
+-Signed-off-by: Mark Asselstine <mark.asselstine@windriver.com>
+-
+----
+- templates/lxc-download.in | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/templates/lxc-download.in b/templates/lxc-download.in
+-index 4cb2129..923d2a1 100644
+---- a/templates/lxc-download.in
+-+++ b/templates/lxc-download.in
+-@@ -329,7 +329,7 @@ elif [ -n "${DOWNLOAD_TEMP}" ]; then
+-   mkdir -p "${DOWNLOAD_TEMP}"
+-   DOWNLOAD_TEMP="$(mktemp -p "${DOWNLOAD_TEMP}" -d)"
+- else
+--  DOWNLOAD_TEMP="${DOWNLOAD_TEMP}$(mktemp -d)"
+-+  DOWNLOAD_TEMP="$(mktemp -p ${DOWNLOAD_TEMP} -d)"
+- fi
+- 
+- # Simply list images
+diff --git a/recipes-containers/lxc/lxc_git.bb b/recipes-containers/lxc/lxc_git.bb
+index 63123590..65c0fd6b 100644
+--- a/recipes-containers/lxc/lxc_git.bb
++++ b/recipes-containers/lxc/lxc_git.bb
+@@ -39,7 +39,6 @@ RDEPENDS:${PN}-networking += "iptables"
+ SRC_URI = "git://github.com/lxc/lxc.git;branch=stable-6.0;protocol=https \
+ 	file://lxc-1.0.0-disable-udhcp-from-busybox-template.patch \
+ 	file://run-ptest \
+-	file://templates-actually-create-DOWNLOAD_TEMP-directory.patch \
+ 	file://template-make-busybox-template-compatible-with-core-.patch \
+ 	file://templates-use-curl-instead-of-wget.patch \
+ 	file://0001-download-don-t-try-compatbility-index.patch \
+-- 
+2.43.0
+

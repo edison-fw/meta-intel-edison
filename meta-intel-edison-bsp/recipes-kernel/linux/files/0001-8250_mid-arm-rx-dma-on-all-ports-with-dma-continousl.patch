@@ -10,6 +10,7 @@ is full or when a 4 char interchar gap is received (timeout). After
 timeout we immediately arm the DMA again.
 
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+Upstream-Status: Pending
 ---
  drivers/tty/serial/8250/8250_mid.c | 27 +++++++++++++++++++++++++++
  1 file changed, 27 insertions(+)
@@ -30,7 +31,7 @@ index 8ec03863606e..f47db118317c 100644
 @@ -239,6 +241,29 @@ static void mid8250_set_termios(struct uart_port *p, struct ktermios *termios,
  	serial8250_do_set_termios(p, termios, old);
  }
- 
+
 +static int mid8250_startup(struct uart_port *port)
 +{
 +	struct uart_8250_port *up = up_to_u8250p(port);
@@ -63,9 +64,9 @@ index 8ec03863606e..f47db118317c 100644
  	uart.port.set_termios = mid8250_set_termios;
 +	uart.port.startup = mid8250_startup;
 +	uart.port.shutdown = mid8250_shutdown;
- 
+
  	uart.port.mapbase = pci_resource_start(pdev, mid->board->bar);
  	uart.port.membase = pcim_iomap(pdev, mid->board->bar, 0);
--- 
+--
 2.43.0
 

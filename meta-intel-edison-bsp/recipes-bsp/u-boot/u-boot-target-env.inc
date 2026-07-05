@@ -7,26 +7,26 @@ ENV_SIZE = "0x10000"
 #Env base Name
 ENV_BASE_NAME = "${MACHINE}"
 # Env base file correspond to common part of all environment
-ENV_BASE_FILE = "${WORKDIR}/${ENV_BASE_NAME}.env"
+ENV_BASE_FILE = "${UNPACKDIR}/${ENV_BASE_NAME}.env"
 
 # Env directory is where target variant files are stored
-ENV_DIR = "${WORKDIR}/target_env"
+ENV_DIR = "${UNPACKDIR}/target_env"
 # Env composed is directory where target env are composed
 # by concatening of base environment file and variant files
 # pattern name is applied the resulting files: base-variant.env
-ENV_COMPOSED_DIR = "${WORKDIR}/target_composed"
+ENV_COMPOSED_DIR = "${UNPACKDIR}/target_composed"
 # Env bin is directory where target env are store in binary form
 # filename follows pattern name above : base-variant.bin
-ENV_BIN_DIR = "${WORKDIR}/target_env_bin"
+ENV_BIN_DIR = "${UNPACKDIR}/target_env_bin"
 
 # Env deploy dir is the name of directory where binary envs will be deployed
-ENV_DEPLOY_DIR="u-boot-envs"
+ENV_DEPLOY_DIR = "u-boot-envs"
 
 # Env deploy src dir is the name of directory where txt envs will be deployed
-ENV_SRC_DEPLOY_DIR="u-boot-envs-src"
+ENV_SRC_DEPLOY_DIR = "u-boot-envs-src"
 
 # Env target to use for IFWI stitching process
-ENV_IFWI_TARGET_NAME="ifwi"
+ENV_IFWI_TARGET_NAME = "ifwi"
 # Env image is U-Boot primary environment (where internal U-Boot variables are stored)
 # The same vairiable is also defined in u-boot-osip recip in charge of doing stitching
 # process for IFWI

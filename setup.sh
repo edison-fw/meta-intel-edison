@@ -25,8 +25,9 @@
 set -e
 
 # Branch and Tag to fetch from the yoctoproject.org upstream repository.
-yocto_branch="scarthgap"
-yocto_tag="scarthgap"
+yocto_branch="whinlatter"
+yocto_tag="whinlatter"
+poky_tag="yocto-5.3.4"
 
 do_local_conf () {
   rm $yocto_conf_dir/local.conf
@@ -52,7 +53,7 @@ COPY_LIC_DIRS = "1"
 FILESYSTEM_PERMS_TABLES = "$top_repo_dir/meta-intel-edison/meta-intel-edison-distro/files/fs-perms.txt"
 PACKAGE_CLASSES += " package_deb sign_package_feed"
 PACKAGE_FEED_GPG_NAME = "6449A703BCA9A698055ACB23976A9A3F994268DB"
-PACKAGE_FEED_GPG_PASSPHRASE_FILE="$top_repo_dir/meta-intel-edison/utils/key/passphrase"
+PACKAGE_FEED_GPG_PASSPHRASE_FILE = "$top_repo_dir/meta-intel-edison/utils/key/passphrase"
 PACKAGE_CLASSES ?= "$extra_package_type"
 $extra_archiving
 $extra_conf
@@ -80,12 +81,16 @@ LCONF_VERSION = "6"
 BBPATH = "\${TOPDIR}"
 BBFILES ?= ""
 BBLAYERS ?= " \\
-  $poky_dir/meta \\
-  $poky_dir/meta-poky \\
-  $poky_dir/meta-yocto-bsp \\
+  $poky_dir/openembedded-core/meta \\
+  $poky_dir/meta-yocto/meta-poky \\
+  $poky_dir/meta-yocto/meta-yocto-bsp \\
   $poky_dir/meta-openembedded/meta-oe \\
   $poky_dir/meta-openembedded/meta-python \\
   $poky_dir/meta-openembedded/meta-networking \\
+  $poky_dir/meta-openembedded/meta-filesystems \\
+  $poky_dir/meta-virtualization \\
+  $poky_dir/meta-security \\
+  $poky_dir/meta-snapd \\
   $poky_dir/meta-qt5 \\
   $poky_dir/meta-intel \\
   $top_repo_dir/meta-intel-edison/meta-intel-edison-bsp \\
@@ -272,25 +277,64 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   esac
 
   # Updating local git cache
-  do_update_cache "poky" "git://git.yoctoproject.org"
-  do_update_cache "meta-openembedded" "https://github.com/openembedded"
-  do_update_cache "meta-intel" "git://git.yoctoproject.org"
+  do_update_cache "bitbake" "https://git.openembedded.org"
+  do_update_cache "openembedded-core" "https://git.openembedded.org"
+  do_update_cache "meta-yocto" "https://git.yoctoproject.org"
+  do_update_cache "meta-openembedded" "https://git.openembedded.org"
+  do_update_cache "meta-virtualization" "https://git.yoctoproject.org"
+  do_update_cache "meta-intel" "https://git.yoctoproject.org"
   do_update_cache "meta-acpi" "https://github.com/edison-fw"
   do_update_cache "meta-qt5" "https://github.com/meta-qt5"
+  do_update_cache "meta-snapd" "https://github.com/edison-fw"
+  do_update_cache "meta-security" "https://git.yoctoproject.org"
 
   cd $my_build_dir
   poky_dir=$my_build_dir/poky
-  echo "Cloning Poky in the $poky_dir directory"
+  echo "Cloning Poky Layers in the $poky_dir directory"
   rm -rf $poky_dir
 
-  git clone -b ${yocto_branch} ${my_dl_dir}/poky-mirror.git poky
+  mkdir -p $poky_dir
   cd $poky_dir
+  oe_dir=$poky_dir/bitbake
+  git clone ${poky_branch} ${my_dl_dir}/bitbake-mirror.git bitbake
+
+  oe_dir=$poky_dir/openembedded-core
+  git clone ${my_dl_dir}/openembedded-core-mirror.git openembedded-core
+  cd ${oe_dir}
+  git checkout ${yocto_tag}
+
+  cd $poky_dir
+  oe_dir=$poky_dir/meta-yocto
+  git clone ${poky_branch} ${my_dl_dir}/meta-yocto-mirror.git meta-yocto
+  cd ${oe_dir}
   git checkout ${yocto_tag}
 
   cd $poky_dir
   oe_dir=$poky_dir/meta-openembedded
   echo "Cloning Openembedded layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-openembedded-mirror.git meta-openembedded
+  cd ${oe_dir}
+  git checkout ${yocto_tag}
+
+  cd $poky_dir
+  oe_dir=$poky_dir/meta-virtualization
+  echo "Cloning meta-virtualization layer to ${oe_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-virtualization-mirror.git meta-virtualization
+  cd ${oe_dir}
+  git checkout ${yocto_tag}
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-lxc-drop-DOWNLOAD_TEMP-patch.patch
+
+  cd $poky_dir
+  oe_dir=$poky_dir/meta-security
+  echo "Cloning meta-virtualization layer to ${oe_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-security-mirror.git meta-security
+  cd ${oe_dir}
+  git checkout ${yocto_tag}
+
+  cd $poky_dir
+  oe_dir=$poky_dir/meta-snapd
+  echo "Cloning meta-snapd layer to ${oe_dir} directory from local cache"
+  git clone ${my_dl_dir}/meta-snapd-mirror.git meta-snapd
   cd ${oe_dir}
   git checkout ${yocto_tag}
 
@@ -320,14 +364,16 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "Cloning meta-qt5 layer to ${oe_dir} directory from local cache"
   git clone ${my_dl_dir}/meta-qt5-mirror.git meta-qt5
   cd ${oe_dir}
-  git checkout ${yocto_tag}
-
+  git checkout master
   # Apply patch on top of it allowing to perform build in external source directory
   echo "Applying patch on poky"
-  cd $poky_dir
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
-  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
+  cd $poky_dir/openembedded-core
+#  git apply $top_repo_dir/meta-intel-edison/utils/0001-u-boot-Fix-path-to-merge_config.sh.patch
   git apply $top_repo_dir/meta-intel-edison/utils/0001-signing-keys-build-empty-meta-package.patch
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-Intercept-make.patch
+  cd $poky_dir/bitbake
+  git apply $top_repo_dir/meta-intel-edison/utils/0001-Add-shared-make-jobserver-support.patch
+
 
   # We have keys for creating a signed DEB repo, register them
   cd ${top_repo_dir}/meta-intel-edison/utils/key/
@@ -342,7 +388,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
 
   if [ ! -e "$yocto_conf_dir/local.conf" ]; then
     echo "Initializing yocto build environment"
-    source $poky_dir/oe-init-build-env $my_build_dir/build > /dev/null
+    source $poky_dir/openembedded-core//oe-init-build-env $my_build_dir/build > /dev/null
 
     echo "Setting up yocto configuration file (in build/conf/local.conf)"
     do_local_conf
@@ -354,7 +400,7 @@ COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL*'
   echo "SDK will be generated for $my_sdk_host host"
   echo "Now run these two commands to setup and build the flashable image:"
   echo "cd $my_build_dir"
-  echo "source poky/oe-init-build-env"
+  echo "source poky/openembedded-core/oe-init-build-env"
   echo "bitbake -k edison-image"
   echo "*************"
 }

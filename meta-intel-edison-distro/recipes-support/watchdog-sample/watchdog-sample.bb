@@ -16,7 +16,7 @@ DEPENDS = "systemd"
 inherit systemd
 inherit pkgconfig
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_compile() {
 	$CC $CFLAGS ${S}/watchdog-sample.c `pkg-config --cflags --libs --print-errors libsystemd` -o watchdog-sample
@@ -25,7 +25,7 @@ do_compile() {
 do_install() {
 	# install service file
 	install -d ${D}${systemd_unitdir}/system
-	install -c -m 0644 ${WORKDIR}/watchdog-sample.service ${D}${systemd_unitdir}/system
+	install -c -m 0644 ${S}/watchdog-sample.service ${D}${systemd_unitdir}/system
 
 	# install watchdog binary
 	install -d ${D}${bindir}

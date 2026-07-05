@@ -17,41 +17,40 @@ mkdir -p $build_dir/toFlash
 
 env_dir=$top_repo_dir/meta-intel-edison/meta-intel-edison-bsp/recipes-bsp/u-boot/files
 
-# Get Edison rootfs image settings
+# For btrfs the home partition is maxed out
 if [ -f $env_dir/edison.env ]
 then
-       EDISON_ROOTFS_MB=`grep -rnw "name=rootfs" $env_dir/target_env/blankcdc.env | sed 's/.\+;name=rootfs,size=\([0-9]\+\)MiB.\+/\1/g'`
+       EDISON_ROOTFS_MB=3808
 else
        echo -e "\033[31mError: file $env_dir/edison.env does not exist!\033[0m"
        exit 1;
 fi
 
 # Get edison rootfs image size
-IMAGE_SIZE_MB=$((`stat --printf="%s" -L $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.ext4` / 1048576))
+IMAGE_SIZE_MB=$((`stat --printf="%s" -L $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.btrfs` / 1048576))
 
 echo "EDISON_ROOTFS_MB = $EDISON_ROOTFS_MB, IMAGE_SIZE_MB = $IMAGE_SIZE_MB"
 
 # Compare rootfs partition settings with rootfs image
 if [ $EDISON_ROOTFS_MB -lt $IMAGE_SIZE_MB ]
 then
-        echo -e "\033[31mError: image edison-image-edison.rootfs.ext4(${IMAGE_SIZE_MB}MB) has exceeded rootfs partition settings(${EDISON_ROOTFS_MB}MB)!\033[0m"
-        echo -e "\033[33mNeed to enlarge rootfs partition size, otherwise it will cause edison board bootup fail!\033[0m"
-        echo -e "\033[33mYou can change it $env_dir/edison.env directly.\033[0m "
+        echo -e "\033[31mError: image edison-image-edison.rootfs.btrfs(${IMAGE_SIZE_MB}MB) has exceeded home partition settings(${EDISON_ROOTFS_MB}MB)!\033[0m"
+        echo -e "\033[33mNeed to reduce image size, otherwise it will cause edison board bootup fail!\033[0m"
         exit 1
 fi
 
 # Copy boot partition (contains kernel and ramdisk)
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.hddimg $build_dir/toFlash/edison-image-edison.hddimg
+cp --reflink $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.hddimg $build_dir/toFlash/edison-image-edison.hddimg
 
 # Copy u-boot
-cp $build_dir/tmp/deploy/images/edison/u-boot-edison.img $build_dir/toFlash/
-cp $build_dir/tmp/deploy/images/edison/u-boot-edison.bin $build_dir/toFlash/
+cp --reflink  $build_dir/tmp/deploy/images/edison/u-boot-edison.img $build_dir/toFlash/
+cp --reflink  $build_dir/tmp/deploy/images/edison/u-boot-edison.bin $build_dir/toFlash/
 
 # Copy u-boot environments files binary
-cp -R $build_dir/tmp/deploy/images/edison/u-boot-envs $build_dir/toFlash
+cp --reflink  -R $build_dir/tmp/deploy/images/edison/u-boot-envs $build_dir/toFlash
 
 # Copy IFWI
-cp $top_repo_dir/meta-intel-edison/utils/flash/ifwi/edison/*.bin $build_dir/toFlash/
+cp --reflink  $top_repo_dir/meta-intel-edison/utils/flash/ifwi/edison/*.bin $build_dir/toFlash/
 
 # build Ifwi file for using in DFU mode
 # Remove FUP footer (144 bytes) as it's not needed when we directly write to boot partitions
@@ -62,15 +61,13 @@ do
 done
 
 # Copy rootfs
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.ext4 $build_dir/toFlash/edison-image-edison.ext4
-cp $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.btrfs $build_dir/toFlash/edison-image-edison.btrfs
+cp  --reflink $build_dir/tmp/deploy/images/edison/edison-image-edison.rootfs.btrfs $build_dir/toFlash/edison-image-edison.btrfs
 
 # Copy flashing script
-cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
-cp $top_repo_dir/meta-intel-edison/utils/flash/flashall.bat $build_dir/toFlash/
-cp $top_repo_dir/meta-intel-edison/utils/flash/filter-dfu-out.js $build_dir/toFlash/
-cp $top_repo_dir/meta-intel-edison/utils/flash/FlashEdison.json $build_dir/toFlash/
-cp -R $top_repo_dir/meta-intel-edison/utils/flash/helper $build_dir/toFlash/helper
+cp  --reflink $top_repo_dir/meta-intel-edison/utils/flash/flashall.sh $build_dir/toFlash/
+cp  --reflink $top_repo_dir/meta-intel-edison/utils/flash/filter-dfu-out.js $build_dir/toFlash/
+cp  --reflink $top_repo_dir/meta-intel-edison/utils/flash/FlashEdison.json $build_dir/toFlash/
+cp  --reflink -R $top_repo_dir/meta-intel-edison/utils/flash/helper $build_dir/toFlash/helper
 
 # Look for mkimage tool path
 ubootdir=$top_repo_dir/u-boot

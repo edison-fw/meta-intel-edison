@@ -1,0 +1,58 @@
+From 81190df4d954d0c94d8cc0e5e29ab3608d905d66 Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Fri, 26 Jun 2026 18:11:54 +0200
+Subject: [PATCH 1/1] Adjust for ABI break in libapt-pkg7.0
+
+Upstream-Status: Pending
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ src/generic/apt/pkg_acqfile.cc | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/generic/apt/pkg_acqfile.cc b/src/generic/apt/pkg_acqfile.cc
+index 4a4da6fa..7fd87e24 100644
+--- a/src/generic/apt/pkg_acqfile.cc
++++ b/src/generic/apt/pkg_acqfile.cc
+@@ -66,17 +66,17 @@ bool get_archive(pkgAcquire *Owner, pkgSourceList *Sources,
+ 
+   // Does not really matter here.. we are going to fail out below
+   if (Vf.end() != true)
+-    {     
++    {
+       // If this fails to get a file name we will bomb out below.
+       pkgRecords::Parser &Parse = Recs->Lookup(Vf);
+       if (_error->PendingError() == true)
+ 	return false;
+-            
++
+       // Generate the final file name as: package_version_arch.foo
+       StoreFilename = QuoteString(Version.ParentPkg().Name(),"_:") + '_' +
+ 	QuoteString(Version.VerStr(),"_:") + '_' +
+-	QuoteString(Version.Arch(),"_:.") + 
+-	"." + flExtension(Parse.FileName());
++	QuoteString(Version.Arch(),"_:.") +
++	"." + std::string{flExtension(Parse.FileName())};
+     }
+ 
+    for (; Vf.end() == false; Vf++)
+@@ -89,7 +89,7 @@ bool get_archive(pkgAcquire *Owner, pkgSourceList *Sources,
+       pkgIndexFile *Index;
+       if (Sources->FindIndex(Vf.File(),Index) == false)
+             continue;
+-      
++
+       // Grab the text package record
+       pkgRecords::Parser &Parse = Recs->Lookup(Vf);
+       if (_error->PendingError() == true)
+@@ -104,7 +104,7 @@ bool get_archive(pkgAcquire *Owner, pkgSourceList *Sources,
+ 			       Version.ParentPkg().FullName().c_str());
+ 	}
+ 
+-      std::string DestFile = directory + "/" + flNotDir(StoreFilename);
++      std::string DestFile = directory + "/" + std::string{flNotDir(StoreFilename)};
+ 
+       // Create the item
+       new pkgAcqFile(Owner,
+-- 
+2.43.0
+

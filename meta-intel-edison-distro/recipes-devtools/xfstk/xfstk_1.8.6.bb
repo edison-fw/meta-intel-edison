@@ -12,7 +12,7 @@ SRC_URI = "git://github.com/edison-fw/xFSTK.git;branch=main;tag=v${PV};protocol=
         file://0001-Don-t-build-docs.patch \
         "
 
-S = "${WORKDIR}/git"
+S = "${UNPACKDIR}/git"
 
 TARGET_CC_ARCH += "${LDFLAGS}"
 

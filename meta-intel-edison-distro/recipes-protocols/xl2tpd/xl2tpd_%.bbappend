@@ -15,5 +15,5 @@ SRC_URI:append = " \
 
 do_install:append() {
 	install -d ${D}/${systemd_unitdir}/system
-	install -m 644 ${WORKDIR}/xl2tpd.service ${D}/${systemd_unitdir}/system
+	install -m 644 ${UNPACKDIR}/xl2tpd.service ${D}/${systemd_unitdir}/system
 }

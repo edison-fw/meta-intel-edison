@@ -1,0 +1,101 @@
+From 48363b65d8f7a57228b1becb4856258a1ca8bd7d Mon Sep 17 00:00:00 2001
+From: Ferry Toth <ftoth@exalondelft.nl>
+Date: Sat, 20 Jun 2026 22:07:28 +0200
+Subject: [PATCH 1/1] Intercept make
+
+Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+---
+ meta/conf/bitbake.conf      |  2 +-
+ scripts/make-intercept/make | 67 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 68 insertions(+), 1 deletion(-)
+ create mode 100755 scripts/make-intercept/make
+
+diff --git a/meta/conf/bitbake.conf b/meta/conf/bitbake.conf
+index 729f92fcdb..c79eae1168 100644
+--- a/meta/conf/bitbake.conf
++++ b/meta/conf/bitbake.conf
+@@ -504,7 +504,7 @@ EXTRA_IMAGEDEPENDS = ""
+ # Toolchain info.
+ ##################################################################
+ 
+-PATH:prepend = "${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
++PATH:prepend = "${COREBASE}/scripts/make-intercept:${COREBASE}/scripts:${STAGING_BINDIR_TOOLCHAIN}:${STAGING_BINDIR_CROSS}:${STAGING_DIR_NATIVE}${sbindir_native}:${STAGING_BINDIR_NATIVE}:${STAGING_DIR_NATIVE}${base_sbindir_native}:${STAGING_DIR_NATIVE}${base_bindir_native}:"
+ export PATH
+ 
+ ##################################################################
+diff --git a/scripts/make-intercept/make b/scripts/make-intercept/make
+new file mode 100755
+index 0000000000..a41271692d
+--- /dev/null
++++ b/scripts/make-intercept/make
+@@ -0,0 +1,67 @@
++#!/usr/bin/env python3
++import sys
++import os
++import subprocess
++
++# first find the correct make as we are here because make-intercept is in the path
++newpath = []
++origpath = os.environ["PATH"].split(":")
++for p in origpath:
++    if "make-intercept" in p:
++        continue
++    newpath.append(p)
++os.environ["PATH"] = ":".join(newpath)
++
++# find if the version of make supports named pipes
++NewArgv = []
++NewArgv.append("make")
++NewArgv.append("--version")
++
++output = subprocess.run(NewArgv, shell=False, capture_output=True,encoding='ascii').stdout
++ver =output.split('\n')[0].split()[-1]
++named_pipes = True
++# we assume that make version numbering is x.y and not x.y.z
++if float(ver[:3]) <= 4.3:
++    named_pipes = False
++
++if "BB_MAKEFIFO" in os.environ:
++    fifoname = os.environ["BB_MAKEFIFO"]
++
++    if not named_pipes:
++        r = os.open(fifoname, os.O_RDONLY|os.O_NONBLOCK)
++        w = os.open(fifoname, os.O_WRONLY)
++        # since python 3.3 handles are no longer inheritable by default
++        os.set_inheritable(w, True)
++        os.close(r)
++        r = os.open(fifoname, os.O_RDONLY)
++        os.set_inheritable(r, True)
++
++    # look for -j n and if seen delete it
++    seen = False
++    Next = False
++    NewArgv = []
++    for i in sys.argv:
++        if Next:
++            Next = False
++        else:
++            if "-j" in i:
++                seen = True
++                Next = True
++            else:
++                NewArgv.append(i)
++
++    if seen:
++        if named_pipes:
++            w = os.open(fifoname, os.O_WRONLY|os.O_NONBLOCK)
++            os.environ["MAKEFLAGS"] = "-j --jobserver-auth=fifo:" + fifoname
++        else:
++            os.environ["MAKEFLAGS"] = "-j --jobserver-auth=" + str(r) + "," + str(w)
++else:
++    NewArgv = []
++    for i in sys.argv:
++        NewArgv.append(i)
++
++NewArgv[0] = "make"
++
++# even if inheritable still nede to explicitly prevent from being closed
++sys.exit(subprocess.run(NewArgv, shell=False, close_fds=False).returncode)
+-- 
+2.43.0
+

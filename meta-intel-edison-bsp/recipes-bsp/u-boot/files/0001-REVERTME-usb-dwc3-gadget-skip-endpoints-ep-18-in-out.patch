@@ -16,6 +16,7 @@ describing such endpoints.
  • 1 1KB BW Bulk IN (IN#8)+ 1 1KB BW Bulk OUT (Run Control) (OUT#8)
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Upstream-Status: Pending
 ---
  drivers/usb/dwc3/gadget.c | 10 ++++++++++
  1 file changed, 10 insertions(+)
@@ -27,7 +28,7 @@ index 4e68fb0a82..c0578c286d 100644
 @@ -1585,6 +1585,16 @@ static int dwc3_gadget_init_hw_endpoints(struct dwc3 *dwc,
  	for (i = 0; i < num; i++) {
  		u8 epnum = (i << 1) | (!!direction);
- 
+
 +		/*
 +		 * REVERTME: This is a temporary hack to get Intel
 +		 * Edison's USB working with mainline kernel. This hack
@@ -41,6 +42,6 @@ index 4e68fb0a82..c0578c286d 100644
  		dep = kzalloc(sizeof(*dep), GFP_KERNEL);
  		if (!dep)
  			return -ENOMEM;
--- 
+--
 2.30.2
 

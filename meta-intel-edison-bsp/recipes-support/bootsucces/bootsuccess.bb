@@ -13,14 +13,16 @@ RDEPENDS:${PN} = "systemd  bash"
 DEPENDS = "systemd"
 inherit systemd
 
+S = "${UNPACKDIR}"
+
 do_install() {
 	# install service file
 	install -d ${D}${systemd_unitdir}/system
-	install -c -m 0644 ${WORKDIR}/bootsuccess.service ${D}${systemd_unitdir}/system
+	install -c -m 0644 ${S}/bootsuccess.service ${D}${systemd_unitdir}/system
 
 	# install bootsuccess script
 	install -d ${D}${sbindir}
-	install -c -m 0755 ${WORKDIR}/boot_success.sh ${D}${sbindir}
+	install -c -m 0755 ${S}/boot_success.sh ${D}${sbindir}
 }
 
 # As this package is tied to systemd, only build it when we're also building systemd.

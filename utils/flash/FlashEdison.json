@@ -121,7 +121,7 @@
     "tool" : "dfuDownloader"
    },
    {
-    "args" : "\"--alt\" \"rootfs\" \"-D\" \"${rootfs_file}\" \"-t\" \"4096\" \"-R\"",
+    "args" : "\"--alt\" \"home\" \"-D\" \"${rootfs_file}\" \"-R\"",
     "description" : "Flashing rootfs",
     "mandatory" : true,
     "restrict" : null,
@@ -216,19 +216,19 @@
     "description" : "Rootfs",
     "name" : "Rootfs",
     "type" : "file",
-    "value" : "edison-image-edison.ext4"
+    "value" : "edison-image-edison.btrfs"
    },
    "u-boot-env_file_cdc" :    {
     "description" : "U-Boot CDC environment",
     "name" : "U-Boot CDC environment",
     "type" : "file",
-    "value" : "u-boot-envs/edison-blankcdc.bin"
+    "value" : "u-boot-envs/edison-btrfs.bin"
    },
    "u-boot-env_file_rndis" :    {
-    "description" : "U-Boot RNDIS environment",
+    "description" : "U-Boot RNDIS environment UNTESTED",
     "name" : "U-Boot RNDIS environment",
     "type" : "file",
-    "value" : "u-boot-envs/edison-blankrndis.bin"
+    "value" : "u-boot-envs/edison-btrfs.bin"
    },
    "u-boot_file" :    {
     "description" : "U-Boot",

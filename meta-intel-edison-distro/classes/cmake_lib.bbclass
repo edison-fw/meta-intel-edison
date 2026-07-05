@@ -25,10 +25,10 @@
 #      is replaced by resulting string of 'replace'. To create a resulting string currently
 #      6 command-line like options are available (see parseparam below):
 #
-#        -f<file-in-WORKDIR>:
-#          Resulting string is taken from the file <file-in-WORKDIR>. This option should be
+#        -f<file-in-UNPACKDIR>:
+#          Resulting string is taken from the file <file-in-UNPACKDIR>. This option should be
 #          choosen for longer strings or stings containg ','.
-#        -F<file-in-WORKDIR>:
+#        -F<file-in-UNPACKDIR>:
 #          same as -f but bitbake variables are expanded e.g '${libdir}' -> '/usr/lib'
 #        -s<string>
 #          Resulting string is <string>
@@ -105,9 +105,9 @@ python do_populate_sysroot:append() {
             cmd = param[0:2]
             cmdparam = param[2:]
 
-            # handle file in WORKDIR
+            # handle file in UNPACKDIR
             if cmd == '-f' or cmd == '-F':
-                filename = "%s/%s" % (d.getVar('WORKDIR'), cmdparam)
+                filename = "%s/%s" % (d.getVar('UNPACKDIR'), cmdparam)
                 if os.path.isfile(filename):
                     fd = open(filename, 'r')
                     str = fd.read()

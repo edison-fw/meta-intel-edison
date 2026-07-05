@@ -8,7 +8,7 @@ itself into a connection timeout loop. It hits the TimeoutStopUSec= and
 is forcibly killed by SIGKILL. Order zerotier after network.target so it
 can shutdown gracefully while the network is still up.
 Suggested-by: https://github.com/zerotier/ZeroTierOne/pull/1093/commits/c9f07e855e2abac9c1a29cd412d888500a6a0bbb
-
+Upstream-Status: Pending
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
 ---
  debian/zerotier-one.service | 5 +++++
@@ -25,16 +25,16 @@ index 133d4490..f582cbc1 100644
 +# Shutdown zerotier before tearing down the network
 +# https://github.com/zerotier/ZeroTierOne/pull/1093/commits/c9f07e855e2abac9c1a29cd412d888500a6a0bbb
 +After=network.target
- 
+
  [Service]
  ExecStart=/usr/sbin/zerotier-one
  Restart=always
  KillMode=process
 +# Override default 90 second timeout in pathological conditions
 +TimeoutStopSec=5
- 
+
  [Install]
  WantedBy=multi-user.target
--- 
+--
 2.30.2
 

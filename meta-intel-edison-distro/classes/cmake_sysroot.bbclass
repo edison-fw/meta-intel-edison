@@ -1,7 +1,7 @@
 # class to keep cmake files staged to sysroot for modifications/checks
 
 # filename for the file containg full names of all cmakefiles staged
-CMAKEINSTALLED = "${WORKDIR}/staged_cmake_files"
+CMAKEINSTALLED = "${UNPACKDIR}/staged_cmake_files"
 
 # 1. remove tmp file from last build
 python do_populate_sysroot:prepend() {

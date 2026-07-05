@@ -4,6 +4,7 @@ Date: Sat, 27 Jan 2024 22:41:19 +0100
 Subject: [PATCH 1/1] fix widec path
 
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+Upstream-Status: Pending
 ---
  src/cwidget/curses++.h | 2 +-
  src/cwidget/style.h    | 2 +-

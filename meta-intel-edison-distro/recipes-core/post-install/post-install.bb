@@ -11,12 +11,14 @@ SYSTEMD_SERVICE:${PN} = "post-install.service"
 
 RDEPENDS:${PN} = "systemd bash blink-led"
 
+S = "${UNPACKDIR}"
+
 do_install() {
 	install -d ${D}${sbindir}
-	install -c -m 0744 ${WORKDIR}/post-install.sh ${D}${sbindir}
+	install -c -m 0744 ${S}/post-install.sh ${D}${sbindir}
 	install -d ${D}${systemd_unitdir}/system
 	install -d ${D}${sysconfdir}/systemd/system/basic.target.wants
-	install -c -m 0644 ${WORKDIR}/post-install.service ${D}${systemd_unitdir}/system
+	install -c -m 0644 ${S}/post-install.service ${D}${systemd_unitdir}/system
 	sed -i -e 's,@BASE_BINDIR@,${base_bindir},g' \
 		-e 's,@BASE_SBINDIR@,${base_sbindir},g' \
 		-e 's,@SBINDIR@,${sbindir},g' \

@@ -9,7 +9,7 @@ SRC_URI = "file://mcu_fw_loader.service \
 
 SYSTEMD_SERVICE_${PN} = "mcu_fw_loader.service"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 inherit systemd
 
@@ -21,3 +21,8 @@ do_install () {
 	install -m 0644 mcu_fw_loader.service ${D}${systemd_unitdir}/system/
 }
 
+FILES:${PN} = "${sysconfdir}/intel_mcu/*"
+FILES:${PN} += "${systemd_unitdir}/system/*"
+
+# Do not enable by default.
+SYSTEMD_AUTO_ENABLE = "disable"

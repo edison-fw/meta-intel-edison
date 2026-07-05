@@ -102,6 +102,18 @@ read_args() {
     done
 }
 
+# Function to get the UUID of a block device
+get_uuid() {
+    local device="$1"
+    # Read /dev/disk/by-uuid to find the UUID
+    for uuid in /dev/disk/by-uuid/*; do
+        if [ "$(readlink -f "$uuid")" = "$device" ]; then
+            echo "$(basename "$uuid")"
+            return
+        fi
+    done
+}
+
 boot_root() {
     # Watches the udev event queue, and exits if all current events are handled
     udevadm settle --timeout=3
@@ -118,6 +130,14 @@ boot_root() {
     mkdir -p  /realroot
     mount -n -t ${ROOT_TYPE} ${ROOTFLAGS} ${ROOT_DEVICE} /realroot
 
+    # Get the UUID of the root disk
+    if [ -n "$ROOT_DEVICE" ]; then
+        ROOT_UUID=$(get_uuid "$ROOT_DEVICE")
+    else
+        echo "Error: Root device not found."
+        exit 1
+    fi
+
     # check if init found
     if [[ -h /realroot/sbin/init || -f /realroot/sbin/init ]]; then
         echo "Init found, booting..."
@@ -127,6 +147,8 @@ boot_root() {
 
     # copy fstab
     if [[ -h /realroot/etc/fstab || -f /realroot/etc/fstab ]]; then
+        # fixup fstab to have the UUID of the disk
+        sed -i "s/#rootfs#/$ROOT_UUID/g" /realroot/etc/fstab
         cp /realroot/etc/fstab /etc
         # if /boot in fstab mount it now
         mount -n /boot || true

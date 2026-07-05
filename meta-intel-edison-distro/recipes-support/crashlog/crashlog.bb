@@ -13,14 +13,16 @@ RDEPENDS:${PN} = "systemd"
 DEPENDS = "systemd"
 inherit systemd
 
+S = "${UNPACKDIR}"
+
 do_install() {
 	# install service file
 	install -d ${D}${systemd_unitdir}/system
-	install -c -m 0644 ${WORKDIR}/crashlog.service ${D}${systemd_unitdir}/system
+	install -c -m 0644 ${S}/crashlog.service ${D}${systemd_unitdir}/system
 
 	# install crashlog script
 	install -d ${D}${sbindir}
-	install -c -m 0755 ${WORKDIR}/retrieve_crashlog.sh ${D}${sbindir}
+	install -c -m 0755 ${S}/retrieve_crashlog.sh ${D}${sbindir}
 }
 
 # As this package is tied to systemd, only build it when we're also building systemd.

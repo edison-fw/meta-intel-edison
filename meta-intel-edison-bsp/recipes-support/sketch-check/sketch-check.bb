@@ -13,7 +13,7 @@ SYSTEMD_AUTO_ENABLE = "disable"
 SRC_URI = "file://sketch-check.sh"
 SRC_URI += "file://sketch-check.service"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
         install -d ${D}${bindir}

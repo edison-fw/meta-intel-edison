@@ -7,10 +7,10 @@ SRC_URI += "file://fstab.btrfs"
 volatiles = "tmp"
 
 do_install:append() {
-	install -m 0644 ${WORKDIR}/release ${D}${sysconfdir}/release
-	install -m 0644 ${WORKDIR}/fstab ${D}${sysconfdir}/fstab
-	install -m 0644 ${WORKDIR}/fstab.btrfs ${D}${sysconfdir}/fstab.btrfs
-	install -m 0755 ${WORKDIR}/share/dot.profile ${D}${ROOT_HOME}/.profile
-	install -m 0755 ${WORKDIR}/share/dot.bashrc ${D}${ROOT_HOME}/.bashrc
+	install -m 0644 ${UNPACKDIR}/release ${D}${sysconfdir}/release
+	install -m 0644 ${UNPACKDIR}/fstab ${D}${sysconfdir}/fstab
+	install -m 0644 ${UNPACKDIR}/fstab.btrfs ${D}${sysconfdir}/fstab.btrfs
+	install -m 0755 ${UNPACKDIR}/share/dot.profile ${D}${ROOT_HOME}/.profile
+	install -m 0755 ${UNPACKDIR}/share/dot.bashrc ${D}${ROOT_HOME}/.bashrc
 
 }

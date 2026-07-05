@@ -24,7 +24,6 @@ folders:
 
 - title: Introduction
   pdf: true
-  jurl: /minitoc_theme_intro.html
 
   folderitems:
   - title: A Word of Warning
@@ -60,6 +59,11 @@ folders:
     ref: 0.6-News
     pdf: true
 
+  - title: Why btrfs is great
+    jurl: /0.7-Why-btrfs-is-great.html
+    ref: 0.7-Why-btrfs-is-great
+    pdf: true
+
 - title: Setting up
   pdf: true
   jurl: /minitoc_general_jekyll_topics.html
@@ -90,21 +94,50 @@ folders:
     ref: 1.5-update-kernel-u-boot
     pdf: true
 
+  - title:  Add features to your kernel
+    jurl: /1.6-kernel-config.html
+    ref: 1.6-kernel-config
+    pdf: true
+
+  - title:  Adding packages to your image
+    jurl: /1.7-add-package.html
+    ref: 1.7-add-package
+    pdf: true
+
 - title: Building and installing
   pdf: true
   jurl: /minitoc_theme_build.html
 
   folderitems:
-  - title: Building and installing the image
-    jurl: /2.0-Building-and-installing-the-image.html
-    ref: 2.0-Building-and-installing-the-image
+  - title: Understanding the partitioning scheme
+    jurl: /2.0.0-How-to-switch-to-btrfs.html
+    ref: 2.0.0-How-to-switch-to-btrfs
     pdf: true
 
-  - title: Building and installing the rootfs to SDHC
-    jurl: /2.1-Building-and-installing-the-rootfs.html
-    ref: 2.1-Building-and-installing-the-rootfs
+  - title: What's in the rootfs and the initramfs images
+    jurl: /2.5-Whats-in-the-rootfs-and-the-initramfs.html
+    ref: 2.5-Whats-in-the-rootfs-and-the-initramfs
     pdf: true
 
+  - title: Building the image
+    jurl: /2.0.1-Building-the-image.html
+    ref: 2.0.1-Building-the-image
+    pdf: true
+
+  - title: Installing the image to eMMC
+    jurl: /2.0.2-Installing-the-image-EMMC.html
+    ref: 2.0.2-Installing-the-image-EMMC
+    pdf: true
+
+  - title: Installing the rootfs to SDHC
+    jurl: /2.1-Installing-the-rootfs.html
+    ref: 2.1-Installing-the-rootfs
+    pdf: true
+
+- title: Special install procedures
+  pdf: true
+
+  folderitems:
   - title: Building and installing the kernel
     jurl: /2.2-Building-and-installing-the-kernel.html
     ref: 2.2-Building-and-installing-the-kernel
@@ -120,19 +153,49 @@ folders:
     ref: 2.4-Recovery
     pdf: true
 
-  - title: What's in the rootfs and the initramfs images
-    jurl: /2.5-Whats-in-the-rootfs-and-the-initramfs.html
-    ref: 2.5-Whats-in-the-rootfs-and-the-initramfs
+  - title: Snaps from Snapcraft.io
+    jurl: /2.5-Snaps.html
+    ref: 2.5-Snaps
     pdf: true
 
-  - title: Building a Debian image
+  - title: LXC and Docker containers
     jurl: /2.6-Building-Debian.html
     ref: 2.6-Building-Debian
     pdf: true
 
-  - title: Installing Ubuntu
-    jurl: /2.7-Install_Ubuntu.html
-    ref: 2.7-Install_Ubuntu
+  - title: Transferring an alternate btrfs image
+    jurl: /2.7-Transferring-a-alt-btrfs-image.html
+    ref: 2.7-Transferring-a-alt-btrfs-image
+    pdf: true
+
+  - title: Installing an alternate kernel
+    jurl: /2.8-Installing-an-alternate-kernel.html
+    ref: 2.8-Installing-an-alternate-kernel
+    pdf: true
+
+  - title: Installing an alternate kernel fast
+    jurl: /2.8.5-Installing-an-alternate-kernel-fast.html
+    ref: 2.8.5-Installing-an-alternate-kernel
+    pdf: true
+
+  - title: Installing an updated U-Boot
+    jurl: /2.9-Installing-an-updated-U-Boot.html
+    ref: 2.9-Installing-an-updated-U-Boot
+    pdf: true
+
+  - title: Adding packages
+    jurl: /2.10-Adding-packages.html
+    ref: 2.10-Adding-packages
+    pdf: true
+
+  - title: Creating a deb repository
+    jurl: /2.11-Creating-a-deb-repository.html
+    ref: 2.11-Creating-a-deb-repository
+    pdf: true
+
+  - title: MCU Support
+    jurl: /2.12-MCU-support.html
+    ref: 2.12-MCU-support
     pdf: true
 
 - title: SDK
@@ -189,43 +252,9 @@ folders:
   jurl: /minitoc_theme_build.html
 
   folderitems:
-  - title: Creating a deb repository
-    jurl: /5.0-Creating-a-deb-repository.html
-    ref: 5.0-Creating-a-deb-repository
-    pdf: true
-  - title: Bitbake tricks
-    jurl: /5.1-Bitbake-tricks
-    ref: 5.1-Bitbake-tricks
-    pdf: true
   - title: Creating documentation
     jurl: /5.2-Documentation.html
     ref: 5.2-Documentation
-    pdf: true
-
-- title: Moving to btrfs
-  pdf: true
-  jurl: /minitoc_theme_build.html
-
-  folderitems:
-  - title: Why btrfs is great
-    jurl: /6.0-Why-btrfs-is-great.html
-    ref: 6.0-Why-btrfs-is-great
-    pdf: true
-  - title: How to switch to btrfs
-    jurl: /6.1-How-to-switch-to-btrfs.html
-    ref: 6.1-How-to-switch-to-btrfs
-    pdf: true
-  - title: Transferring a new btrfs image
-    jurl: /6.2-Transferring-a-new-btrfs-image.html
-    ref: 6.2-Transferring-a-new-btrfs-image
-    pdf: true
-  - title: Installing an alternate kernel
-    jurl: /6.3-Installing-an-alternate-kernel.html
-    ref: 6.3-Installing-an-alternate-kernel
-    pdf: true
-  - title: Installing an updated U-Boot
-    jurl: /6.4-Installing-an-updated-U-Boot.html
-    ref: 6.4-Installing-an-updated-U-Boot
     pdf: true
 
 

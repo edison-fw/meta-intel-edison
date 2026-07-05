@@ -14,7 +14,7 @@ SYSTEMD_SERVICE:${PN} = "bluetooth_bd_addr.service"
 SRC_URI = "file://bluetooth_bd_addr.sh"
 SRC_URI:append = " file://bluetooth_bd_addr.service"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
         install -d ${D}${bindir}
@@ -22,7 +22,7 @@ do_install() {
 
         # Copy service file
         install -d ${D}/${systemd_unitdir}/system
-        install -c -m 644 ${WORKDIR}/bluetooth_bd_addr.service ${D}/${systemd_unitdir}/system
+        install -c -m 644 ${S}/bluetooth_bd_addr.service ${D}/${systemd_unitdir}/system
 }
 
 FILES:${PN} = "${base_libdir}/systemd/system/bluetooth_bd_addr.service"

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-DO_BTRFS=0
+DO_BTRFS=1
+DO_NATIVE=0
 BACKUP_IFS=$IFS
 IFS=$(echo -en "\n\b")
 
@@ -38,13 +39,15 @@ OUTPUT_LOG_CMD="2>&1 | tee -a ${LOG_FILENAME} | ( sed -n '19 q'; head -n 1; cat 
 
 function print-usage {
 	cat << EOF
-Usage: ${0##*/} [-h][--help][--recovery][--btrfs]
+Usage: ${0##*/} [-h][--help][--recovery][--btrfs][--ext4]
 Update all software and restore board to its initial state.
  -h,--help     display this help and exit.
  -v            verbose output
  --recovery    recover the board to DFU mode using a dedicated tool,
                available only on linux and window hosts.
- --btrfs       flash the btrfs image, this will destoy your current home partition.
+ --btrfs       flash the btrfs image, this will destoy your current home partition. This is the default.
+ --ext4	       flash the ext4 image DEPRECATED
+ --native      when called from the Makefile.mk file.
 EOF
 	exit -5
 }
@@ -78,8 +81,10 @@ function flash-debug {
 }
 
 function flash-ifwi {
-	if [ -x "$(which xfstk-dldr-solo)" ]; then
-		flash-ifwi-xfstk
+	if [ ${DO_NATIVE} -eq 1 ]; then
+                flash-ifwi-xfstk "oe-run-native xfstk-native xfstk-dldr-solo"
+        elif [ -x "$(which xfstk-dldr-solo)" ]; then
+		flash-ifwi-xfstk "xfstk-dldr-solo"
 	else
 		echo "!!! You should install xfstk tools, please visit http://xfstk.sourceforge.net/"
 		exit -1
@@ -92,7 +97,7 @@ function flash-ifwi-xfstk {
 	XFSTK_PARAMS="${XFSTK_PARAMS} --fwimage ${ESC_BASE_DIR}/edison_ifwi-dbg-00.bin"
 	XFSTK_PARAMS="${XFSTK_PARAMS} --osdnx ${ESC_BASE_DIR}/edison_dnx_osr.bin"
 
-	eval xfstk-dldr-solo ${XFSTK_PARAMS}
+	eval $1 ${XFSTK_PARAMS}
 	if [ $? -ne 0 ];
 	then
 		echo "Xfstk tool error"
@@ -125,7 +130,7 @@ function dfu-wait {
 }
 
 # Execute old getopt to have long options support
-ARGS=$($GETOPTS -o hvrb -l "recovery,help,btrfs" -n "${0##*/}" -- "$@");
+ARGS=$($GETOPTS -o hvrbe -l "recovery,help,btrfs,ext4" -n "${0##*/}" -- "$@");
 #Bad arguments
 if [ $? -ne 0 ]; then print-usage ; fi;
 eval set -- "$ARGS";
@@ -136,6 +141,8 @@ while true; do
 		-v) shift; OUTPUT_LOG_CMD=" 2>&1 | tee -a ${LOG_FILENAME}";;
 		-r|--recovery) shift; DO_RECOVERY=1;;
 		-b|--btrfs) shift; DO_BTRFS=1;;
+		-e|--ext4) shift; DO_BTRFS=0;;
+		-n|--native) shift; DO_NATIVE=1;;
 		--) shift; break;;
 	esac
 done

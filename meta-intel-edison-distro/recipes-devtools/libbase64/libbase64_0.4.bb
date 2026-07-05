@@ -23,7 +23,7 @@ SRC_URI:append = " file://0001-Only-build-CLI-on-supported-platforms.patch"
 
 SRCREV = "f8fc2176b47197045aa180e199708087385a1303"
 
-S = "${WORKDIR}/git"
+S = "${UNPACKDIR}/git"
 
 inherit cmake
 

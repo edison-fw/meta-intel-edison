@@ -1,4 +1,4 @@
-From c7d690a88269f2a559a0616c3037d07255de95d3 Mon Sep 17 00:00:00 2001
+workdirFrom c7d690a88269f2a559a0616c3037d07255de95d3 Mon Sep 17 00:00:00 2001
 From: Ferry Toth <ftoth@exalondelft.nl>
 Date: Sat, 2 Dec 2023 21:47:23 +0100
 Subject: [PATCH 1/1] Add shared ninja jobserver support
@@ -77,33 +77,33 @@ index 255f5efb70..bdba0d8740 100644
 --- a/meta/recipes-devtools/ninja/ninja_1.11.1.bb
 +++ b/meta/recipes-devtools/ninja/ninja_1.12.0.bb
 @@ -6,9 +6,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=a81586a64ad4e476c791cda7e2f2c52e"
- 
+
  DEPENDS = "re2c-native ninja-native"
- 
+
 -SRCREV = "a524bf3f6bacd1b4ad85d719eed2737d8562f27a"
 +SRCREV = "bee56b62adb847e5812c6cf3bf2115cca0aa4702"
- 
+
 -SRC_URI = "git://github.com/ninja-build/ninja.git;branch=release;protocol=https"
 +SRC_URI = "git://github.com/htot/ninja.git;branch=master;protocol=https \
 +	file://ninja.py \
 +	"
 +SRC_URI[sha256sum] = "5702446cd3919e73b39e4de8903c087025f068edd11825f271d8b7fa026d71b0"
  UPSTREAM_CHECK_GITTAGREGEX = "v(?P<pver>.*)"
- 
- S = "${WORKDIR}/git"
+
+ S = "${UNPACKDIR}/git"
 @@ -25,7 +28,11 @@ do_compile() {
  }
- 
+
  do_install() {
 -	install -D -m 0755  ${S}/ninja ${D}${bindir}/ninja
-+	install -D -m 0755  ${WORKDIR}/ninja.py ${D}${bindir}/ninja
++	install -D -m 0755  ${UNPACKDIR}/ninja.py ${D}${bindir}/ninja
 +	install -D -m 0755  ${S}/ninja ${D}${bindir}/ninja.run
  }
- 
+
  BBCLASSEXTEND = "native nativesdk"
 +
 +# This is a different Ninja
 +CVE_CHECK_IGNORE += "CVE-2021-4336"
--- 
+--
 2.40.1
 

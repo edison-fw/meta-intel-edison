@@ -30,7 +30,7 @@ HOMEPAGE = "https://www.zerotier.com/"
 # licenses then you should change the value to separate the licenses with |
 # instead of &. If there is any doubt, check the accompanying documentation
 # to determine which situation is applicable.
-LICENSE = "ZeroTier_BSL_1.1 & MIT"
+LICENSE = "BSL-1.0 & MIT"
 LIC_FILES_CHKSUM = "file://COPYING;md5=11bbae9cacaf61dd7fc10035f6f5c68e \
                     file://LICENSE.txt;md5=9a913ad4fdae889b528bc6213633b24c \
                     file://attic/historic/anode/LICENSE.txt;md5=d32239bcb673463ab874e80d47fae504 \
@@ -47,22 +47,18 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=11bbae9cacaf61dd7fc10035f6f5c68e \
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
-SRC_URI = "git://github.com/zerotier/ZeroTierOne;branch=master;protocol=https"
+SRC_URI = "git://github.com/zerotier/ZeroTierOne;branch=main;protocol=https"
 SRC_URI:append = " file://0001-systemd-fix-zerotier-hanging-on-shutdown.patch"
 
 # Modify these as desired
 PV = "1.6.5+git${SRCPV}"
 SRCREV = "6faca86bb424d0b9643b6efa50571f73310d8276"
 
-S = "${WORKDIR}/git"
-
-# NOTE: spec file indicates the license may be "ZeroTier BSL 1.1"
-
 EXTRA_OEMAKE = " \
                 DESTDIR=${D} \
-                ZT_DEBUG=1 \
                 STRIP=echo \
-                "
+                LDFLAGS='${LDFLAGS}' \
+"
 
 do_install() {
 	oe_runmake install
@@ -71,6 +67,8 @@ do_install() {
 	install -c -m 0644 ${S}/debian/zerotier-one.service ${D}${systemd_unitdir}/system
 
 }
+
+FILES:${PN} += "${systemd_unitdir}/system/zerotier-one.service"
 
 inherit systemd
 SYSTEMD_SERVICE_${PN} = "zerotier-one.service"

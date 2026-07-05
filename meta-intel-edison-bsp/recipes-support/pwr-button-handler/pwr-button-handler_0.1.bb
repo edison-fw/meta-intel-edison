@@ -15,7 +15,7 @@ SRC_URI += "file://connect_bluetooth.sh"
 SRC_URI += "file://pwr-button-handler.service"
 SRC_URI += "file://pwr-button-handler.conf"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 TARGET_CC_ARCH += "${LDFLAGS}"
 
@@ -31,12 +31,12 @@ do_install() {
 
         # Copy service file
         install -d ${D}/${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/pwr-button-handler.service ${D}${systemd_unitdir}/system/
-        
+        install -m 644 ${S}/pwr-button-handler.service ${D}${systemd_unitdir}/system/
+
         # Disable systemd's power button handling
         install -d ${D}${libdir}/systemd
         install -d ${D}${libdir}/systemd/logind.conf.d
-        install -m 644 ${WORKDIR}/pwr-button-handler.conf ${D}${libdir}/systemd/logind.conf.d/
+        install -m 644 ${S}/pwr-button-handler.conf ${D}${libdir}/systemd/logind.conf.d/
 }
 
 FILES:${PN} = "${base_libdir}/systemd/system/pwr-button-handler.service"

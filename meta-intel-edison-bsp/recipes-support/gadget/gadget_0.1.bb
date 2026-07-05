@@ -10,7 +10,7 @@ SRC_URI:append = " file://conf-gadget.sh"
 
 RDEPENDS:${PN} = "bash"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
         install -d ${D}${bindir}
@@ -18,7 +18,7 @@ do_install() {
 
         # Copy udev rule
         install -d ${D}/${sysconfdir}/udev/rules.d
-        install -c -m 644 ${WORKDIR}/gadget.rules ${D}/${sysconfdir}/udev/rules.d
+        install -c -m 644 ${UNPACKDIR}/gadget.rules ${D}/${sysconfdir}/udev/rules.d
 }
 
 FILES:${PN} = "${sysconfdir}/udev/rules.d/gadget.rules"

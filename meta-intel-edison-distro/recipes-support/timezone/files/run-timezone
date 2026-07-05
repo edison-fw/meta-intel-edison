@@ -11,12 +11,12 @@
 # the order of this list is important, do not change!
 
 # check if the service is reachable
-ping -c 1 -w 2 -q ipapi.co
+ping -c 1 -w 2 -q ip-api.com
 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
   exit $RESULT
 fi
 
-timedatectl set-timezone `curl -s https://ipapi.co/timezone`
+timedatectl set-timezone `curl http://ip-api.com/csv/?fields=timezone`
 exit $?

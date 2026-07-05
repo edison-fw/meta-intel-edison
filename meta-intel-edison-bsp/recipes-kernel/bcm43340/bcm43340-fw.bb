@@ -15,7 +15,7 @@ SRC_URI = "git://github.com/01org/edison-firmware.git;branch=master;protocol=htt
            git://github.com/htot/device-generic-firmware.git;branch=nougat-x86;protocol=https;rev=afd71f20e36112edd8b1ad88f8055051069fd921;destsuffix=android-firmware;name=bt \
           "
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://edison-firmware/broadcom_cws/wlan/firmware/LICENCE.broadcom_bcm43xx;md5=3160c14df7228891b868060e1951dfbc"

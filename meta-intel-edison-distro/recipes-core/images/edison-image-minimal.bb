@@ -20,6 +20,7 @@ ROOTFS = ""
 
 # Specify rootfs image type
 IMAGE_FSTYPES += "btrfs ext4 live"
+EXTRA_IMAGECMD:btrfs:append = " -M --compress zlib"
 
 IMAGE_CLASSES += "qemuboot"
 
@@ -35,7 +36,7 @@ IMAGE_ROOTFS_SIZE = "1048576"
 
 IMAGE_FEATURES += "package-management ssh-server-openssh"
 # Allow passwordless root login and postinst logging
-IMAGE_FEATURES += "debug-tweaks"
+IMAGE_FEATURES += "allow-root-login empty-root-password post-install-logging"
 
 IMAGE_INSTALL:append = " wpa-supplicant"
 IMAGE_INSTALL:append = " iw"

@@ -1,0 +1,51 @@
+Description: Use detected type of tv_usec
+ On 32-bit architectures it is no suseconds_t but __suseconds64_t...
+Author: Julian Andres Klode <juliank@ubuntu.com>
+Upstream-Status: Pending
+--- a/tests/test_misc.cc
++++ b/tests/test_misc.cc
+@@ -119,7 +119,7 @@ private:
+     struct timeval c = subtract_timevals(a, b);
+
+     CPPUNIT_ASSERT_EQUAL(static_cast<time_t>(5), c.tv_sec);
+-    CPPUNIT_ASSERT_EQUAL(static_cast<suseconds_t>(950), c.tv_usec);
++    CPPUNIT_ASSERT_EQUAL(static_cast<decltype(c.tv_usec)>(950), c.tv_usec);
+   }
+
+   void testSubtractTimevalGreaterInSecondsLessInMilliseconds()
+@@ -135,7 +135,7 @@ private:
+     struct timeval c = subtract_timevals(a, b);
+
+     CPPUNIT_ASSERT_EQUAL(static_cast<time_t>(4), c.tv_sec);
+-    CPPUNIT_ASSERT_EQUAL(static_cast<suseconds_t>(999975), c.tv_usec);
++    CPPUNIT_ASSERT_EQUAL(static_cast<decltype(c.tv_usec)>(999975), c.tv_usec);
+   }
+
+
+@@ -152,7 +152,7 @@ private:
+     struct timeval c = subtract_timevals(a, b);
+
+     CPPUNIT_ASSERT_EQUAL(static_cast<time_t>(0), c.tv_sec);
+-    CPPUNIT_ASSERT_EQUAL(static_cast<suseconds_t>(0), c.tv_usec);
++    CPPUNIT_ASSERT_EQUAL(static_cast<decltype(c.tv_usec)>(0), c.tv_usec);
+   }
+
+   void testSubtractTimevalLessInSecondsGreaterInMilliseconds()
+@@ -168,7 +168,7 @@ private:
+     struct timeval c = subtract_timevals(a, b);
+
+     CPPUNIT_ASSERT_EQUAL(static_cast<time_t>(-10), c.tv_sec);
+-    CPPUNIT_ASSERT_EQUAL(static_cast<suseconds_t>(490), c.tv_usec);
++    CPPUNIT_ASSERT_EQUAL(static_cast<decltype(c.tv_usec)>(490), c.tv_usec);
+   }
+
+   void testSubtractTimevalLessInBothComponents()
+@@ -184,7 +184,7 @@ private:
+     struct timeval c = subtract_timevals(a, b);
+
+     CPPUNIT_ASSERT_EQUAL(static_cast<time_t>(-24), c.tv_sec);
+-    CPPUNIT_ASSERT_EQUAL(static_cast<suseconds_t>(999999), c.tv_usec);
++    CPPUNIT_ASSERT_EQUAL(static_cast<decltype(c.tv_usec)>(999999), c.tv_usec);
+   }
+ };
+

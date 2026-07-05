@@ -18,6 +18,7 @@ describing such endpoints.
 
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Upstream-Status: Pending
 ---
  drivers/usb/dwc3/gadget.c | 10 ++++++++++
  1 file changed, 10 insertions(+)
@@ -29,7 +30,7 @@ index c7ef218e7a8c..9f2e10ccbf35 100644
 @@ -2722,6 +2722,16 @@ static int dwc3_gadget_init_endpoints(struct dwc3 *dwc, u8 total)
  	for (epnum = 0; epnum < total; epnum++) {
  		int			ret;
- 
+
 +		/*
 +		 * REVERTME: This is a temporary hack to get Intel
 +		 * Edison's USB working with mainline kernel. This hack
@@ -43,6 +44,6 @@ index c7ef218e7a8c..9f2e10ccbf35 100644
  		ret = dwc3_gadget_init_endpoint(dwc, epnum);
  		if (ret)
  			return ret;
--- 
+--
 2.27.0
 

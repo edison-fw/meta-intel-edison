@@ -8,7 +8,7 @@ SRC_URI = "file://run-timezone \
            file://run-timezone.init \
            file://run-timezone.service"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 inherit allarch systemd update-rc.d
 
@@ -29,13 +29,13 @@ do_compile () {
 
 do_install() {
 	install -d ${D}${sbindir}
-	install -m 0755 ${WORKDIR}/run-timezone ${D}${sbindir}/
+	install -m 0755 ${S}/run-timezone ${D}${sbindir}/
 
 	install -d ${D}${sysconfdir}/init.d/
-	install -m 0755 ${WORKDIR}/run-timezone.init ${D}${sysconfdir}/init.d/run-timezone
+	install -m 0755 ${S}/run-timezone.init ${D}${sysconfdir}/init.d/run-timezone
 
 	install -d ${D}${systemd_unitdir}/system/
-	install -m 0644 ${WORKDIR}/run-timezone.service ${D}${systemd_unitdir}/system/
+	install -m 0644 ${S}/run-timezone.service ${D}${systemd_unitdir}/system/
 
 	sed -i -e 's:#SYSCONFDIR#:${sysconfdir}:g' \
                -e 's:#SBINDIR#:${sbindir}:g' \

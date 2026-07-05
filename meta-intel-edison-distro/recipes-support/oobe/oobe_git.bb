@@ -1,14 +1,12 @@
-DESCRIPTION="The out-of-box configuration service"
+DESCRIPTION = "The out-of-box configuration service"
 LICENSE = "MIT"
 
 SRC_URI = "git://github.com/edison-fw/edison-oobe;branch=master;protocol=https"
 
-SRCREV = "438839dc69a614b77d8056ff539a82146bda216a"
+SRCREV = "ac378e63a1b1e1f6fab0c552136b2a859684dcb0"
 PV = "1.2.1+git${SRCPV}"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=ea398a763463b76b18da15f013c0c531"
-
-S = "${WORKDIR}/git"
 
 RDEPENDS:${PN} = "python3-core python3-bottle"
 

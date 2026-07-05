@@ -9,6 +9,7 @@ Reviewed-By: Axel Beckert <abe@debian.org>
 Bug-Debian: https://bugs.debian.org/1015925
 Bug: https://bugs.debian.org/1015925
 Signed-off-by: Ferry Toth <ftoth@exalondelft.nl>
+Upstream-Status: Pending
 ---
  src/cwidget/generic/threads/threads.h | 1 +
  1 file changed, 1 insertion(+)
@@ -19,12 +20,12 @@ index 1600d9e..86db05a 100644
 +++ b/src/cwidget/generic/threads/threads.h
 @@ -26,6 +26,7 @@
  #define THREADS_H
- 
+
  #include <errno.h>
 +#include <pthread.h>
  #include <cwidget/generic/util/exception.h>
- 
+
  namespace cwidget
--- 
+--
 2.40.1
 

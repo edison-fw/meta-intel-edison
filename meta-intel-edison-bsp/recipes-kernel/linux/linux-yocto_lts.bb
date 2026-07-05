@@ -68,15 +68,18 @@ SRC_URI:append = " ${@bb.utils.contains("DISTRO_FEATURES", "ppp", " file://ppp.c
 SRC_URI:append = " file://iio.cfg"
 SRC_URI:append = " file://cdc_eem.cfg"
 SRC_URI:append = " file://namespaces.cfg"
+SRC_URI:append = " file://lxc.cfg"
+SRC_URI:append = " file://squashfs.cfg"
+SRC_URI:append = " file://mcu.cfg"
+SRC_URI:append = " file://features/ecryptfs/ecryptfs.scc"
 
 # kernel patches
 SRC_URI:append = " file://0044-REVERTME-usb-dwc3-gadget-skip-endpoints-ep-18-in-out.patch"
 SRC_URI:append = " file://0001-8250_mid-arm-rx-dma-on-all-ports-with-dma-continousl.patch"
 SRC_URI:append = " file://0001a-usb-dwc3-core-Fix-dwc3_core_soft_reset-before-anythi.patch"
 SRC_URI:append = " file://0001-phy-ti-tusb1210-write-to-scratch-on-power-on.patch"
-SRC_URI:append = " file://0092-platform-x86-intel_scu_ipc-Replace-workaround-by-32-.patch"
-SRC_URI:append = " file://0093-platform-x86-intel_scu_ipc-Simplify-code-with-cleanu.patch"
-SRC_URI:append = " file://0094-platform-x86-intel_scu_ipc-Save-a-copy-of-the-entire.patch"
+SRC_URI:append = " file://0060-platform-x86-Add-Intel-generic-MCU-control-interface.patch"
+SRC_URI:append = " file://0061-platform-x86-Introduce-an-interface-to-Platform-Serv.patch"
 
 # usefull kernel debug options here
 #SRC_URI:append = " file://0001-8250_mid-toggle-IO7-on-ttyS1-interrupt-entry.patch"
@@ -87,7 +90,7 @@ SRC_URI:append = " file://0094-platform-x86-intel_scu_ipc-Save-a-copy-of-the-ent
 SRCREV = "v${LINUX_VERSION}"
 LINUX_KERNEL_TYPE = "${@bb.utils.contains("DISTRO_FEATURES", "rt", "preempt-rt", "standard", d)}"
 LINUX_VERSION_EXTENSION = "-edison-acpi-${LINUX_KERNEL_TYPE}"
-LINUX_VERSION ?= "6.12.3"
-KERNEL_VERSION_SANITY_SKIP="1"
+LINUX_VERSION ?= "6.12.64"
+KERNEL_VERSION_SANITY_SKIP = "1"
 
 COMPATIBLE_MACHINE = "edison"

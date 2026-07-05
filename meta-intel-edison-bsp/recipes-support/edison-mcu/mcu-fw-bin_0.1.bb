@@ -6,12 +6,12 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 
 SRC_URI = "file://intel_mcu.bin"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install () {
 	install -v -d ${D}/${base_libdir}/firmware/
 	install -m 644 intel_mcu.bin ${D}/${base_libdir}/firmware/
 }
 
-FILES_${PN} = "${base_libdir}/firmware/"
+FILES:${PN} = "${base_libdir}/firmware/*"
 

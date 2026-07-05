@@ -12,7 +12,7 @@ SRC_URI = " \
     npmsw://${THISDIR}/files/npm-shrinkwrap.json \
     "
 
-S = "${WORKDIR}/npm"
+S = "${UNPACKDIR}/npm"
 
 inherit npm
 

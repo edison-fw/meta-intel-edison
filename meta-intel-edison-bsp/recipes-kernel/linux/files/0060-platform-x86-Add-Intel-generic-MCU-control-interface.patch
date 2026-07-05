@@ -1,0 +1,658 @@
+From 17df8615f032d6d81ecde21eea08c42a56778c72 Mon Sep 17 00:00:00 2001
+From: Lei Wen <lei.wen@intel.com>
+Date: Mon, 22 Sep 2014 09:53:10 +0800
+Subject: [PATCH 1/1] platform/x86: Add Intel generic MCU control interface
+
+We define three tty channels along with sysfs nodes for userspace communicate
+with MCU side. Those three tty interfaces are as:
+/dev/ttymcu0:
+  This channel services as user customized message service.
+  User need to define their own format in both IA and MCU sides.
+/dev/ttymcu1:
+  This channel services as interface to get MCU side trace.
+/dev/ttymcu2:
+  This channel services as interface for GDB to hook with.
+
+Those three sysfs nodes are as:
+/sys/devices/platform/intel_mcu/control
+  It is served as load the MCU application.
+/sys/devices/platform/intel_mcu/fw_version
+  It is served as read out application version.
+/sys/devices/platform/intel_mcu/log_level
+  It is served as set and read app log level.
+
+Signed-off-by: Fang Hui <huix.fang@intel.com>
+Signed-off-by: Lei Wen <lei.wen@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Upstream-Status: Pending
+---
+ drivers/platform/x86/intel/Kconfig       |   1 +
+ drivers/platform/x86/intel/Makefile      |   1 +
+ drivers/platform/x86/intel/mcu/Kconfig   |  14 +
+ drivers/platform/x86/intel/mcu/Makefile  |   2 +
+ drivers/platform/x86/intel/mcu/psh_ipc.c | 504 +++++++++++++++++++++++
+ drivers/platform/x86/intel/mcu/psh_ipc.h |  47 +++
+ 6 files changed, 569 insertions(+)
+ create mode 100644 drivers/platform/x86/intel/mcu/Kconfig
+ create mode 100644 drivers/platform/x86/intel/mcu/Makefile
+ create mode 100644 drivers/platform/x86/intel/mcu/psh_ipc.c
+ create mode 100644 drivers/platform/x86/intel/mcu/psh_ipc.h
+
+diff --git a/drivers/platform/x86/intel/Kconfig b/drivers/platform/x86/intel/Kconfig
+index 19a2246f2770..49fdf9ca7dc6 100644
+--- a/drivers/platform/x86/intel/Kconfig
++++ b/drivers/platform/x86/intel/Kconfig
+@@ -7,6 +7,7 @@ source "drivers/platform/x86/intel/atomisp2/Kconfig"
+ source "drivers/platform/x86/intel/ifs/Kconfig"
+ source "drivers/platform/x86/intel/int1092/Kconfig"
+ source "drivers/platform/x86/intel/int3472/Kconfig"
++source "drivers/platform/x86/intel/mcu/Kconfig"
+ source "drivers/platform/x86/intel/pmc/Kconfig"
+ source "drivers/platform/x86/intel/pmt/Kconfig"
+ source "drivers/platform/x86/intel/speed_select_if/Kconfig"
+diff --git a/drivers/platform/x86/intel/Makefile b/drivers/platform/x86/intel/Makefile
+index 78acb414e154..c346adcefff1 100644
+--- a/drivers/platform/x86/intel/Makefile
++++ b/drivers/platform/x86/intel/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_INTEL_ATOMISP2_PDX86)	+= atomisp2/
+ obj-$(CONFIG_INTEL_IFS)			+= ifs/
+ obj-$(CONFIG_INTEL_SAR_INT1092)		+= int1092/
+ obj-$(CONFIG_INTEL_SKL_INT3472)		+= int3472/
++obj-$(CONFIG_X86_INTEL_MID)		+= mcu/
+ obj-$(CONFIG_INTEL_PMC_CORE)		+= pmc/
+ obj-$(CONFIG_INTEL_PMT_CLASS)		+= pmt/
+ obj-$(CONFIG_INTEL_SPEED_SELECT_INTERFACE) += speed_select_if/
+diff --git a/drivers/platform/x86/intel/mcu/Kconfig b/drivers/platform/x86/intel/mcu/Kconfig
+new file mode 100644
+index 000000000000..4743086c3b9a
+--- /dev/null
++++ b/drivers/platform/x86/intel/mcu/Kconfig
+@@ -0,0 +1,14 @@
++config INTEL_PSH_IPC
++	bool "Intel PSH IPC Support"
++	help
++	  PSH (Platform Services Hub) is a low frequency IA core on Intel Tangier platform,
++	  whose power consumption is quite low. PSH runs RTOS software inside itself,
++	  which independently controls and collects sensor data, pre-processes the data,
++	  and communicates with Intel Atom. Thus Intel Atom side could be put into low power mode
++	  with more time, while all the sensor data are collected without any loss.
++
++	  PSH IPC is used as a bridge for OS sensor service to control and access PSH
++	  sensors communications between kernel and PSH. This is not needed for PC-type
++	  machines.
++
++	  Say Y here to get Intel PSH IPC support.
+diff --git a/drivers/platform/x86/intel/mcu/Makefile b/drivers/platform/x86/intel/mcu/Makefile
+new file mode 100644
+index 000000000000..eb4f6c18460b
+--- /dev/null
++++ b/drivers/platform/x86/intel/mcu/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_INTEL_PSH_IPC)		+= intel_psh_ipc.o
++intel_psh_ipc-y				:= psh_ipc.o
+diff --git a/drivers/platform/x86/intel/mcu/psh_ipc.c b/drivers/platform/x86/intel/mcu/psh_ipc.c
+new file mode 100644
+index 000000000000..23e577bef43b
+--- /dev/null
++++ b/drivers/platform/x86/intel/mcu/psh_ipc.c
+@@ -0,0 +1,504 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for the Intel PSH IPC mechanism
++ *
++ * (C) Copyright 2012 Intel Corporation
++ * Author: Yang Bin (bin.yang@intel.com)
++ */
++
++#include <linux/delay.h>
++#include <linux/fs.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/pm_runtime.h>
++#include <linux/semaphore.h>
++#include <linux/workqueue.h>
++
++#include "psh_ipc.h"
++
++#define STATUS_PSH2IA(x)	(1 << ((x) + 6))
++#define FLAG_BIND		(1 << 0)
++
++#define PIMR_ADDR(x)		(&ipcdev->psh_regs->pimr##x)
++
++#define PSH_REG_ADDR(x)		(&ipcdev->psh_regs->x)
++
++#define PSH_CH_HANDLE(x)	(ipcdev->channel_handle[x])
++#define PSH_CH_DATA(x)		(ipcdev->channel_data[x])
++#define PSH_CH_FLAG(x)		(ipcdev->flags[x])
++
++/* PSH registers */
++struct psh_registers {
++	u32		pimr0;		/* 00h */
++	u32		csr;		/* 04h */
++	u32		pmctl;		/* 08h */
++	u32		pmstat;		/* 0Ch */
++	u32		psh_msi_direct;	/* 10h */
++	u32		res1[59];	/* 14h ~ FCh + 3, padding */
++	u32		pimr3;		/* 100h */
++	struct psh_msg	scu2psh;	/* 104h ~ 108h + 3 */
++	struct psh_msg	psh2scu;	/* 10Ch ~ 110h + 3 */
++	u32		res2[187];	/* 114h ~ 3FCh + 3, padding */
++	u32		pisr;		/* 400h */
++	u32		scratchpad[2];	/* 404h ~ 407h */
++	u32		res3[61];	/* 40Ch ~ 4FCh + 3, padding */
++	u32		pimr1;		/* 500h */
++	struct psh_msg	ia2psh[NUM_IA2PSH_IPC];	/* 504h ~ 520h + 3 */
++	struct psh_msg	psh2ia[NUM_PSH2IA_IPC];	/* 524h ~ 540h + 3 */
++	u32		res4[175];	/* 544h ~ 7FCh + 3, padding */
++	u32		pimr2;		/* 800h */
++	struct psh_msg	cry2psh;	/* 804h ~ 808h + 3 */
++	struct psh_msg	psh2cry;	/* 80Ch ~ 810h + 3 */
++} __packed;
++
++struct ipc_controller_t {
++	struct device *dev;
++	struct psh_registers __iomem *psh_regs;
++	int irq;
++
++	spinlock_t		lock;
++	int			flags[NUM_ALL_CH];
++	struct semaphore	ch_lock[NUM_ALL_CH];
++	struct mutex		psh_mutex;
++	psh_channel_handle_t	channel_handle[NUM_PSH2IA_IPC];
++	void			*channel_data[NUM_PSH2IA_IPC];
++};
++
++static struct ipc_controller_t *ipc_ctrl;
++
++/**
++ * intel_ia2psh_command - send IA to PSH command
++ * Send ia2psh command and return psh message and status
++ *
++ * @in: input psh message
++ * @out: output psh message
++ * @ch: psh channel
++ * @timeout: timeout for polling busy bit, in us
++ */
++int intel_ia2psh_command(struct psh_msg *in, struct psh_msg *out, int ch, int timeout)
++{
++	struct ipc_controller_t *ipcdev = ipc_ctrl;
++	u32 status;
++	int ret = 0;
++
++	might_sleep();
++
++	if (!ipcdev)
++		return -ENODEV;
++
++	if (ch < PSH_SEND_CH0 || ch > PSH_SEND_CH0 + NUM_IA2PSH_IPC - 1 || in == NULL)
++		return -EINVAL;
++
++	if (!in || in->msg & CHANNEL_BUSY)
++		return -EINVAL;
++
++	pm_runtime_get_sync(ipcdev->dev);
++	down(&ipcdev->ch_lock[ch]);
++
++	in->msg |= CHANNEL_BUSY;
++	/* Check if channel is ready for IA sending command */
++
++	if (readl(PSH_REG_ADDR(ia2psh[ch].msg)) & CHANNEL_BUSY) {
++		ret = -EBUSY;
++		goto end;
++	}
++
++	writel(in->param, PSH_REG_ADDR(ia2psh[ch].param));
++	writel(in->msg, PSH_REG_ADDR(ia2psh[ch].msg));
++
++	/* Input timeout is zero, do not check channel status */
++	if (timeout == 0)
++		goto end;
++
++	/* Input timeout is nonzero, check channel status */
++	while (((status = readl(PSH_REG_ADDR(ia2psh[ch].msg))) & CHANNEL_BUSY) && timeout) {
++		usleep_range(100, 101);
++		timeout -= 100;
++	}
++
++	if (timeout <= 0) {
++		ret = -ETIMEDOUT;
++		dev_err(ipcdev->dev, "ia2psh channel %d is always busy!\n", ch);
++	} else if (out) {
++		out->param = readl(PSH_REG_ADDR(ia2psh[ch].param));
++		out->msg = status;
++	}
++
++end:
++	up(&ipcdev->ch_lock[ch]);
++	pm_runtime_put(ipcdev->dev);
++
++	return ret;
++}
++EXPORT_SYMBOL(intel_ia2psh_command);
++
++/**
++ * intel_psh_ipc_bind - bind a handler to a psh channel
++ *
++ * @ch: psh channel
++ * @handle: handle function called when IA received psh interrupt
++ * @data: data passed to handle
++ */
++int intel_psh_ipc_bind(int ch, psh_channel_handle_t handle, void *data)
++{
++	struct ipc_controller_t *ipcdev = ipc_ctrl;
++	unsigned long flags;
++
++	if (!ipcdev)
++		return -ENODEV;
++
++	if (!handle ||
++	    ch < PSH_RECV_CH0 || ch > PSH_RECV_CH0 + NUM_PSH2IA_IPC - 1)
++		return -EINVAL;
++
++	mutex_lock(&ipcdev->psh_mutex);
++
++	down(&ipcdev->ch_lock[ch]);
++	if (PSH_CH_HANDLE(ch - PSH_RECV_CH0) != NULL) {
++		up(&ipcdev->ch_lock[ch]);
++		mutex_unlock(&ipcdev->psh_mutex);
++		return -EBUSY;
++	}
++
++	PSH_CH_DATA(ch - PSH_RECV_CH0) = data;
++	PSH_CH_HANDLE(ch - PSH_RECV_CH0) = handle;
++	up(&ipcdev->ch_lock[ch]);
++
++	pm_runtime_get_sync(ipcdev->dev);
++	spin_lock_irqsave(&ipcdev->lock, flags);
++	PSH_CH_FLAG(ch) |= FLAG_BIND;
++	writel(readl(PIMR_ADDR(1)) | (1 << (ch - PSH_RECV_CH0)), PIMR_ADDR(1));
++	spin_unlock_irqrestore(&ipcdev->lock, flags);
++	pm_runtime_put(ipcdev->dev);
++
++	mutex_unlock(&ipcdev->psh_mutex);
++	return 0;
++}
++EXPORT_SYMBOL(intel_psh_ipc_bind);
++
++/**
++ * intel_psh_ipc_unbind - unbind a handler to a psh channel
++ *
++ * @ch: psh channel
++ */
++void intel_psh_ipc_unbind(int ch)
++{
++	struct ipc_controller_t *ipcdev = ipc_ctrl;
++	unsigned long flags;
++
++	if (!ipcdev)
++		return;
++
++	if (ch < PSH_RECV_CH0 || ch > PSH_RECV_CH0 + NUM_PSH2IA_IPC - 1)
++		return;
++
++	if (!(PSH_CH_FLAG(ch) & FLAG_BIND))
++		return;
++
++	mutex_lock(&ipcdev->psh_mutex);
++
++	pm_runtime_get_sync(ipcdev->dev);
++	spin_lock_irqsave(&ipcdev->lock, flags);
++	PSH_CH_FLAG(ch) &= ~FLAG_BIND;
++	writel(readl(PIMR_ADDR(1)) & (~(1 << (ch - PSH_RECV_CH0))), PIMR_ADDR(1));
++	spin_unlock_irqrestore(&ipcdev->lock, flags);
++	pm_runtime_put(ipcdev->dev);
++
++	down(&ipcdev->ch_lock[ch]);
++	PSH_CH_HANDLE(ch - PSH_RECV_CH0) = NULL;
++	up(&ipcdev->ch_lock[ch]);
++
++	mutex_unlock(&ipcdev->psh_mutex);
++}
++EXPORT_SYMBOL(intel_psh_ipc_unbind);
++
++void intel_psh_ipc_disable_irq(void)
++{
++	struct ipc_controller_t *ipcdev = ipc_ctrl;
++
++	disable_irq(ipcdev->irq);
++}
++EXPORT_SYMBOL(intel_psh_ipc_disable_irq);
++
++void intel_psh_ipc_enable_irq(void)
++{
++	struct ipc_controller_t *ipcdev = ipc_ctrl;
++
++	enable_irq(ipcdev->irq);
++}
++EXPORT_SYMBOL(intel_psh_ipc_enable_irq);
++
++static void psh_recv_handle(struct ipc_controller_t *ipcdev, int i)
++{
++	int msg, param;
++
++	down(&ipcdev->ch_lock[i + PSH_RECV_CH0]);
++
++	msg = readl(PSH_REG_ADDR(psh2ia[i].msg)) & (~CHANNEL_BUSY);
++	param = readl(PSH_REG_ADDR(psh2ia[i].param));
++
++	if (PSH_CH_HANDLE(i) == NULL) {
++		dev_err(ipcdev->dev, "Ignore message from channel %d\n", i + PSH_RECV_CH0);
++		goto end;
++	}
++
++	/* write back to clear the busy bit */
++	writel(msg, PSH_REG_ADDR(psh2ia[i].msg));
++	PSH_CH_HANDLE(i)(msg, param, PSH_CH_DATA(i));
++end:
++	up(&ipcdev->ch_lock[i + PSH_RECV_CH0]);
++}
++
++static irqreturn_t psh_ipc_irq(int irq, void *data)
++{
++	struct ipc_controller_t *ipcdev = data;
++	unsigned int i;
++	u32 status;
++
++	pm_runtime_get_sync(ipcdev->dev);
++	status = readl(PSH_REG_ADDR(pisr));
++
++	for (i = 0; i < NUM_PSH2IA_IPC; i++) {
++		if (status & STATUS_PSH2IA(i))
++			psh_recv_handle(ipcdev, i);
++	}
++
++	pm_runtime_put(ipcdev->dev);
++	return IRQ_HANDLED;
++}
++
++static void psh_regs_dump(struct ipc_controller_t *ipcdev)
++{
++	struct device *dev = ipcdev->dev;
++	unsigned int i;
++
++	pm_runtime_get_sync(dev);
++	dev_err(dev, "<-------------start------------>\n");
++
++	dev_err(dev, "csr:\t%#x\n", readl(PSH_REG_ADDR(csr)));
++	dev_err(dev, "pisr:\t%#x\n", readl(PSH_REG_ADDR(pisr)));
++
++	dev_err(dev, "pimr0:\t%#x\n", readl(PIMR_ADDR(0)));
++	dev_err(dev, "pimr1:\t%#x\n", readl(PIMR_ADDR(1)));
++	dev_err(dev, "pimr2:\t%#x\n", readl(PIMR_ADDR(2)));
++	dev_err(dev, "pimr3:\t%#x\n", readl(PIMR_ADDR(3)));
++
++	dev_err(dev, "pmctl:\t%#x\n", readl(PSH_REG_ADDR(pmctl)));
++	dev_err(dev, "pmstat:\t%#x\n", readl(PSH_REG_ADDR(pmstat)));
++	dev_err(dev, "scratchpad0:\t%#x\n", readl(PSH_REG_ADDR(scratchpad[0])));
++	dev_err(dev, "scratchpad1:\t%#x\n", readl(PSH_REG_ADDR(scratchpad[1])));
++
++	for (i = 0; i < NUM_IA2PSH_IPC; i++) {
++		dev_err(dev, "ia2psh[%d].msg:\t%#x\n", i, readl(PSH_REG_ADDR(ia2psh[i].msg)));
++		dev_err(dev, "ia2psh[%d].param:\t%#x\n", i, readl(PSH_REG_ADDR(ia2psh[i].param)));
++	}
++
++	dev_err(dev, "cry2psh.msg:\t%#x\n", readl(PSH_REG_ADDR(cry2psh.msg)));
++	dev_err(dev, "cry2psh.param:\t%#x\n", readl(PSH_REG_ADDR(cry2psh.param)));
++	dev_err(dev, "scu2psh.msg:\t%#x\n", readl(PSH_REG_ADDR(scu2psh.msg)));
++	dev_err(dev, "scu2psh.param:\t%#x\n", readl(PSH_REG_ADDR(scu2psh.param)));
++
++	for (i = 0; i < NUM_PSH2IA_IPC; i++) {
++		dev_err(dev, "psh2ia[%d].msg:\t%#x\n", i, readl(PSH_REG_ADDR(psh2ia[i].msg)));
++		dev_err(dev, "psh2ia[%d].param:\t%#x\n", i, readl(PSH_REG_ADDR(psh2ia[i].param)));
++	}
++
++	dev_err(dev, "psh2cry.msg:\t%#x\n", readl(PSH_REG_ADDR(psh2cry.msg)));
++	dev_err(dev, "psh2cry.param:\t%#x\n", readl(PSH_REG_ADDR(psh2cry.param)));
++
++	dev_err(dev, "<-------------end------------>\n");
++	pm_runtime_put(dev);
++}
++
++static struct psh_msg psh_dbg_msg;
++static int psh_ch;
++
++static ssize_t psh_msg_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "Last ia2psh command with msg: %#x\nparam: %#x\n",
++			  psh_dbg_msg.msg, psh_dbg_msg.param);
++}
++
++static ssize_t psh_msg_store(struct device *dev, struct device_attribute *attr,
++			     const char *buf, size_t size)
++{
++	u32 msg, param;
++	int ret;
++
++	memset(&psh_dbg_msg, 0, sizeof(psh_dbg_msg));
++
++	ret = sscanf(buf, "%x %x", &msg, &param);
++	if (ret != 2) {
++		dev_err(dev, "Input two arguments as psh msg and param\n");
++		return -EINVAL;
++	}
++
++	psh_dbg_msg.msg = msg;
++	psh_dbg_msg.param = param;
++
++	return size;
++}
++static DEVICE_ATTR_RW(psh_msg);
++
++static ssize_t psh_ch_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "Last psh channel: %d\n", psh_ch);
++}
++
++static ssize_t psh_ch_store(struct device *dev, struct device_attribute *attr,
++			    const char *buf, size_t size)
++{
++	int ret;
++
++	ret = sscanf(buf, "%d", &psh_ch);
++	if (ret != 1) {
++		dev_err(dev, "Input one argument as psh channel\n");
++		return -EINVAL;
++	}
++
++	return size;
++}
++static DEVICE_ATTR_RW(psh_ch);
++
++static ssize_t ia2psh_cmd_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t size)
++{
++	struct ipc_controller_t *ipcdev = dev_get_drvdata(dev);
++	struct psh_msg out_msg;
++	int psh_dbg_err;
++
++	memset(&out_msg, 0, sizeof(out_msg));
++
++	psh_dbg_err = intel_ia2psh_command(&psh_dbg_msg, &out_msg, psh_ch, 3000000);
++	if (psh_dbg_err) {
++		dev_err(dev, "Send ia2psh command failed, err %d\n", psh_dbg_err);
++		psh_regs_dump(ipcdev);
++		return psh_dbg_err;
++	}
++
++	return size;
++}
++static DEVICE_ATTR_WO(ia2psh_cmd);
++
++static struct attribute *psh_attrs[] = {
++	&dev_attr_psh_msg.attr,
++	&dev_attr_psh_ch.attr,
++	&dev_attr_ia2psh_cmd.attr,
++	NULL
++};
++
++static struct attribute_group psh_attr_group = {
++	.name = "psh_debug",
++	.attrs = psh_attrs,
++};
++__ATTRIBUTE_GROUPS(psh_attr);
++
++static int psh_ipc_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++{
++	struct ipc_controller_t *ipcdev;
++	unsigned int i;
++	int ret;
++
++	ret = pcim_enable_device(pdev);
++	if (ret)
++		return ret;
++
++	ret = pcim_iomap_regions(pdev, 1 << 0, pci_name(pdev));
++	if (ret)
++		return ret;
++
++	ipcdev = devm_kzalloc(&pdev->dev, sizeof(*ipcdev), GFP_KERNEL);
++	if (!ipcdev)
++		return -ENOMEM;
++
++	spin_lock_init(&ipcdev->lock);
++	mutex_init(&ipcdev->psh_mutex);
++
++	for (i = 0; i < NUM_ALL_CH; i++)
++		sema_init(&ipcdev->ch_lock[i], 1);
++
++	ipcdev->dev = &pdev->dev;
++	ipcdev->psh_regs = pcim_iomap_table(pdev)[0];
++	ipcdev->irq = pdev->irq;
++
++	ret = devm_request_threaded_irq(&pdev->dev, pdev->irq, NULL, psh_ipc_irq,
++					IRQF_ONESHOT, "intel_psh_ipc", ipcdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Unable to register IRQ %d\n", pdev->irq);
++		return ret;
++	}
++
++	irq_set_irq_wake(pdev->irq, 1);
++
++	ipc_ctrl = ipcdev;
++	pci_set_drvdata(pdev, ipcdev);
++
++	pm_runtime_put_noidle(&pdev->dev);
++	pm_runtime_allow(&pdev->dev);
++
++	return 0;
++}
++
++static void psh_ipc_remove(struct pci_dev *pdev)
++{
++	pm_runtime_forbid(&pdev->dev);
++	pm_runtime_get_noresume(&pdev->dev);
++
++	ipc_ctrl = NULL;
++}
++
++static int psh_ipc_suspend_noirq(struct device *dev)
++{
++	struct ipc_controller_t *ipcdev = dev_get_drvdata(dev);
++	unsigned int i;
++
++	for (i = 0; i < NUM_ALL_CH; i++) {
++		if (down_trylock(&ipcdev->ch_lock[i]))
++			break;
++	}
++	if (i == NUM_ALL_CH) {
++		while (i--)
++			up(&ipcdev->ch_lock[i]);
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
++static int psh_ipc_resume_noirq(struct device *dev)
++{
++	struct ipc_controller_t *ipcdev = dev_get_drvdata(dev);
++	unsigned int i;
++
++	for (i = 0; i < NUM_ALL_CH; i++)
++		up(&ipcdev->ch_lock[i]);
++
++	return 0;
++}
++
++static DEFINE_NOIRQ_DEV_PM_OPS(psh_ipc_drv_pm_ops, psh_ipc_suspend_noirq, psh_ipc_resume_noirq);
++
++static const struct pci_device_id psh_ipc_id_table[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x11a3) },
++	{}
++};
++MODULE_DEVICE_TABLE(pci, psh_ipc_id_table);
++
++static struct pci_driver psh_ipc_driver = {
++	.name = "intel_psh_ipc",
++	.driver = {
++		.pm = pm_sleep_ptr(&psh_ipc_drv_pm_ops),
++		.dev_groups = psh_attr_groups,
++	},
++	.id_table = psh_ipc_id_table,
++	.probe = psh_ipc_probe,
++	.remove = psh_ipc_remove,
++};
++module_pci_driver(psh_ipc_driver);
++
++MODULE_AUTHOR("bin.yang@intel.com");
++MODULE_DESCRIPTION("Intel PSH IPC driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/platform/x86/intel/mcu/psh_ipc.h b/drivers/platform/x86/intel/mcu/psh_ipc.h
+new file mode 100644
+index 000000000000..5627d0717f56
+--- /dev/null
++++ b/drivers/platform/x86/intel/mcu/psh_ipc.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _INTEL_PSH_IPC_H_
++#define _INTEL_PSH_IPC_H_
++
++#include <linux/bits.h>
++#include <linux/types.h>
++
++#define CHANNEL_BUSY		BIT(31)
++#define PSH_IPC_CONTINUE	BIT(30)
++
++struct psh_msg {
++	u32 msg;
++	u32 param;
++};
++
++int intel_ia2psh_command(struct psh_msg *in, struct psh_msg *out, int ch, int timeout);
++
++enum psh_channel {
++	/* IPC channels from host system to MCU */
++	PSH_SEND_CH0		= 0,
++	PSH_SEND_CH1		= 1,
++	PSH_SEND_CH2		= 2,
++	PSH_SEND_CH3		= 3,
++
++	NUM_IA2PSH_IPC		= 4,
++
++	/* IPC channels from MCU to host system */
++	PSH_RECV_CH0		= 4,
++	PSH_RECV_CH1		= 5,
++	PSH_RECV_CH2		= 6,
++	PSH_RECV_CH3		= 7,
++
++	NUM_PSH2IA_IPC		= 4,
++
++	NUM_ALL_CH = NUM_IA2PSH_IPC + NUM_PSH2IA_IPC,
++};
++
++typedef void (*psh_channel_handle_t)(u32 msg, u32 param, void *data);
++
++int intel_psh_ipc_bind(int ch, psh_channel_handle_t handle, void *data);
++void intel_psh_ipc_unbind(int ch);
++
++void intel_psh_ipc_disable_irq(void);
++void intel_psh_ipc_enable_irq(void);
++
++#endif
+--
+2.43.0
+

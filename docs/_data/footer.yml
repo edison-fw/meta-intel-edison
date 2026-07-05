@@ -2,20 +2,23 @@ about_title: About the Documentation
 about_description: >
   This is the unofficial Yocto for Edison Arduino documentation. You will find instructions how to setup a current Yocto, build recent U-Boot and Linux kernel and install tools on the rootfs.
 
-column1_title: Column 1
+column1_title: Getting started
 column1_links:
   -
-    target: http://someurl1.com
-    text: Column 1 Link 1
+    target: 1.2-Setting-up.html
+    text: Setting up
 
-column2_title: Column 2
+column2_title: Build and deploy
 column2_links:
   -
-    target: http://someurl1.com
-    text: Column 2 Link 1
+    target: 2.0.1-Building-the-image
+    text: Building the image
+  -
+    target: 2.0.2-Installing-the-image-EMMC
+    text: Installing to eMMC
 
-column3_title: Column 3
+column3_title: Finding the sources and reporting bugs
 column3_links:
   -
-    target: http://someurl1.com
-    text: Column 3 Link 1
+    target: https://github.com/edison-fw/meta-intel-edison
+    text: Edison-fw on Github

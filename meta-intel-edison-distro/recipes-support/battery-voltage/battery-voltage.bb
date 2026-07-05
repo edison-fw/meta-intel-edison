@@ -13,10 +13,10 @@ SRC_URI:append = " file://CMakeLists.txt"
 
 SYSTEMD_SERVICE:${PN} = "battery-voltage.service"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install:append() {
 	# install service file
 	install -d ${D}${systemd_unitdir}/system
-	install -c -m 0644 ${WORKDIR}/battery-voltage.service ${D}${systemd_unitdir}/system
+	install -c -m 0644 ${UNPACKDIR}/battery-voltage.service ${D}${systemd_unitdir}/system
 }

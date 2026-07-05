@@ -8,7 +8,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files/:"
 SRC_URI = "file://ap-mode-toggle"
 SRC_URI:append = " file://ap-mode-toggle.service"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 PR = "r6"
 
 SYSTEMD_SERVICE:${PN} = "ap-mode-toggle.service"

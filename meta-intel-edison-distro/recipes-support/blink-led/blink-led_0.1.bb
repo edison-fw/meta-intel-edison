@@ -14,7 +14,7 @@ SRC_URI = "file://blink-led"
 SRC_URI += "file://blink-led.service"
 SRC_URI += "file://flash-led.service"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
 
 do_install() {
         install -d ${D}${bindir}
@@ -22,8 +22,8 @@ do_install() {
 
         # Copy service files
         install -d ${D}/${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/blink-led.service ${D}/${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/flash-led.service ${D}/${systemd_unitdir}/system
+        install -m 644 ${S}/blink-led.service ${D}/${systemd_unitdir}/system
+        install -m 644 ${S}/flash-led.service ${D}/${systemd_unitdir}/system
 }
 
 SYSTEMD_AUTO_ENABLE = "disable"
